@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Hash, Repeat, Timer, Activity, MoreHorizontal } from "lucide-react";
 import { MetadataChip, muscleColorMap } from "@/app/components/ui";
 import { SetTracker } from "./SetTracker";
@@ -10,7 +11,8 @@ import { useLogSet } from "@/app/features/logging/api/mutation-hooks/use-log-set
 import { useUpdateLogSet } from "@/app/features/logging/api/mutation-hooks/use-update-log-set";
 import { useDeleteLogSet } from "@/app/features/logging/api/mutation-hooks/use-delete-log-set";
 import { getLastLog } from "@/app/features/logging/api/query-hooks/use-last-log";
-import { useQueryClient } from "@tanstack/react-query";
+
+import { EditExerciseMetadataDrawer } from "./EditExerciseMetadataDrawer";
 
 interface ExerciseLog {
     id: string;
@@ -21,6 +23,7 @@ interface ExerciseLog {
 
 interface ExerciseCardProps {
     workoutId: string;
+    groupId: string;
     ewmId: string; // ExerciseWithMetadata ID
     exerciseId: string;
     name: string;
@@ -37,7 +40,8 @@ interface ExerciseCardProps {
 
 export function ExerciseCard({
     workoutId,
-    ewmId,
+    groupId,
+    ewmId: _ewmId,
     exerciseId,
     name,
     muscleGroup,
@@ -51,10 +55,13 @@ export function ExerciseCard({
     initialLogs = [],
 }: ExerciseCardProps) {
     const colorClass = muscleColorMap[muscleGroup] ?? "bg-accent";
-    const queryClient = useQueryClient();
-
+    const router = useRouter();
+    const [ewmId, setEwmId] = useState(_ewmId);
     // Drawer State
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
     const [activeSetIndex, setActiveSetIndex] = useState(0);
     const [weight, setWeight] = useState("");
     const [reps, setReps] = useState("");
@@ -183,7 +190,7 @@ export function ExerciseCard({
         <>
             <div className="bg-card text-card-foreground rounded-2xl p-4 border border-border">
                 {/* Exercise header */}
-                <div className="flex items-center gap-3 mb-3">
+                <div className="flex items-center gap-3 mb-3 relative">
                     <div className={`w-2 h-8 rounded-full ${colorClass}`} />
                     <div className="flex-1 min-w-0">
                         <h3 className="font-display text-base font-semibold truncate">
@@ -193,9 +200,35 @@ export function ExerciseCard({
                             {muscleGroup}
                         </span>
                     </div>
-                    <button className="p-2 rounded-xl hover:bg-muted transition-colors">
-                        <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
-                    </button>
+                    <div className="relative">
+                        <button
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            className="p-2 rounded-xl hover:bg-muted transition-colors"
+                        >
+                            <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
+                        </button>
+
+                        {isMenuOpen && (
+                            <>
+                                <div
+                                    className="fixed inset-0 z-10"
+                                    onClick={() => setIsMenuOpen(false)}
+                                />
+                                <div className="absolute right-0 top-full mt-1 w-32 bg-card border border-border rounded-xl shadow-lg z-20 py-1 overflow-hidden">
+                                    <button
+                                        onClick={() => {
+                                            setIsMenuOpen(false);
+                                            setIsEditDrawerOpen(true);
+                                        }}
+                                        className="w-full px-4 py-2 text-left text-sm hover:bg-muted transition-colors flex items-center gap-2"
+                                    >
+                                        <Activity className="w-3.5 h-3.5" />
+                                        Edit
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
                 </div>
 
                 {/* Metadata grid */}
@@ -253,6 +286,29 @@ export function ExerciseCard({
                 previousLog={previousLog}
             />
 
+            <EditExerciseMetadataDrawer
+                isOpen={isEditDrawerOpen}
+                onClose={() => setIsEditDrawerOpen(false)}
+                groupId={groupId}
+                workoutId={workoutId}
+                metadataId={ewmId}
+                exerciseName={name}
+                initialData={{
+                    exerciseId,
+                    setsMin,
+                    setsMax,
+                    repsMin,
+                    repsMax,
+                    restMin,
+                    restMax,
+                    tempo,
+                }}
+                onUpdate={(newEwm) => {
+                    setEwmId(newEwm.id);
+                    router.refresh();
+                }}
+            />
+
             <RestTimer
                 isOpen={isTimerOpen}
                 durationSeconds={restMin}
@@ -261,3 +317,4 @@ export function ExerciseCard({
         </>
     );
 }
+

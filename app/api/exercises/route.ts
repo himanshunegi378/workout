@@ -49,3 +49,33 @@ export async function POST(request: Request) {
         );
     }
 }
+
+export async function GET() {
+    try {
+        const userId = await getUserId();
+        if (!userId) {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
+        const exercises = await prisma.exercise.findMany({
+            where: {
+                OR: [
+                    { user_id: userId },
+                    { user_id: "system" } // Handle global exercises if any
+                ]
+            },
+            orderBy: { name: "asc" },
+        });
+
+        return NextResponse.json(exercises);
+    } catch (error) {
+        console.error("Failed to fetch exercises:", error);
+        return NextResponse.json(
+            { error: "Failed to fetch exercises" },
+            { status: 500 }
+        );
+    }
+}

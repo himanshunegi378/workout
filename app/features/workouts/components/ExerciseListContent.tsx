@@ -111,7 +111,7 @@ export async function ExerciseListContent({
                     />
                 ) : (
                     <div className="space-y-3">
-                        {workout.exercisesWithMetadata.map((ewm, i) => (
+                        {workout.exercisesWithMetadata.filter((ewm) => !ewm.is_hidden).map((ewm, i) => (
                             <div
                                 key={ewm.id}
                                 className="animate-slide-up"
@@ -119,6 +119,7 @@ export async function ExerciseListContent({
                             >
                                 <ExerciseCard
                                     workoutId={workoutId}
+                                    groupId={groupId}
                                     ewmId={ewm.id}
                                     exerciseId={ewm.exercise_id}
                                     name={ewm.exercise.name}

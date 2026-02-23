@@ -83,6 +83,9 @@ model ExerciseWithMetadata {
   /// Position of this exercise within its parent workout
   order_index Int
 
+  /// Soft-deleted when a log exists and metadata was replaced by a new record
+  is_hidden Boolean @default(false)
+
   // Foreign keys
   exercise_id String
   workout_id  String
