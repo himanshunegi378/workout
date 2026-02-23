@@ -1,0 +1,174 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum MuscleGroup {
+  Chest
+  Back
+  Legs
+  Shoulders
+  Arms
+  Core
+}
+
+// ---------------------------------------------------------------------------
+// Models
+// ---------------------------------------------------------------------------
+
+/// Authenticated user (credentials-based auth).
+model User {
+  id            String   @id @default(cuid())
+  username      String   @unique
+  password_hash String
+  created_at    DateTime @default(now())
+
+  // Relations — everything a user owns
+  workoutGroups   WorkoutGroup[]
+  exercises       Exercise[]
+  workoutSessions WorkoutSession[]
+
+  @@map("users")
+}
+
+/// A single, reusable exercise definition.
+model Exercise {
+  id           String      @id @default(cuid())
+  name         String
+  description  String?
+  muscle_group MuscleGroup
+
+  // Owner
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  // Relations
+  exercisesWithMetadata ExerciseWithMetadata[]
+  exerciseLogs          ExerciseLog[]
+
+  @@map("exercises")
+}
+
+/// An exercise as it appears inside a specific Workout, with prescribed
+/// sets / reps / tempo / rest parameters.
+model ExerciseWithMetadata {
+  id String @id @default(cuid())
+
+  /// Prescribed rep range
+  reps_min Int
+  reps_max Int
+
+  /// Prescribed set range
+  sets_min Int
+  sets_max Int
+
+  /// Rest between sets (seconds)
+  rest_min Int
+  rest_max Int
+
+  /// Tempo in "eccentric-pause-concentric-pause" format, e.g. "3-1-2-0"
+  tempo String
+
+  /// Position of this exercise within its parent workout
+  order_index Int
+
+  // Foreign keys
+  exercise_id String
+  workout_id  String
+
+  // Relations
+  exercise     Exercise      @relation(fields: [exercise_id], references: [id])
+  workout      Workout       @relation(fields: [workout_id], references: [id])
+  exerciseLogs ExerciseLog[]
+
+  @@map("exercise_with_metadata")
+}
+
+/// A named workout containing an ordered list of exercises.
+model Workout {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+
+  /// Position of this workout within its parent WorkoutGroup
+  order_index Int
+
+  // Foreign key
+  workout_group_id String
+
+  // Relations
+  workoutGroup          WorkoutGroup           @relation(fields: [workout_group_id], references: [id])
+  exercisesWithMetadata ExerciseWithMetadata[]
+  workoutSessions       WorkoutSession[]
+
+  @@map("workouts")
+}
+
+/// A named collection / programme of workouts (e.g. "Push Pull Legs").
+model WorkoutGroup {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+
+  // Owner
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  // Relations
+  workouts Workout[]
+
+  @@map("workout_groups")
+}
+
+/// A single logged training session tied to a Workout.
+model WorkoutSession {
+  id         String    @id @default(cuid())
+  start_time DateTime?
+  end_time   DateTime?
+  notes      String?
+  date       DateTime  @default(now())
+
+  // Foreign keys
+  workout_id String
+  user_id    String
+
+  // Relations
+  workout      Workout       @relation(fields: [workout_id], references: [id])
+  user         User          @relation(fields: [user_id], references: [id])
+  exerciseLogs ExerciseLog[]
+
+  @@map("workout_sessions")
+}
+
+/// A single logged set within a WorkoutSession.
+model ExerciseLog {
+  id              String @id @default(cuid())
+  weight          Float?
+  reps            Int
+  set_order_index Int
+
+  // Foreign keys
+  /// Populated for planned exercises (links back to the prescribed metadata).
+  exercise_with_metadata_id String?
+  /// Populated for ad-hoc exercises added on the fly (no preset metadata).
+  exercise_id               String?
+  workout_session_id        String
+
+  // Relations
+  exerciseWithMetadata ExerciseWithMetadata? @relation(fields: [exercise_with_metadata_id], references: [id])
+  exercise             Exercise?             @relation(fields: [exercise_id], references: [id])
+  workoutSession       WorkoutSession        @relation(fields: [workout_session_id], references: [id])
+
+  @@map("exercise_logs")
+}
