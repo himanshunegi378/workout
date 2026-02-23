@@ -45,27 +45,81 @@
   --animate-pulse-ring: pulse-ring 1.2s ease-out infinite;
 
   @keyframes slide-up {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
+
   @keyframes fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
   }
+
   @keyframes press {
-    0%   { transform: scale(1); }
-    50%  { transform: scale(0.96); }
-    100% { transform: scale(1); }
+    0% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(0.96);
+    }
+
+    100% {
+      transform: scale(1);
+    }
   }
+
   @keyframes check-pop {
-    0%   { transform: scale(0); }
-    60%  { transform: scale(1.2); }
-    100% { transform: scale(1); }
+    0% {
+      transform: scale(0);
+    }
+
+    60% {
+      transform: scale(1.2);
+    }
+
+    100% {
+      transform: scale(1);
+    }
   }
+
   @keyframes pulse-ring {
-    0%   { box-shadow: 0 0 0 0 oklch(from var(--color-accent) l c h / 0.6); }
-    100% { box-shadow: 0 0 0 12px oklch(from var(--color-accent) l c h / 0); }
+    0% {
+      box-shadow: 0 0 0 0 oklch(from var(--color-accent) l c h / 0.6);
+    }
+
+    100% {
+      box-shadow: 0 0 0 12px oklch(from var(--color-accent) l c h / 0);
+    }
   }
+}
+
+.light {
+  /* ── Surface bg/fg pairs ── */
+  --color-background: #f8f9fa;
+  --color-foreground: #212529;
+  --color-card: #ffffff;
+  --color-card-foreground: #212529;
+  --color-muted: #e9ecef;
+  --color-muted-foreground: #6c757d;
+  --color-border: #dee2e6;
+
+  /* ── Accent bg/fg pairs (keep the same vibrant colors) ── */
+  /* --color-accent remains #6c5ce7 */
+  /* --color-accent-foreground remains #ffffff */
+  /* --color-accent-hover remains #5a4bd6 */
+  --color-ring: #6c5ce740;
 }
 
 /* ── Smooth scrolling ── */
