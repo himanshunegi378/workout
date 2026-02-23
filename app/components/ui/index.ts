@@ -6,5 +6,6 @@ export { FAB } from "./FAB";
 export { CardSkeleton, CardSkeletonList } from "./CardSkeleton";
 export { MetadataChip } from "./MetadataChip";
 export { MuscleGroupSelector } from "./MuscleGroupSelector";
+export * from "./Portal";
 export { muscleColorMap } from "./muscle-colors";
 export { EmptyState } from "./EmptyState";

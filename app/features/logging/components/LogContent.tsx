@@ -62,6 +62,8 @@ export async function LogContent() {
                     {daySessions.map((session) => {
                         const exerciseGroups = groupLogsByExercise(session.exerciseLogs);
 
+                        if (exerciseGroups.length === 0) return null;
+
                         return (
                             <SessionCard
                                 key={session.id}

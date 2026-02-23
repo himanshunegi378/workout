@@ -49,6 +49,9 @@ export async function ExerciseListContent({
         include: {
             exerciseLogs: {
                 select: {
+                    id: true,
+                    weight: true,
+                    reps: true,
                     exercise_with_metadata_id: true,
                     set_order_index: true,
                 },
@@ -56,14 +59,19 @@ export async function ExerciseListContent({
         },
     });
 
-    const completedSetsByEwm: Record<string, number[]> = {};
+    const logsByEwm: Record<string, { id: string; weight: number | null; reps: number; set_order_index: number }[]> = {};
     if (session) {
         session.exerciseLogs.forEach((log) => {
             if (log.exercise_with_metadata_id) {
-                if (!completedSetsByEwm[log.exercise_with_metadata_id]) {
-                    completedSetsByEwm[log.exercise_with_metadata_id] = [];
+                if (!logsByEwm[log.exercise_with_metadata_id]) {
+                    logsByEwm[log.exercise_with_metadata_id] = [];
                 }
-                completedSetsByEwm[log.exercise_with_metadata_id].push(log.set_order_index);
+                logsByEwm[log.exercise_with_metadata_id].push({
+                    id: log.id,
+                    weight: log.weight,
+                    reps: log.reps,
+                    set_order_index: log.set_order_index,
+                });
             }
         });
     }
@@ -122,7 +130,7 @@ export async function ExerciseListContent({
                                     restMin={ewm.rest_min}
                                     restMax={ewm.rest_max}
                                     tempo={ewm.tempo}
-                                    initialCompletedSets={completedSetsByEwm[ewm.id] || []}
+                                    initialLogs={logsByEwm[ewm.id] || []}
                                 />
                             </div>
                         ))}

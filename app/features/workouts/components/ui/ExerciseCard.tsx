@@ -7,8 +7,17 @@ import { SetTracker } from "./SetTracker";
 import { LogSetDrawer } from "./LogSetDrawer";
 import { RestTimer } from "./RestTimer";
 import { useLogSet } from "@/app/features/logging/api/mutation-hooks/use-log-set";
+import { useUpdateLogSet } from "@/app/features/logging/api/mutation-hooks/use-update-log-set";
+import { useDeleteLogSet } from "@/app/features/logging/api/mutation-hooks/use-delete-log-set";
 import { getLastLog } from "@/app/features/logging/api/query-hooks/use-last-log";
 import { useQueryClient } from "@tanstack/react-query";
+
+interface ExerciseLog {
+    id: string;
+    weight: number | null;
+    reps: number;
+    set_order_index: number;
+}
 
 interface ExerciseCardProps {
     workoutId: string;
@@ -23,7 +32,7 @@ interface ExerciseCardProps {
     restMin: number;
     restMax: number;
     tempo: string;
-    initialCompletedSets?: number[];
+    initialLogs?: ExerciseLog[];
 }
 
 export function ExerciseCard({
@@ -39,7 +48,7 @@ export function ExerciseCard({
     restMin,
     restMax,
     tempo,
-    initialCompletedSets = [],
+    initialLogs = [],
 }: ExerciseCardProps) {
     const colorClass = muscleColorMap[muscleGroup] ?? "bg-accent";
     const queryClient = useQueryClient();
@@ -54,15 +63,27 @@ export function ExerciseCard({
     // Timer State
     const [isTimerOpen, setIsTimerOpen] = useState(false);
 
-    // Track which sets are completed locally for immediate UI feedback
-    const [completedSets, setCompletedSets] = useState<number[]>(initialCompletedSets);
+    // Track logs locally for immediate UI feedback
+    const [logs, setLogs] = useState<ExerciseLog[]>(initialLogs);
 
     const { mutate: logSetMutation, isPending: isSaving } = useLogSet();
+    const { mutate: updateSetMutation, isPending: isUpdating } = useUpdateLogSet();
+    const { mutate: deleteSetMutation, isPending: isDeleting } = useDeleteLogSet();
+
+    const currentLog = logs.find((l) => l.set_order_index === activeSetIndex);
+    const completedSets = logs.map((l) => l.set_order_index);
 
     const handleSetClick = async (setIndex: number) => {
         setActiveSetIndex(setIndex);
-        setWeight("");
-        setReps("");
+        const log = logs.find((l) => l.set_order_index === setIndex);
+
+        if (log) {
+            setWeight(log.weight?.toString() || "");
+            setReps(log.reps.toString());
+        } else {
+            setWeight("");
+            setReps("");
+        }
 
         // Fetch previous log data to pre-fill
         try {
@@ -79,26 +100,65 @@ export function ExerciseCard({
     const handleSaveSet = () => {
         if (!reps) return;
 
-        logSetMutation(
-            {
-                workoutId,
-                exerciseWithMetadataId: ewmId,
-                exerciseId,
-                setOrderIndex: activeSetIndex,
-                weight: weight,
-                reps: reps,
-            },
-            {
+        if (currentLog) {
+            // Update existing set
+            updateSetMutation(
+                {
+                    setId: currentLog.id,
+                    weight,
+                    reps,
+                },
+                {
+                    onSuccess: (updated: ExerciseLog) => {
+                        setLogs((prev) =>
+                            prev.map((l) => (l.id === updated.id ? updated : l))
+                        );
+                        setIsDrawerOpen(false);
+                    },
+                    onError: (error: any) => {
+                        alert(`Error updating set: ${error.message}`);
+                    },
+                }
+            );
+        } else {
+            // Create new set
+            logSetMutation(
+                {
+                    workoutId,
+                    exerciseWithMetadataId: ewmId,
+                    exerciseId,
+                    setOrderIndex: activeSetIndex,
+                    weight: weight,
+                    reps: reps,
+                },
+                {
+                    onSuccess: (newLog) => {
+                        setLogs((prev) => [...prev, newLog]);
+                        setIsDrawerOpen(false);
+                        setIsTimerOpen(true); // Auto-start rest timer
+                    },
+                    onError: (error: any) => {
+                        alert(`Error saving set: ${error.message}`);
+                    },
+                }
+            );
+        }
+    };
+
+    const handleDeleteSet = () => {
+        if (!currentLog) return;
+
+        if (window.confirm("Are you sure you want to remove this set?")) {
+            deleteSetMutation(currentLog.id, {
                 onSuccess: () => {
-                    setCompletedSets((prev) => [...new Set([...prev, activeSetIndex])]);
+                    setLogs((prev) => prev.filter((l) => l.id !== currentLog.id));
                     setIsDrawerOpen(false);
-                    setIsTimerOpen(true); // Auto-start rest timer
                 },
                 onError: (error: any) => {
-                    alert(`Error saving set: ${error.message}`);
+                    alert(`Error deleting set: ${error.message}`);
                 },
-            }
-        );
+            });
+        }
     };
 
     return (
@@ -168,7 +228,10 @@ export function ExerciseCard({
                 reps={reps}
                 setReps={setReps}
                 onSave={handleSaveSet}
-                isSaving={isSaving}
+                onDelete={handleDeleteSet}
+                isSaving={isSaving || isUpdating}
+                isDeleting={isDeleting}
+                isEdit={!!currentLog}
                 previousLog={previousLog}
             />
 

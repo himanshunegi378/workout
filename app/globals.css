@@ -11,10 +11,10 @@
   --color-border: #2a2a32;
 
   /* ── Accent bg/fg pairs ── */
-  --color-accent: #6c5ce7;
+  --color-accent: #ec4899;
   --color-accent-foreground: #ffffff;
-  --color-accent-hover: #5a4bd6;
-  --color-ring: #6c5ce740;
+  --color-accent-hover: #db2777;
+  --color-ring: #ec489940;
 
   --color-success: #00b894;
   --color-success-foreground: #ffffff;
@@ -116,10 +116,10 @@
   --color-border: #dee2e6;
 
   /* ── Accent bg/fg pairs (keep the same vibrant colors) ── */
-  /* --color-accent remains #6c5ce7 */
+  /* --color-accent remains #ec4899 */
   /* --color-accent-foreground remains #ffffff */
-  /* --color-accent-hover remains #5a4bd6 */
-  --color-ring: #6c5ce740;
+  /* --color-accent-hover remains #db2777 */
+  --color-ring: #ec489940;
 }
 
 /* ── Smooth scrolling ── */

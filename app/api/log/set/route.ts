@@ -75,3 +75,113 @@ export async function POST(request: Request) {
         );
     }
 }
+
+export async function DELETE(request: Request) {
+    try {
+        const userId = await getUserId();
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const { searchParams } = new URL(request.url);
+        const setId = searchParams.get("setId");
+
+        if (!setId) {
+            return NextResponse.json(
+                { error: "Set ID is required" },
+                { status: 400 }
+            );
+        }
+
+        // Verify ownership and delete
+        const set = await prisma.exerciseLog.findUnique({
+            where: { id: setId },
+            include: {
+                workoutSession: true,
+            },
+        });
+
+        if (!set) {
+            return NextResponse.json(
+                { error: "Set not found" },
+                { status: 404 }
+            );
+        }
+
+        if (set.workoutSession.user_id !== userId) {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 403 }
+            );
+        }
+
+        await prisma.exerciseLog.delete({
+            where: { id: setId },
+        });
+
+        return NextResponse.json({ message: "Set deleted successfully" });
+    } catch (error: any) {
+        console.error("Failed to delete set:", error);
+        return NextResponse.json(
+            { error: error?.message || "Failed to delete set" },
+            { status: 500 }
+        );
+    }
+}
+
+export async function PATCH(request: Request) {
+    try {
+        const userId = await getUserId();
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const body = await request.json();
+        const { setId, weight, reps } = body;
+
+        if (!setId || reps === undefined) {
+            return NextResponse.json(
+                { error: "Missing required fields" },
+                { status: 400 }
+            );
+        }
+
+        // Verify ownership
+        const set = await prisma.exerciseLog.findUnique({
+            where: { id: setId },
+            include: {
+                workoutSession: true,
+            },
+        });
+
+        if (!set) {
+            return NextResponse.json(
+                { error: "Set not found" },
+                { status: 404 }
+            );
+        }
+
+        if (set.workoutSession.user_id !== userId) {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 403 }
+            );
+        }
+
+        const updatedSet = await prisma.exerciseLog.update({
+            where: { id: setId },
+            data: {
+                weight: weight ? parseFloat(weight) : null,
+                reps: parseInt(reps),
+            },
+        });
+
+        return NextResponse.json(updatedSet);
+    } catch (error: any) {
+        console.error("Failed to update set:", error);
+        return NextResponse.json(
+            { error: error?.message || "Failed to update set" },
+            { status: 500 }
+        );
+    }
+}

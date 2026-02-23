@@ -19,7 +19,7 @@ Build mobile-first, dark-themed UI for the workout health application using **Ta
 
 ## Design Direction
 
-Dark-first fitness aesthetic. Deep near-black backgrounds (`#0c0c0e`), vivid purple accent (`#6c5ce7`), per-muscle-group color coding. Rounded cards (`rounded-2xl`), glassmorphic nav bar (`backdrop-blur-xl`), smooth slide-up entry animations.
+Dark-first fitness aesthetic. Deep near-black backgrounds (`#0c0c0e`), vivid pink accent (`#ec4899`), per-muscle-group color coding. Rounded cards (`rounded-2xl`), glassmorphic nav bar (`backdrop-blur-xl`), smooth slide-up entry animations.
 
 Color theming uses **background / foreground** token pairs (e.g. `--color-card` / `--color-card-foreground`). See **[references/design-system.md](references/design-system.md)** for the full palette, typography scale, spacing rules, animations, and `@theme` block.
 
@@ -63,7 +63,7 @@ app/
 EVERY client-side interaction (mutations, secondary fetches) MUST use the TanStack Query architecture in the feature's `api/` folder.
 
 1. **Query Keys**: Centralize keys in `query-keys.ts` to ensure consistent cache invalidation.
-2. **Standard Invalidation**: Mutations MUST invalidate related queries via `onSuccess`.
+2. **Standard Invalidation**: Mutations MUST invalidate related queries via `onSuccess`. If the mutation modifies data that was initially passed down from a Server Component, also call `router.refresh()` to keep Server and Client in sync.
 3. **"Use Client" Discipline**: Any component containing a React Query hook (e.g. `usePrograms`, `useLogSet`) or local state MUST have `"use client"` at the top. Failure to do so is a common cause of build errors.
 
 ```tsx
@@ -76,6 +76,7 @@ export function useLogSet() {
       // Invalidate both local workout view AND global history
       queryClient.invalidateQueries({ queryKey: workoutKeys.detail(variables.workoutId) });
       queryClient.invalidateQueries({ queryKey: logKeys.lists() });
+      router.refresh(); // Sync server components
     },
   });
 }
@@ -140,6 +141,10 @@ const colorClass = muscleColorMap[muscleGroup] ?? "bg-accent";
 bg-card text-card-foreground rounded-2xl p-4 border border-border
 hover:border-accent/40 transition-all duration-300 active:animate-press
 ```
+
+### Portals for Fixed Elements
+When rendering fixed `z-50` overlays (like Modals, Drawers, or Rest Timers) that are invoked from *inside* animated containers (e.g., inside an `animate-slide-up` card), you MUST wrap the overlay content in a `<Portal>` component (`@/app/components/ui/Portal`). 
+Without a Portal, the parent's CSS animation or transform creates a new stacking context, trapping the fixed element inside the card instead of letting it render relative to the viewport.
 
 ### Input
 ```
