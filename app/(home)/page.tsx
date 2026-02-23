@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { PageHeader, BottomNav, CardSkeletonList } from "@/app/components/ui";
 import { SignOutButton } from "@/app/components/SignOutButton";
-import { WorkoutGroupList } from "./components/WorkoutGroupList";
+import { WorkoutGroupList } from "@/app/features/programs/components/WorkoutGroupList";
 
 export default function HomePage() {
     return (

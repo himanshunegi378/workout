@@ -1,0 +1,46 @@
+interface CreateExerciseData {
+    name: string;
+    description: string | null;
+    muscle_group: string;
+}
+
+export async function createExercise(data: CreateExerciseData) {
+    const res = await fetch("/api/exercises", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to create exercise");
+    }
+
+    return res.json();
+}
+
+interface AddExerciseToWorkoutData {
+    exercise_id: string;
+    sets_min: number;
+    sets_max: number;
+    reps_min: number;
+    reps_max: number;
+    rest_min: number;
+    rest_max: number;
+    tempo: string;
+}
+
+export async function addExerciseToWorkout(groupId: string, workoutId: string, data: AddExerciseToWorkoutData) {
+    const res = await fetch(`/api/groups/${groupId}/workouts/${workoutId}/exercises`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to add exercise");
+    }
+
+    return res.json();
+}

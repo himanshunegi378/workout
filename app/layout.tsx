@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
+import { QueryProvider } from "@/app/components/providers/QueryProvider";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -31,7 +32,9 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
           <SessionProvider>
-            {children}
+            <QueryProvider>
+              {children}
+            </QueryProvider>
           </SessionProvider>
         </ThemeProvider>
       </body>

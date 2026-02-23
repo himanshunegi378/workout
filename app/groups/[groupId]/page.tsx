@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { BottomNav, CardSkeletonList } from "@/app/components/ui";
-import { WorkoutListContent } from "./components/WorkoutListContent";
-import { LoadingHeader } from "./components/ui/LoadingHeader";
+import { WorkoutListContent } from "@/app/features/programs/components/WorkoutListContent";
+import { LoadingHeader } from "@/app/features/programs/components/ui/LoadingHeader";
 
 interface PageProps {
     params: Promise<{ groupId: string }>;

@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { requireUserId } from "@/lib/auth-helpers";
-import { AddExerciseClient } from "./components/AddExerciseClient";
+import { AddExerciseToWorkoutForm } from "@/app/features/exercises/components/AddExerciseToWorkoutForm";
 
 interface PageProps {
     params: Promise<{
@@ -20,7 +20,7 @@ export default async function AddExerciseWithMetadataPage({ params }: PageProps)
     });
 
     return (
-        <AddExerciseClient
+        <AddExerciseToWorkoutForm
             groupId={groupId}
             workoutId={workoutId}
             exercises={exercises}

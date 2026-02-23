@@ -23,93 +23,63 @@ Dark-first fitness aesthetic. Deep near-black backgrounds (`#0c0c0e`), vivid pur
 
 Color theming uses **background / foreground** token pairs (e.g. `--color-card` / `--color-card-foreground`). See **[references/design-system.md](references/design-system.md)** for the full palette, typography scale, spacing rules, animations, and `@theme` block.
 
-## Project Structure
+## Project Structure (Feature-First)
+
+The application follows a **Domain-Driven Feature Folder** pattern. Most business logic and state management resides in `app/features/`.
 
 ```
 app/
-├── components/             ← Global shared
-│   ├── ui/                 ← Shadcn-style primitives (import via "@/app/components/ui")
-│   │   ├── Button.tsx      ← 4 variants: primary, secondary, ghost, danger
-│   │   ├── PageHeader.tsx  ← Sticky glassmorphic header with back nav + action slot
-│   │   ├── BottomNav.tsx   ← Fixed bottom tab bar (Programs / Log / Exercises)
-│   │   ├── CardSkeleton.tsx← Pulse-animated loading placeholder
-│   │   ├── EmptyState.tsx  ← Generic empty state with icon + action slot
-│   │   ├── FAB.tsx         ← Floating action button link
-│   │   ├── MetadataChip.tsx← Compact sets/reps/rest/tempo display
-│   │   ├── MuscleGroupSelector.tsx ← Color-coded selectable chip grid (client)
-│   │   ├── muscle-colors.ts← muscle→Tailwind bg class map
-│   │   └── index.ts        ← Barrel: export all above
-│   ├── SignOutButton.tsx    ← Business logic (uses next-auth/react)
-│   └── index.ts            ← Re-exports ui/* + SignOutButton
+├── components/             ← Global shared primitives
+│   └── ui/                 ← Button, PageHeader, BottomNav, etc.
 │
-├── (home)/                 ← Route group, serves /
-│   ├── page.tsx
-│   └── components/
-│       ├── ui/GroupCard.tsx
-│       ├── ui/GroupsEmptyState.tsx
-│       └── WorkoutGroupList.tsx    ← async server component, fetches data
+├── features/               ← Domain-specific logic
+│   └── [domain]/           ← e.g. programs, workouts, exercises, logging
+│       ├── api/            ← TanStack Query API Layer
+│       │   ├── query-keys.ts    ← Centralized cache keys
+│       │   ├── queries.ts       ← fetch functions (client/server-safe)
+│       │   ├── mutations.ts     ← POST/PATCH/DELETE functions
+│       │   ├── query-hooks/     ← Custom wrapper hooks (useQuery)
+│       │   └── mutation-hooks/  ← Custom wrapper hooks (useMutation)
+│       ├── components/          ← Domain business logic (Server/Client)
+│       └── components/ui/       ← Domain-specific dumb UI
 │
-├── groups/
-│   ├── new/page.tsx        ← Add new program form (client)
-│   └── [groupId]/
-│       ├── page.tsx
-│       ├── components/
-│       │   ├── ui/WorkoutCard.tsx
-│       │   ├── ui/LoadingHeader.tsx
-│       │   └── WorkoutListContent.tsx
-│       └── workouts/
-│           ├── new/page.tsx ← Add new workout form (client)
-│           └── [workoutId]/
-│               ├── page.tsx
-│               ├── components/
-│               │   ├── ui/ExerciseCard.tsx
-│               │   ├── ui/LoadingState.tsx
-│               │   └── ExerciseListContent.tsx
-│               └── exercises/new/
-│                   ├── page.tsx ← Auth shell (server)
-│                   └── components/AddExerciseClient.tsx
-│
+├── (home)/                 ← Routes are mostly thin shells
+├── groups/ [groupId]/ ...
 ├── exercises/
-│   ├── page.tsx            ← Exercise list with search + filter
-│   ├── components/
-│   │   ├── ui/ExerciseListCard.tsx
-│   │   ├── ui/MuscleGroupFilter.tsx  ← client, horizontal pill bar
-│   │   ├── ExerciseListClient.tsx    ← client, manages filter+search state
-│   │   └── ExercisesContent.tsx      ← server, fetches exercises
-│   └── new/
-│       └── page.tsx        ← Add new exercise form (client component)
-│
-├── log/
-│   ├── page.tsx
-│   └── components/
-│       ├── ui/SessionCard.tsx
-│       ├── ui/ExerciseLogGroup.tsx
-│       └── LogContent.tsx
-│
-├── login/page.tsx          ← Auth: sign in (client component)
-├── signup/page.tsx         ← Auth: sign up with auto-login (client component)
-├── globals.css             ← @theme design tokens
-├── layout.tsx              ← Root layout: fonts + <SessionProvider>
-└── api/
-    ├── auth/[...nextauth]/route.ts ← NextAuth handler
-    ├── auth/signup/route.ts        ← POST: create user
-    ├── exercises/route.ts          ← POST: create exercise (global)
-    └── groups/
-        ├── route.ts                ← POST: create program
-        └── [groupId]/workouts/
-            ├── route.ts            ← POST: create workout in program
-            └── [workoutId]/exercises/route.ts ← POST: link exercise to workout
+└── log/
 ```
 
-## 3-Layer Component Architecture (ALWAYS follow this)
-
-Every route has three layers:
+## 4-Layer Component Architecture (REVISED)
 
 | Layer | Location | Rules |
 |---|---|---|
-| **page.tsx** | `app/<route>/page.tsx` | Slim shell only — layout div, `<Suspense>`, layout components. No data fetching, no business logic. ~15–25 lines. |
-| **Business logic** | `app/<route>/components/*.tsx` | `async` server components for data fetching + auth. Call `requireUserId()`. Compose dumb UI from `components/ui/`. |
-| **Dumb UI** | `app/<route>/components/ui/*.tsx` | Pure presentational — only props → JSX. No imports from `lib/`, `prisma`, or `auth`. |
+| **Route Page** | `app/<route>/page.tsx` | Thin shell. `<Suspense>` + Feature Components. |
+| **Feature Logic** | `app/features/<domain>/components/` | Data fetching (via Prisma or useQuery). Auth checks. Logic orchestration. |
+| **Feature UI** | `app/features/<domain>/components/ui/` | Presentational components specific to this domain. |
+| **Global UI** | `app/components/ui/` | Shared primitives used everywhere (Button, Header). |
+
+## Data Fetching & State (TanStack Query)
+
+EVERY client-side interaction (mutations, secondary fetches) MUST use the TanStack Query architecture in the feature's `api/` folder.
+
+1. **Query Keys**: Centralize keys in `query-keys.ts` to ensure consistent cache invalidation.
+2. **Standard Invalidation**: Mutations MUST invalidate related queries via `onSuccess`.
+3. **"Use Client" Discipline**: Any component containing a React Query hook (e.g. `usePrograms`, `useLogSet`) or local state MUST have `"use client"` at the top. Failure to do so is a common cause of build errors.
+
+```tsx
+// Example Mutation Hook (app/features/logging/api/mutation-hooks/use-log-set.ts)
+export function useLogSet() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: logSet,
+    onSuccess: (_, variables) => {
+      // Invalidate both local workout view AND global history
+      queryClient.invalidateQueries({ queryKey: workoutKeys.detail(variables.workoutId) });
+      queryClient.invalidateQueries({ queryKey: logKeys.lists() });
+    },
+  });
+}
+```
 
 ```tsx
 // page.tsx — thin shell
@@ -215,9 +185,18 @@ If a frontend component (like a visual Set Tracker) needs to maintain state acro
 - **Prisma client path:** Import from `@/app/generated/prisma/client`, not `@prisma/client`.
 
 ## Next.js App Router Gotchas
+
 - **Route Params are Promises:** In Next.js 15+, dynamic route parameters (like `params` and `searchParams`) must be awaited or unwrapped.
   - *Server Components / API Routes:* Use `await params` (e.g. `const { groupId } = await params;`).
   - *Client Components:* Use `React.use()` to unwrap the promise (e.g. `const { groupId } = use(params);`).
+
+- **Client Component Discipline (CRITICAL):**
+  - When extracting a form or interactive element (using `useState`, `useEffect`, `useRouter`, or any TanStack Query hook) into a feature component, you **MUST** add `"use client"` at the very first line of the file.
+  - If a file has one of these hooks but is imported into a Server Component without this directive, the build will fail.
+  - **Checklist before extraction:**
+    1. Does the component use a hook? -> Add `"use client"`.
+    2. Are all imports (Lucide, UI primitives) restored? -> Refactoring often accidentally strips standard imports.
+    3. Is the export named or default? -> Feature components typically use **named exports** (e.g., `export function AddWorkoutForm()`).
 
 ## Mobile-First Rules
 

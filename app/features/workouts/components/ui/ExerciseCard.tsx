@@ -6,6 +6,9 @@ import { MetadataChip, muscleColorMap } from "@/app/components/ui";
 import { SetTracker } from "./SetTracker";
 import { LogSetDrawer } from "./LogSetDrawer";
 import { RestTimer } from "./RestTimer";
+import { useLogSet } from "@/app/features/logging/api/mutation-hooks/use-log-set";
+import { getLastLog } from "@/app/features/logging/api/query-hooks/use-last-log";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ExerciseCardProps {
     workoutId: string;
@@ -39,13 +42,13 @@ export function ExerciseCard({
     initialCompletedSets = [],
 }: ExerciseCardProps) {
     const colorClass = muscleColorMap[muscleGroup] ?? "bg-accent";
+    const queryClient = useQueryClient();
 
     // Drawer State
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [activeSetIndex, setActiveSetIndex] = useState(0);
     const [weight, setWeight] = useState("");
     const [reps, setReps] = useState("");
-    const [isSaving, setIsSaving] = useState(false);
     const [previousLog, setPreviousLog] = useState<{ weight: number | null; reps: number } | null>(null);
 
     // Timer State
@@ -54,6 +57,8 @@ export function ExerciseCard({
     // Track which sets are completed locally for immediate UI feedback
     const [completedSets, setCompletedSets] = useState<number[]>(initialCompletedSets);
 
+    const { mutate: logSetMutation, isPending: isSaving } = useLogSet();
+
     const handleSetClick = async (setIndex: number) => {
         setActiveSetIndex(setIndex);
         setWeight("");
@@ -61,50 +66,39 @@ export function ExerciseCard({
 
         // Fetch previous log data to pre-fill
         try {
-            const res = await fetch(`/api/exercises/${exerciseId}/last-log`);
-            if (res.ok) {
-                const data = await res.json();
-                setPreviousLog(data);
-            }
+            const data = await getLastLog(exerciseId);
+            setPreviousLog(data);
         } catch (error) {
             console.error("Failed to fetch previous log", error);
+            setPreviousLog(null);
         }
 
         setIsDrawerOpen(true);
     };
 
-    const handleSaveSet = async () => {
+    const handleSaveSet = () => {
         if (!reps) return;
-        setIsSaving(true);
 
-        try {
-            const res = await fetch("/api/log/set", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    workoutId,
-                    exerciseWithMetadataId: ewmId,
-                    exerciseId,
-                    setOrderIndex: activeSetIndex,
-                    weight: weight ? parseFloat(weight) : null,
-                    reps: parseInt(reps),
-                }),
-            });
-
-            if (res.ok) {
-                setCompletedSets((prev) => [...new Set([...prev, activeSetIndex])]);
-                setIsDrawerOpen(false);
-                setIsTimerOpen(true); // Auto-start rest timer
-            } else {
-                const data = await res.json();
-                alert(`Error saving set: ${data.error}`);
+        logSetMutation(
+            {
+                workoutId,
+                exerciseWithMetadataId: ewmId,
+                exerciseId,
+                setOrderIndex: activeSetIndex,
+                weight: weight,
+                reps: reps,
+            },
+            {
+                onSuccess: () => {
+                    setCompletedSets((prev) => [...new Set([...prev, activeSetIndex])]);
+                    setIsDrawerOpen(false);
+                    setIsTimerOpen(true); // Auto-start rest timer
+                },
+                onError: (error: any) => {
+                    alert(`Error saving set: ${error.message}`);
+                },
             }
-        } catch (error: any) {
-            console.error("Failed to log set", error);
-            alert(`Network error saving set: ${error.message}`);
-        } finally {
-            setIsSaving(false);
-        }
+        );
     };
 
     return (

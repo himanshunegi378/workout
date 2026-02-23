@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { BottomNav } from "@/app/components/ui";
-import { ExerciseListContent } from "./components/ExerciseListContent";
-import { LoadingState } from "./components/ui/LoadingState";
+import { ExerciseListContent } from "@/app/features/workouts/components/ExerciseListContent";
+import { LoadingState } from "@/app/features/workouts/components/ui/LoadingState";
 
 interface PageProps {
     params: Promise<{ groupId: string; workoutId: string }>;

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { PageHeader, BottomNav, CardSkeletonList } from "@/app/components/ui";
-import { LogContent } from "./components/LogContent";
+import { LogContent } from "@/app/features/logging/components/LogContent";
 
 export default function LogPage() {
     return (
