@@ -77,24 +77,42 @@ export function ExerciseCard({
         setActiveSetIndex(setIndex);
         const log = logs.find((l) => l.set_order_index === setIndex);
 
+        let initialWeight = "";
+        let initialReps = "";
+
         if (log) {
-            setWeight(log.weight?.toString() || "");
-            setReps(log.reps.toString());
+            initialWeight = log.weight?.toString() || "";
+            initialReps = log.reps.toString();
         } else {
-            setWeight("");
-            setReps("");
+            // Default to previous set in current session
+            const previousSetLog = logs
+                .filter((l) => l.set_order_index < setIndex)
+                .sort((a, b) => b.set_order_index - a.set_order_index)[0];
+
+            if (previousSetLog) {
+                initialWeight = previousSetLog.weight?.toString() || "";
+                initialReps = previousSetLog.reps.toString();
+            }
         }
 
-        // Fetch previous log data to pre-fill
+        setWeight(initialWeight);
+        setReps(initialReps);
+        setIsDrawerOpen(true);
+
+        // Fetch previous log data (from last session)
         try {
             const data = await getLastLog(exerciseId);
             setPreviousLog(data);
+
+            // If it's a new set and we still don't have initial values, use last session's data
+            if (!log && !initialWeight && !initialReps && data) {
+                setWeight(data.weight?.toString() || "");
+                setReps(data.reps.toString());
+            }
         } catch (error) {
             console.error("Failed to fetch previous log", error);
             setPreviousLog(null);
         }
-
-        setIsDrawerOpen(true);
     };
 
     const handleSaveSet = () => {
