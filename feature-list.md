@@ -1,8 +1,8 @@
-1. reliable count down timer
+1. reliable count down timer [done]
 2. edit exercies in workout [done]
-3. Improve the UI for add exercise in workout form
+3. Improve the UI for add exercise in workout form [done]
 4. screen for seeing log of only a single exercies accross workout
-5. different feed if target rep not achieved.
+5. different feedback if target rep not achieved.
 6. Detect perfomance degradation or bigger jump that would cause more fatigure then necessary.
 7. Supersets & Giant Sets: Ability to link multiple exercises together to perform them back-to-back.
 8. Warm-up vs. Working Sets: Add a `set_type` to logs (Warmup, Drop Set, Failure) so volume is calculated accurately.
@@ -15,4 +15,4 @@
 15. Duplicate Workouts / Routines: Easy action to copy an entire `WorkoutGroup` or `Workout` to use as a base for a new program.
 16. Offline Mode / PWA: Aggressive caching so users can log their workout even if the gym has poor internet/cell reception.
 17. Improve UX: current server component give loading screen that could be handled better with react query and server actions.
-18. write test
+18. write tests for features.

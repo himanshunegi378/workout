@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { QueryProvider } from "@/app/components/providers/QueryProvider";
 import { RestTimerProvider } from "@/app/features/workouts/contexts/RestTimerContext";
 import { RestTimerOverlay } from "@/app/features/workouts/components/ui/RestTimer";
+import { BottomDrawerProvider } from "@/app/components/ui";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -36,7 +37,9 @@ export default function RootLayout({
           <SessionProvider>
             <QueryProvider>
               <RestTimerProvider>
-                {children}
+                <BottomDrawerProvider>
+                  {children}
+                </BottomDrawerProvider>
                 <RestTimerOverlay />
               </RestTimerProvider>
             </QueryProvider>

@@ -10,7 +10,7 @@ export function ExerciseListCard({ name, description, muscleGroup }: ExerciseLis
     const colorClass = muscleColorMap[muscleGroup] ?? "bg-accent";
 
     return (
-        <div className="bg-card text-card-foreground rounded-2xl p-4 border border-border flex items-center gap-3">
+        <div className="bg-card text-card-foreground rounded-2xl p-4 border border-border flex items-center gap-3 elevation-2">
             {/* Muscle group color stripe */}
             <div className={`w-1.5 self-stretch rounded-full ${colorClass}`} />
 

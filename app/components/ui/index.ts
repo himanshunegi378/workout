@@ -9,3 +9,6 @@ export { MuscleGroupSelector } from "./MuscleGroupSelector";
 export * from "./Portal";
 export { muscleColorMap } from "./muscle-colors";
 export { EmptyState } from "./EmptyState";
+export { NumberStepper } from "./NumberStepper";
+export { BottomDrawer } from "./BottomDrawer";
+export { BottomDrawerProvider } from "./BottomDrawerContext";

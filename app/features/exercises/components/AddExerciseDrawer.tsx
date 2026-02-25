@@ -1,93 +1,72 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ChevronDown, Save } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, Plus } from "lucide-react";
 import { Button, NumberStepper, muscleColorMap, BottomDrawer } from "@/app/components/ui";
-import { useExercises } from "@/app/features/exercises/api/query-hooks/use-exercises";
-import { useEditExerciseMetadata } from "@/app/features/exercises/api/mutation-hooks/use-edit-exercise-metadata";
-import { ExerciseSelectDrawer } from "@/app/features/exercises/components/ExerciseSelectDrawer";
+import { useExercises } from "../api/query-hooks/use-exercises";
+import { useAddExerciseToWorkout } from "../api/mutation-hooks/use-add-exercise-to-workout";
+import { ExerciseSelectDrawer } from "./ExerciseSelectDrawer";
 
-interface EditExerciseMetadataDrawerProps {
+interface AddExerciseDrawerProps {
     isOpen: boolean;
     onClose: () => void;
     groupId: string;
     workoutId: string;
-    metadataId: string;
-    exerciseName: string;
-    initialData: {
-        exerciseId: string;
-        setsMin: number;
-        setsMax: number;
-        repsMin: number;
-        repsMax: number;
-        restMin: number;
-        restMax: number;
-        tempo: string;
-    };
-    onUpdate?: (newEwm: any) => void;
 }
 
-export function EditExerciseMetadataDrawer({
-    isOpen,
-    onClose,
-    groupId,
-    workoutId,
-    metadataId,
-    exerciseName,
-    initialData,
-    onUpdate,
-}: EditExerciseMetadataDrawerProps) {
-    const [exerciseId, setExerciseId] = useState(initialData.exerciseId);
-    const [isSelectDrawerOpen, setIsSelectDrawerOpen] = useState(false);
-    const [sets, setSets] = useState(initialData.setsMin);
-    const [reps, setReps] = useState(initialData.repsMin);
-    const [rest, setRest] = useState(initialData.restMin);
-    const [tempo, setTempo] = useState(initialData.tempo);
-
+export function AddExerciseDrawer({ isOpen, onClose, groupId, workoutId }: AddExerciseDrawerProps) {
     const { data: exercises = [] } = useExercises();
+
+    const [exerciseId, setExerciseId] = useState("");
+    const [isSelectDrawerOpen, setIsSelectDrawerOpen] = useState(false);
+
+    const [sets, setSets] = useState(3);
+    const [reps, setReps] = useState(10);
+    const [rest, setRest] = useState(60);
+    const [tempo, setTempo] = useState("2-0-1-0");
+
     const selectedExercise = exercises.find((ex: { id: string; name: string; muscle_group: string }) => ex.id === exerciseId);
-    const { mutate: editMetadata, isPending } = useEditExerciseMetadata({
-        groupId,
-        workoutId,
-        metadataId,
-    });
 
-    useEffect(() => {
-        if (isOpen) {
-            setExerciseId(initialData.exerciseId);
-            setSets(initialData.setsMin);
-            setReps(initialData.repsMin);
-            setRest(initialData.restMin);
-            setTempo(initialData.tempo);
-        }
-    }, [isOpen, initialData]);
+    const { mutate: addExercise, isPending, error: mutationError } = useAddExerciseToWorkout();
 
-    const handleSave = () => {
-        editMetadata(
+    const canSubmit = exerciseId !== "" && sets > 0 && reps > 0 && rest >= 0 && tempo;
+
+    function handleSubmit() {
+        if (!canSubmit) return;
+
+        addExercise(
             {
-                exercise_id: exerciseId,
-                sets_min: sets,
-                sets_max: sets,
-                reps_min: reps,
-                reps_max: reps,
-                rest_min: rest,
-                rest_max: rest,
-                tempo,
+                groupId,
+                workoutId,
+                data: {
+                    exercise_id: exerciseId,
+                    sets_min: sets,
+                    sets_max: sets,
+                    reps_min: reps,
+                    reps_max: reps,
+                    rest_min: rest,
+                    rest_max: rest,
+                    tempo: tempo.trim(),
+                },
             },
             {
-                onSuccess: (newEwm) => {
-                    onUpdate?.(newEwm);
+                onSuccess: () => {
+                    setExerciseId("");
+                    setSets(3);
+                    setReps(10);
+                    setRest(60);
+                    setTempo("2-0-1-0");
                     onClose();
                 },
             }
         );
-    };
+    }
 
     return (
         <>
-            <BottomDrawer isOpen={isOpen} onClose={onClose} title={`Edit ${exerciseName}`}>
-                <div className="space-y-5 max-h-[70vh] overflow-y-auto no-scrollbar pb-2">
-                    {/* Exercise Selector */}
+            <BottomDrawer isOpen={isOpen} onClose={onClose} title="Add Exercise" height="85vh">
+                <div className="space-y-6 flex-1 overflow-y-auto no-scrollbar">
+                    {/* Exercise Selection */}
                     <div className="space-y-1.5">
                         <label className="text-sm font-medium text-foreground">Exercise</label>
                         <button
@@ -125,9 +104,9 @@ export function EditExerciseMetadataDrawer({
                     <div className="grid grid-cols-2 gap-4">
                         <NumberStepper label="Rest" value={rest} onChange={setRest} min={0} max={600} step={10} suffix="s" />
                         <div className="space-y-1.5">
-                            <label className="text-sm font-medium text-foreground" htmlFor="edit-tempo">Tempo</label>
+                            <label className="text-sm font-medium text-foreground" htmlFor="tempo">Tempo</label>
                             <input
-                                id="edit-tempo"
+                                id="tempo"
                                 type="text"
                                 placeholder="e.g. 2-0-1-0"
                                 value={tempo}
@@ -138,14 +117,21 @@ export function EditExerciseMetadataDrawer({
                     </div>
                 </div>
 
-                <Button
-                    onClick={handleSave}
-                    variant="primary"
-                    className="w-full py-4 text-base mt-4 shadow-accent/20 shadow-lg"
-                    disabled={isPending}
-                >
-                    {isPending ? "Saving..." : <span className="flex items-center gap-2"><Save className="w-4 h-4" /> Save Changes</span>}
-                </Button>
+                <div className="pt-4 mt-auto shrink-0 border-t border-border/50">
+                    {mutationError && (
+                        <div className="bg-danger/10 border border-danger/20 rounded-xl px-4 py-3 text-danger text-sm mb-4">
+                            {mutationError instanceof Error ? mutationError.message : "Something went wrong"}
+                        </div>
+                    )}
+                    <Button
+                        onClick={handleSubmit}
+                        variant="primary"
+                        disabled={!canSubmit || isPending}
+                        className="w-full py-4 text-base shadow-accent/20 shadow-lg"
+                    >
+                        {isPending ? "Adding…" : <span className="flex items-center gap-2"><Plus className="w-5 h-5" /> Add to Workout</span>}
+                    </Button>
+                </div>
             </BottomDrawer>
 
             <ExerciseSelectDrawer

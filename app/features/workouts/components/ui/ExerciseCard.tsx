@@ -187,7 +187,7 @@ export function ExerciseCard({
 
     return (
         <>
-            <div className="bg-card text-card-foreground rounded-2xl p-4 border border-border">
+            <div className="bg-card text-card-foreground rounded-2xl p-4 border border-border elevation-3">
                 {/* Exercise header */}
                 <div className="flex items-center gap-3 mb-3 relative">
                     <div className={`w-2 h-8 rounded-full ${colorClass}`} />
@@ -210,10 +210,10 @@ export function ExerciseCard({
                         {isMenuOpen && (
                             <>
                                 <div
-                                    className="fixed inset-0 z-10"
+                                    className="fixed inset-0 z-10 "
                                     onClick={() => setIsMenuOpen(false)}
                                 />
-                                <div className="absolute right-0 top-full mt-1 w-32 bg-card border border-border rounded-xl shadow-lg z-20 py-1 overflow-hidden">
+                                <div className="absolute right-0 top-full mt-1 w-32 bg-card border border-border rounded-xl elevation-4 z-20 py-1 overflow-hidden">
                                     <button
                                         onClick={() => {
                                             setIsMenuOpen(false);

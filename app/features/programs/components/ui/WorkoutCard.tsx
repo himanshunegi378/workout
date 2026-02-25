@@ -21,6 +21,7 @@ export function WorkoutCard({
             href={`/groups/${groupId}/workouts/${id}`}
             className="block bg-card text-card-foreground rounded-2xl p-4
                        border border-border hover:border-accent/40
+                       elevation-2 hover:elevation-4
                        transition-all duration-300 active:animate-press"
         >
             <div className="flex items-center gap-3 mb-2">

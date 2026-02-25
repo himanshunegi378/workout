@@ -19,7 +19,7 @@ export function SessionCard({
     exerciseGroups,
 }: SessionCardProps) {
     return (
-        <div className="bg-card text-card-foreground rounded-2xl border border-border overflow-hidden">
+        <div className="bg-card text-card-foreground rounded-2xl border border-border overflow-hidden elevation-2">
             {/* Session header */}
             <div className="px-4 py-3 border-b border-border">
                 <h3 className="font-display text-base font-semibold">

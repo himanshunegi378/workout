@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma";
 import { requireUserId } from "@/lib/auth-helpers";
 import { PageHeader, EmptyState } from "@/app/components/ui";
 import { ExerciseCard } from "./ui/ExerciseCard";
+import { AddExerciseTrigger } from "../../exercises/components/AddExerciseTrigger";
 
 export async function ExerciseListContent({
     groupId,
@@ -82,12 +83,11 @@ export async function ExerciseListContent({
                 title={workout.name}
                 backHref={`/groups/${groupId}`}
                 action={
-                    <Link
-                        href={`/groups/${groupId}/workouts/${workoutId}/exercises/new`}
-                        className="p-2 rounded-xl hover:bg-muted transition-colors"
-                    >
-                        <Plus className="w-5 h-5 text-accent" />
-                    </Link>
+                    <AddExerciseTrigger
+                        groupId={groupId}
+                        workoutId={workoutId}
+                        variant="icon"
+                    />
                 }
             />
 
@@ -98,15 +98,11 @@ export async function ExerciseListContent({
                         title="No Exercises Yet"
                         description="Add exercises to this workout to get started"
                         action={
-                            <Link
-                                href={`/groups/${groupId}/workouts/${workoutId}/exercises/new`}
-                                className="inline-flex items-center justify-center gap-2 px-5 py-3
-                                         rounded-xl font-display text-sm font-semibold
-                                         transition-all duration-200 active:animate-press
-                                         bg-accent hover:bg-accent-hover text-accent-foreground shadow-lg shadow-accent/20"
-                            >
-                                <Plus className="w-4 h-4" /> Add Exercise
-                            </Link>
+                            <AddExerciseTrigger
+                                groupId={groupId}
+                                workoutId={workoutId}
+                                variant="button"
+                            />
                         }
                     />
                 ) : (

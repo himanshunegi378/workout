@@ -14,6 +14,7 @@ export function GroupCard({ id, name, description, workoutCount }: GroupCardProp
             href={`/groups/${id}`}
             className="block bg-card text-card-foreground rounded-2xl p-4
                        border border-border hover:border-accent/40
+                       elevation-2 hover:elevation-4
                        transition-all duration-300 active:animate-press group"
         >
             <div className="flex items-center justify-between mb-2">
