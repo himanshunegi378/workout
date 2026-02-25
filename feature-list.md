@@ -1,7 +1,7 @@
 1. reliable count down timer [done]
 2. edit exercies in workout [done]
 3. Improve the UI for add exercise in workout form [done]
-4. screen for seeing log of only a single exercies accross workout
+4. screen for seeing log of only a single exercies accross workout [done]
 5. different feedback if target rep not achieved.
 6. Detect perfomance degradation or bigger jump that would cause more fatigure then necessary.
 7. Supersets & Giant Sets: Ability to link multiple exercises together to perform them back-to-back.

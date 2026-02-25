@@ -67,7 +67,13 @@ export async function GET() {
                     { user_id: "system" } // Handle global exercises if any
                 ]
             },
-            orderBy: { name: "asc" },
+            orderBy: [{ muscle_group: "asc" }, { name: "asc" }],
+            select: {
+                id: true,
+                name: true,
+                description: true,
+                muscle_group: true,
+            },
         });
 
         return NextResponse.json(exercises);

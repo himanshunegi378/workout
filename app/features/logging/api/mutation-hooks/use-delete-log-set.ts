@@ -13,10 +13,8 @@ export function useDeleteLogSet() {
         onSuccess: () => {
             // Invalidate the workout details cache
             queryClient.invalidateQueries({ queryKey: workoutKeys.details() });
-            // Invalidate the global logs lists
-            queryClient.invalidateQueries({ queryKey: logKeys.lists() });
-            // Refresh server components
-            router.refresh();
+            // Invalidate all log-related queries (sessions, lists, history)
+            queryClient.invalidateQueries({ queryKey: logKeys.all });
         },
     });
 }

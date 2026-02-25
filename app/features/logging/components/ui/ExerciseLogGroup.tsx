@@ -56,23 +56,30 @@ export function SetRow({ id, index, weight, reps }: SetRowProps) {
     );
 }
 
+import { ExerciseHistoryDrawer } from "@/app/features/exercises/components/ExerciseHistoryDrawer";
+
 interface ExerciseLogGroupProps {
+    exerciseId: string;
     exerciseName: string;
     muscleGroup: string;
     sets: { id: string; weight: number | null; reps: number }[];
 }
 
-export function ExerciseLogGroup({ exerciseName, muscleGroup, sets }: ExerciseLogGroupProps) {
+export function ExerciseLogGroup({ exerciseId, exerciseName, muscleGroup, sets }: ExerciseLogGroupProps) {
     const colorClass = muscleColorMap[muscleGroup] ?? "bg-accent";
+    const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
     return (
         <div className="px-4 py-3">
-            <div className="flex items-center gap-2 mb-2">
+            <button
+                onClick={() => setIsHistoryOpen(true)}
+                className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity text-left w-full group outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm"
+            >
                 <div className={`w-1.5 h-5 rounded-full ${colorClass}`} />
-                <span className="font-display text-sm font-semibold">
+                <span className="font-display text-sm font-semibold group-hover:underline underline-offset-2 decoration-border">
                     {exerciseName}
                 </span>
-            </div>
+            </button>
             <div className="space-y-1 ml-3.5">
                 {sets.map((log, si) => (
                     <SetRow
@@ -84,6 +91,13 @@ export function ExerciseLogGroup({ exerciseName, muscleGroup, sets }: ExerciseLo
                     />
                 ))}
             </div>
+
+            <ExerciseHistoryDrawer
+                exerciseId={exerciseId}
+                exerciseName={exerciseName}
+                isOpen={isHistoryOpen}
+                onClose={() => setIsHistoryOpen(false)}
+            />
         </div>
     );
 }

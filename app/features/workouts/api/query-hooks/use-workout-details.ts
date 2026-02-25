@@ -1,13 +1,48 @@
-"use client";
-
 import { useQuery } from "@tanstack/react-query";
 import { workoutKeys } from "../query-keys";
-import { getWorkoutDetails } from "../queries";
+
+type WorkoutDetailsResponse = {
+    workout: {
+        id: string;
+        name: string;
+        exercisesWithMetadata: {
+            id: string;
+            exercise_id: string;
+            sets_min: number | null;
+            sets_max: number | null;
+            reps_min: number | null;
+            reps_max: number | null;
+            rest_min: number | null;
+            rest_max: number | null;
+            tempo: string | null;
+            is_hidden: boolean;
+            exercise: {
+                id: string;
+                name: string;
+                muscle_group: string;
+            };
+        }[];
+    };
+    session: {
+        id: string;
+        exerciseLogs: {
+            id: string;
+            weight: number | null;
+            reps: number;
+            exercise_with_metadata_id: string | null;
+            set_order_index: number;
+        }[];
+    } | null;
+};
 
 export function useWorkoutDetails(groupId: string, workoutId: string) {
     return useQuery({
         queryKey: workoutKeys.detail(workoutId),
-        queryFn: () => getWorkoutDetails(groupId, workoutId),
+        queryFn: async (): Promise<WorkoutDetailsResponse> => {
+            const res = await fetch(`/api/groups/${groupId}/workouts/${workoutId}/details`);
+            if (!res.ok) throw new Error("Failed to fetch workout details");
+            return res.json() as Promise<WorkoutDetailsResponse>;
+        },
         enabled: !!groupId && !!workoutId,
     });
 }

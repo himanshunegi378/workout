@@ -38,6 +38,7 @@ export function SessionCard({
                 {exerciseGroups.map(({ exercise, sets }) => (
                     <ExerciseLogGroup
                         key={exercise.id}
+                        exerciseId={exercise.id}
                         exerciseName={exercise.name}
                         muscleGroup={exercise.muscle_group}
                         sets={sets}

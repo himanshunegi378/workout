@@ -40,3 +40,36 @@ export async function POST(request: Request) {
         );
     }
 }
+
+export async function GET() {
+    try {
+        const userId = await getUserId();
+        if (!userId) {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
+        const groups = await prisma.workoutGroup.findMany({
+            where: { user_id: userId },
+            select: {
+                id: true,
+                name: true,
+                description: true,
+                workouts: {
+                    select: { id: true },
+                },
+            },
+            orderBy: { name: "asc" },
+        });
+
+        return NextResponse.json(groups);
+    } catch (error) {
+        console.error("Failed to fetch workout groups:", error);
+        return NextResponse.json(
+            { error: "Failed to fetch workout groups" },
+            { status: 500 }
+        );
+    }
+}

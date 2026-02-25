@@ -106,13 +106,13 @@ export function ExerciseListContent({
                                     exerciseId={ewm.exercise_id}
                                     name={ewm.exercise.name}
                                     muscleGroup={ewm.exercise.muscle_group}
-                                    setsMin={ewm.sets_min}
-                                    setsMax={ewm.sets_max}
-                                    repsMin={ewm.reps_min}
-                                    repsMax={ewm.reps_max}
-                                    restMin={ewm.rest_min}
-                                    restMax={ewm.rest_max}
-                                    tempo={ewm.tempo}
+                                    setsMin={ewm.sets_min ?? 0}
+                                    setsMax={ewm.sets_max ?? 0}
+                                    repsMin={ewm.reps_min ?? 0}
+                                    repsMax={ewm.reps_max ?? 0}
+                                    restMin={ewm.rest_min ?? 0}
+                                    restMax={ewm.rest_max ?? 0}
+                                    tempo={ewm.tempo ?? ""}
                                     initialLogs={logsByEwm[ewm.id] || []}
                                 />
                             </div>
