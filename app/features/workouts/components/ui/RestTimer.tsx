@@ -1,50 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Play, Pause, X, RotateCcw, Minus, Plus } from "lucide-react";
+import { Play, Pause, X, Minus, Plus } from "lucide-react";
 import { Button, Portal } from "@/app/components/ui";
+import { useRestTimer } from "@/app/features/workouts/contexts/RestTimerContext";
 
-interface RestTimerProps {
-    isOpen: boolean;
-    durationSeconds: number;
-    onClose: () => void;
-}
+export function RestTimerOverlay() {
+    const { isActive, timeLeft, isRunning, pauseTimer, resumeTimer, addTime, stopTimer } = useRestTimer();
 
-export function RestTimer({ isOpen, durationSeconds, onClose }: RestTimerProps) {
-    const [timeLeft, setTimeLeft] = useState(durationSeconds);
-    const [isRunning, setIsRunning] = useState(true);
-
-    // Reset when opened with a new duration
-    useEffect(() => {
-        if (isOpen) {
-            setTimeLeft(durationSeconds);
-            setIsRunning(true);
-        }
-    }, [isOpen, durationSeconds]);
-
-    useEffect(() => {
-        let interval: NodeJS.Timeout;
-        if (isOpen && isRunning && timeLeft > 0) {
-            interval = setInterval(() => {
-                setTimeLeft((prev: number) => prev - 1);
-            }, 1000);
-        } else if (timeLeft === 0) {
-            setIsRunning(false);
-            // Optional: Play a sound here
-        }
-        return () => clearInterval(interval);
-    }, [isOpen, isRunning, timeLeft]);
-
-    if (!isOpen) return null;
+    if (!isActive) return null;
 
     const formatTime = (seconds: number) => {
         const m = Math.floor(seconds / 60);
         const s = seconds % 60;
         return `${m}:${s.toString().padStart(2, "0")}`;
-    };
-
-    const addTime = (amount: number) => {
-        setTimeLeft((prev: number) => Math.max(0, prev + amount));
     };
 
     const isComplete = timeLeft === 0;
@@ -58,7 +26,7 @@ export function RestTimer({ isOpen, durationSeconds, onClose }: RestTimerProps) 
                             Rest Timer
                         </span>
                         <button
-                            onClick={onClose}
+                            onClick={stopTimer}
                             className="text-muted-foreground hover:text-foreground transition-colors p-1"
                         >
                             <X className="w-5 h-5" />
@@ -103,7 +71,7 @@ export function RestTimer({ isOpen, durationSeconds, onClose }: RestTimerProps) 
                     <div className="grid grid-cols-2 gap-3 mt-2">
                         <Button
                             variant={isRunning ? "secondary" : "primary"}
-                            onClick={() => setIsRunning(!isRunning)}
+                            onClick={isRunning ? pauseTimer : resumeTimer}
                             className="w-full"
                         >
                             {isRunning ? (
@@ -116,7 +84,7 @@ export function RestTimer({ isOpen, durationSeconds, onClose }: RestTimerProps) 
                                 </>
                             )}
                         </Button>
-                        <Button variant="danger" onClick={onClose} className="w-full">
+                        <Button variant="danger" onClick={stopTimer} className="w-full">
                             Skip
                         </Button>
                     </div>

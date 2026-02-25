@@ -6,11 +6,11 @@ import { Hash, Repeat, Timer, Activity, MoreHorizontal } from "lucide-react";
 import { MetadataChip, muscleColorMap } from "@/app/components/ui";
 import { SetTracker } from "./SetTracker";
 import { LogSetDrawer } from "./LogSetDrawer";
-import { RestTimer } from "./RestTimer";
 import { useLogSet } from "@/app/features/logging/api/mutation-hooks/use-log-set";
 import { useUpdateLogSet } from "@/app/features/logging/api/mutation-hooks/use-update-log-set";
 import { useDeleteLogSet } from "@/app/features/logging/api/mutation-hooks/use-delete-log-set";
 import { getLastLog } from "@/app/features/logging/api/query-hooks/use-last-log";
+import { useRestTimer } from "@/app/features/workouts/contexts/RestTimerContext";
 
 import { EditExerciseMetadataDrawer } from "./EditExerciseMetadataDrawer";
 
@@ -67,8 +67,7 @@ export function ExerciseCard({
     const [reps, setReps] = useState("");
     const [previousLog, setPreviousLog] = useState<{ weight: number | null; reps: number } | null>(null);
 
-    // Timer State
-    const [isTimerOpen, setIsTimerOpen] = useState(false);
+    const { startTimer } = useRestTimer();
 
     // Track logs locally for immediate UI feedback
     const [logs, setLogs] = useState<ExerciseLog[]>(initialLogs);
@@ -160,7 +159,7 @@ export function ExerciseCard({
                     onSuccess: (newLog) => {
                         setLogs((prev) => [...prev, newLog]);
                         setIsDrawerOpen(false);
-                        setIsTimerOpen(true); // Auto-start rest timer
+                        startTimer(restMin); // Auto-start rest timer
                     },
                     onError: (error: any) => {
                         alert(`Error saving set: ${error.message}`);
@@ -307,12 +306,6 @@ export function ExerciseCard({
                     setEwmId(newEwm.id);
                     router.refresh();
                 }}
-            />
-
-            <RestTimer
-                isOpen={isTimerOpen}
-                durationSeconds={restMin}
-                onClose={() => setIsTimerOpen(false)}
             />
         </>
     );

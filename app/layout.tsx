@@ -3,6 +3,8 @@ import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 import { QueryProvider } from "@/app/components/providers/QueryProvider";
+import { RestTimerProvider } from "@/app/features/workouts/contexts/RestTimerContext";
+import { RestTimerOverlay } from "@/app/features/workouts/components/ui/RestTimer";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -33,7 +35,10 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
           <SessionProvider>
             <QueryProvider>
-              {children}
+              <RestTimerProvider>
+                {children}
+                <RestTimerOverlay />
+              </RestTimerProvider>
             </QueryProvider>
           </SessionProvider>
         </ThemeProvider>
