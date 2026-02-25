@@ -262,7 +262,8 @@ export function ExerciseCard({
                     <SetTracker
                         setsMin={setsMin}
                         setsMax={setsMax}
-                        completedSets={completedSets}
+                        logs={logs.map(l => ({ set_order_index: l.set_order_index, reps: l.reps }))}
+                        targetReps={repsMin}
                         onSetClick={handleSetClick}
                     />
                 </div>

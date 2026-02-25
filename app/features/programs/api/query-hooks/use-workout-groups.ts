@@ -1,11 +1,12 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 import { programKeys } from "../query-keys";
-import { getPrograms } from "../queries";
+import { getWorkoutGroups } from "../queries";
 
-export function usePrograms() {
+export function useWorkoutGroups() {
     return useQuery({
         queryKey: programKeys.lists(),
-        queryFn: getPrograms,
+        queryFn: () => getWorkoutGroups(),
     });
 }
-

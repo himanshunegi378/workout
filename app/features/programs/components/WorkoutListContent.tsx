@@ -1,34 +1,42 @@
+"use client";
+
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Dumbbell, Plus } from "lucide-react";
-import prisma from "@/lib/prisma";
-import { requireUserId } from "@/lib/auth-helpers";
-import { PageHeader, Button, EmptyState } from "@/app/components/ui";
+import { Dumbbell, Plus, Loader2 } from "lucide-react";
+import { PageHeader, EmptyState } from "@/app/components/ui";
 import { WorkoutCard } from "./ui/WorkoutCard";
+import { useWorkoutGroup } from "../api/query-hooks/use-workout-group";
 
-export async function WorkoutListContent({ groupId }: { groupId: string }) {
-    const userId = await requireUserId();
+export function WorkoutListContent({ groupId }: { groupId: string }) {
+    const { data: group, isLoading, isError } = useWorkoutGroup(groupId);
 
-    const group = await prisma.workoutGroup.findFirst({
-        where: { id: groupId, user_id: userId },
-        include: {
-            workouts: {
-                orderBy: { order_index: "asc" },
-                include: {
-                    exercisesWithMetadata: {
-                        include: {
-                            exercise: { select: { name: true } },
-                        },
-                        orderBy: { order_index: "asc" },
-                        take: 3,
-                    },
-                    _count: { select: { exercisesWithMetadata: true } },
-                },
-            },
-        },
-    });
+    if (isLoading) {
+        return (
+            <>
+                <PageHeader title="Loading..." backHref="/" />
+                <div className="min-h-screen flex flex-col pt-24 items-center gap-4">
+                    <Loader2 className="w-8 h-8 animate-spin text-accent" />
+                    <span className="text-sm text-muted-foreground animate-pulse font-medium">Loading workouts...</span>
+                </div>
+            </>
+        );
+    }
 
-    if (!group) notFound();
+    if (isError || !group) {
+        if (isError) {
+            return (
+                <>
+                    <PageHeader title="Error" backHref="/" />
+                    <EmptyState
+                        icon={Dumbbell}
+                        title="Something went wrong"
+                        description="Could not load workouts. Please try again."
+                    />
+                </>
+            );
+        }
+        notFound();
+    }
 
     return (
         <>

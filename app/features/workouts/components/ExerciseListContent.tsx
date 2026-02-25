@@ -1,64 +1,50 @@
+"use client";
+
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { Activity, Plus } from "lucide-react";
-import prisma from "@/lib/prisma";
-import { requireUserId } from "@/lib/auth-helpers";
+import { Activity, Loader2 } from "lucide-react";
 import { PageHeader, EmptyState } from "@/app/components/ui";
 import { ExerciseCard } from "./ui/ExerciseCard";
 import { AddExerciseTrigger } from "../../exercises/components/AddExerciseTrigger";
+import { useWorkoutDetails } from "../api/query-hooks/use-workout-details";
 
-export async function ExerciseListContent({
+export function ExerciseListContent({
     groupId,
     workoutId,
 }: {
     groupId: string;
     workoutId: string;
 }) {
-    const userId = await requireUserId();
+    const { data, isLoading, isError } = useWorkoutDetails(groupId, workoutId);
 
-    const workout = await prisma.workout.findFirst({
-        where: {
-            id: workoutId,
-            workoutGroup: { id: groupId, user_id: userId },
-        },
-        include: {
-            exercisesWithMetadata: {
-                orderBy: { order_index: "asc" },
-                include: {
-                    exercise: true,
-                },
-            },
-        },
-    });
+    if (isLoading) {
+        return (
+            <>
+                <PageHeader title="Loading..." backHref={`/groups/${groupId}`} />
+                <div className="min-h-screen flex flex-col pt-24 items-center gap-4">
+                    <Loader2 className="w-8 h-8 animate-spin text-accent" />
+                    <span className="text-sm text-muted-foreground animate-pulse font-medium">Preparing training session...</span>
+                </div>
+            </>
+        );
+    }
 
-    if (!workout) notFound();
+    if (isError || !data) {
+        if (isError) {
+            return (
+                <>
+                    <PageHeader title="Error" backHref={`/groups/${groupId}`} />
+                    <EmptyState
+                        icon={Activity}
+                        title="Something went wrong"
+                        description="Could not load your workout. Please try again."
+                    />
+                </>
+            );
+        }
+        notFound();
+    }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    const session = await prisma.workoutSession.findFirst({
-        where: {
-            user_id: userId,
-            workout_id: workoutId,
-            date: {
-                gte: today,
-                lt: tomorrow,
-            },
-        },
-        include: {
-            exerciseLogs: {
-                select: {
-                    id: true,
-                    weight: true,
-                    reps: true,
-                    exercise_with_metadata_id: true,
-                    set_order_index: true,
-                },
-            },
-        },
-    });
+    const { workout, session } = data;
 
     const logsByEwm: Record<string, { id: string; weight: number | null; reps: number; set_order_index: number }[]> = {};
     if (session) {

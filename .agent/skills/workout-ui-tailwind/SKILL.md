@@ -1,6 +1,6 @@
 ---
 name: workout-ui-tailwind
-description: Build production-grade UI screens for the workout/fitness tracking app using Tailwind CSS v4 and Next.js. Use when creating or modifying any UI component, page, or screen for the workout application — including workout group lists, workout lists, exercise views with metadata, add-exercise forms, exercise log screens, and auth pages (login/signup). Covers the full design system (colors, typography, spacing, animations), 3-layer component architecture, auth-aware data fetching, mobile-first responsive layout, and Prisma data model to UI mapping.
+description: Build production-grade UI screens for the workout/fitness tracking app using Tailwind CSS v4 and Next.js. Use when creating or modifying any UI component, page, or screen for the workout application — including workout group lists, workout lists, exercise views with metadata, add-exercise forms, exercise log screens, and auth pages (login/signup). Covers the full design system (colors, typography, spacing, animations), 4-layer component architecture, Server Actions + React Query data fetching pattern, mobile-first responsive layout, Prisma select best practices, and UX rules (e.g. loading states must always show PageHeader).
 ---
 
 # Workout UI with Tailwind CSS
@@ -53,60 +53,50 @@ app/
 
 | Layer | Location | Rules |
 |---|---|---|
-| **Route Page** | `app/<route>/page.tsx` | Thin shell. `<Suspense>` + Feature Components. |
-| **Feature Logic** | `app/features/<domain>/components/` | Data fetching (via Prisma or useQuery). Auth checks. Logic orchestration. |
+| **Route Page** | `app/<route>/page.tsx` | Thin shell. Renders Feature Components. |
+| **Feature Logic** | `app/features/<domain>/components/` | `"use client"` components using React Query hooks for data fetching. |
 | **Feature UI** | `app/features/<domain>/components/ui/` | Presentational components specific to this domain. |
 | **Global UI** | `app/components/ui/` | Shared primitives used everywhere (Button, Header). |
 
-## Data Fetching & State (TanStack Query)
+## Data Fetching & State (TanStack Query + Server Actions)
 
-EVERY client-side interaction (mutations, secondary fetches) MUST use the TanStack Query architecture in the feature's `api/` folder.
+ALL data fetching MUST use `"use server"` actions called via React Query hooks. **Do NOT use direct Prisma calls in components.**
 
-1. **Query Keys**: Centralize keys in `query-keys.ts` to ensure consistent cache invalidation.
-2. **Standard Invalidation**: Mutations MUST invalidate related queries via `onSuccess`. If the mutation modifies data that was initially passed down from a Server Component, also call `router.refresh()` to keep Server and Client in sync.
-3. **"Use Client" Discipline**: Any component containing a React Query hook (e.g. `usePrograms`, `useLogSet`) or local state MUST have `"use client"` at the top. Failure to do so is a common cause of build errors.
+### Architecture
+1. **Server Actions** (`api/queries.ts`): `"use server"` functions that call Prisma with `select` (not `include`).
+2. **Query Hooks** (`api/query-hooks/`): Thin `useQuery` wrappers calling server actions.
+3. **Query Keys** (`api/query-keys.ts`): Centralized cache keys for invalidation.
+4. **Mutations** (`api/mutations.ts` + `mutation-hooks/`): `useMutation` wrappers that invalidate related queries.
 
 ```tsx
-// Example Mutation Hook (app/features/logging/api/mutation-hooks/use-log-set.ts)
-export function useLogSet() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: logSet,
-    onSuccess: (_, variables) => {
-      // Invalidate both local workout view AND global history
-      queryClient.invalidateQueries({ queryKey: workoutKeys.detail(variables.workoutId) });
-      queryClient.invalidateQueries({ queryKey: logKeys.lists() });
-      router.refresh(); // Sync server components
-    },
+// api/queries.ts — Server Action
+"use server";
+import prisma from "@/lib/prisma";
+import { requireUserId } from "@/lib/auth-helpers";
+export async function getItems() {
+  const userId = await requireUserId();
+  return prisma.item.findMany({
+    where: { user_id: userId },
+    select: { id: true, name: true }, // Always use select, not include
   });
 }
-```
 
-```tsx
-// page.tsx — thin shell
-export default function MyPage() {
-  return (
-    <div className="min-h-screen pb-20">
-      <PageHeader title="My Page" />
-      <main className="max-w-lg mx-auto px-4 py-4">
-        <Suspense fallback={<CardSkeletonList count={4} />}>
-          <MyContent />              {/* business logic */}
-        </Suspense>
-      </main>
-      <BottomNav />
-    </div>
-  );
+// api/query-hooks/use-items.ts — React Query Hook
+"use client";
+import { useQuery } from "@tanstack/react-query";
+import { itemKeys } from "../query-keys";
+import { getItems } from "../queries";
+export function useItems() {
+  return useQuery({ queryKey: itemKeys.lists(), queryFn: () => getItems() });
 }
 
-// components/MyContent.tsx — business logic
-export async function MyContent() {
-  const userId = await requireUserId();   // redirects to /login if not authed
-  const data = await prisma.foo.findMany({ where: { user_id: userId } });
-  return data.map(item => <MyCard key={item.id} {...item} />);
+// components/ItemsContent.tsx — Client Component
+"use client";
+export function ItemsContent() {
+  const { data, isLoading, isError } = useItems();
+  if (isLoading) return <LoadingWithHeader />;
+  // ... render data
 }
-
-// components/ui/MyCard.tsx — dumb
-export function MyCard({ name, ... }: Props) { return <div>...</div>; }
 ```
 
 ## Auth
@@ -171,6 +161,7 @@ If a frontend component (like a visual Set Tracker) needs to maintain state acro
 
 ## Prisma Gotchas
 
+- **Prefer `select` over `include`:** Always use `select` to fetch only the fields the UI needs. Avoid `include` which fetches entire related models and bloats server action payloads. This also improves performance and data privacy.
 - **Enum types:** Always import and use Prisma enum types — never pass plain strings. Example:
   ```ts
   import { MuscleGroup } from "@/app/generated/prisma/client";
@@ -209,4 +200,16 @@ If a frontend component (like a visual Set Tracker) needs to maintain state acro
 - All touch targets minimum `44px` (`p-2` + icon or `py-3 px-5`)
 - Bottom nav: `h-16` fixed, page content gets `pb-20` to clear it
 - Use `max-w-lg mx-auto` on content containers
-- Always wrap async content in `<Suspense fallback={<CardSkeletonList />}>` — never show blank screens
+- **Loading states MUST include `PageHeader`:** When a page is loading data via React Query, the loading state must ALWAYS render the `<PageHeader>` with the back button and a placeholder title (e.g., "Loading..."). Never show a blank screen without navigation context — the user must always be able to navigate back.
+  ```tsx
+  if (isLoading) {
+    return (
+      <>
+        <PageHeader title="Loading..." backHref="/" />
+        <div className="min-h-screen flex flex-col pt-24 items-center gap-4">
+          <Loader2 className="w-8 h-8 animate-spin text-accent" />
+        </div>
+      </>
+    );
+  }
+  ```

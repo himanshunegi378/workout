@@ -1,22 +1,23 @@
-import prisma from "@/lib/prisma";
-import { requireUserId } from "@/lib/auth-helpers";
+"use client";
+
+import { Loader2 } from "lucide-react";
 import { GroupCard } from "./ui/GroupCard";
 import { GroupsEmptyState } from "./ui/GroupsEmptyState";
+import { useWorkoutGroups } from "../api/query-hooks/use-workout-groups";
 
-export async function WorkoutGroupList() {
-    const userId = await requireUserId();
+export function WorkoutGroupList() {
+    const { data: groups, isLoading, isError } = useWorkoutGroups();
 
-    const groups = await prisma.workoutGroup.findMany({
-        where: { user_id: userId },
-        include: {
-            workouts: {
-                select: { id: true },
-            },
-        },
-        orderBy: { name: "asc" },
-    });
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center py-12 text-muted-foreground">
+                <Loader2 className="w-6 h-6 animate-spin mr-2" />
+                <span className="text-sm">Loading programs...</span>
+            </div>
+        );
+    }
 
-    if (groups.length === 0) {
+    if (isError || !groups || groups.length === 0) {
         return <GroupsEmptyState />;
     }
 

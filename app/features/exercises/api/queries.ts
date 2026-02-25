@@ -1,8 +1,19 @@
+"use server";
+
+import prisma from "@/lib/prisma";
+import { requireUserId } from "@/lib/auth-helpers";
+
 export async function getExercises() {
-    const res = await fetch("/api/exercises");
-    if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to fetch exercises");
-    }
-    return res.json();
+    const userId = await requireUserId();
+
+    return prisma.exercise.findMany({
+        where: { user_id: userId },
+        orderBy: [{ muscle_group: "asc" }, { name: "asc" }],
+        select: {
+            id: true,
+            name: true,
+            description: true,
+            muscle_group: true,
+        },
+    });
 }

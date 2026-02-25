@@ -1,37 +1,33 @@
-import { Check } from "lucide-react";
-import prisma from "@/lib/prisma";
-import { requireUserId } from "@/lib/auth-helpers";
+"use client";
+
+import { Check, Loader2 } from "lucide-react";
 import { EmptyState } from "@/app/components/ui";
 import { SessionCard } from "./ui/SessionCard";
+import { useSessions } from "../api/query-hooks/use-sessions";
 
-export async function LogContent() {
-    const userId = await requireUserId();
+export function LogContent() {
+    const { data: sessions, isLoading, isError } = useSessions();
 
-    const sessions = await prisma.workoutSession.findMany({
-        where: { user_id: userId },
-        orderBy: { date: "desc" },
-        take: 30,
-        include: {
-            workout: {
-                include: {
-                    workoutGroup: { select: { name: true } },
-                },
-            },
-            exerciseLogs: {
-                orderBy: { set_order_index: "asc" },
-                include: {
-                    exercise: true,
-                    exerciseWithMetadata: {
-                        include: {
-                            exercise: true,
-                        },
-                    },
-                },
-            },
-        },
-    });
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center py-16 text-muted-foreground">
+                <Loader2 className="w-6 h-6 animate-spin mr-2" />
+                <span className="text-sm">Loading sessions...</span>
+            </div>
+        );
+    }
 
-    if (sessions.length === 0) {
+    if (isError) {
+        return (
+            <EmptyState
+                icon={Check}
+                title="Something went wrong"
+                description="Could not load your log. Please try again."
+            />
+        );
+    }
+
+    if (!sessions || sessions.length === 0) {
         return (
             <EmptyState
                 icon={Check}
