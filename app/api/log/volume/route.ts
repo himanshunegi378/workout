@@ -23,6 +23,22 @@ export async function GET() {
                     select: {
                         weight: true,
                         reps: true,
+                        exercise: {
+                            select: {
+                                name: true,
+                                muscle_group: true,
+                            },
+                        },
+                        exerciseWithMetadata: {
+                            select: {
+                                exercise: {
+                                    select: {
+                                        name: true,
+                                        muscle_group: true,
+                                    },
+                                },
+                            },
+                        },
                     },
                 },
             },
@@ -31,74 +47,56 @@ export async function GET() {
             },
         });
 
-        // Group by workout ID
-        const workoutsMap = new Map<
-            string,
-            { name: string; sessions: Map<string, { volume: number; sessionCount: number }> }
-        >();
+        const dataPointsMap = new Map<string, {
+            date: string;
+            workoutId: string;
+            workoutName: string;
+            muscleGroup: string;
+            volume: number;
+            exercises: Map<string, number>;
+        }>();
 
         for (const session of sessions) {
             const workoutId = session.workout.id;
             const workoutName = session.workout.name;
             const dateStr = session.date.toISOString().split("T")[0];
 
-            if (!workoutsMap.has(workoutId)) {
-                workoutsMap.set(workoutId, { name: workoutName, sessions: new Map() });
-            }
-
-            const workoutGroup = workoutsMap.get(workoutId)!;
-
-            let sessionVolume = 0;
             for (const log of session.exerciseLogs) {
                 const weight = log.weight ?? 0;
-                sessionVolume += weight * log.reps;
+                const volume = weight * log.reps;
+                if (volume === 0) continue;
+
+                const muscleGroup = log.exercise?.muscle_group || log.exerciseWithMetadata?.exercise.muscle_group;
+                if (!muscleGroup) continue;
+
+                const exerciseName = log.exercise?.name || log.exerciseWithMetadata?.exercise.name || "Unknown Exercise";
+                const key = `${dateStr}-${workoutId}-${muscleGroup}`;
+
+                if (!dataPointsMap.has(key)) {
+                    dataPointsMap.set(key, {
+                        date: dateStr,
+                        workoutId,
+                        workoutName,
+                        muscleGroup,
+                        volume: 0,
+                        exercises: new Map<string, number>(),
+                    });
+                }
+
+                const point = dataPointsMap.get(key)!;
+                point.volume += volume;
+
+                const currentExVol = point.exercises.get(exerciseName) ?? 0;
+                point.exercises.set(exerciseName, currentExVol + volume);
             }
-
-            if (sessionVolume === 0) continue;
-
-            const current = workoutGroup.sessions.get(dateStr) ?? { volume: 0, sessionCount: 0 };
-            workoutGroup.sessions.set(dateStr, {
-                volume: current.volume + sessionVolume,
-                sessionCount: current.sessionCount + 1,
-            });
         }
 
-        // Format and calculate percent changes
-        const result = Array.from(workoutsMap.entries())
-            .filter(([, data]) => data.sessions.size > 0)
-            .map(([workoutId, data]) => {
-                const sortedSessions = Array.from(data.sessions.entries()).sort(
-                    (a, b) => a[0].localeCompare(b[0])
-                );
-
-                const formattedSessions = sortedSessions.map(([date, sessionData], index) => {
-                    let percentChange: number | null = null;
-
-                    if (index > 0) {
-                        const prevVolume = sortedSessions[index - 1][1].volume;
-                        if (prevVolume > 0) {
-                            percentChange = Number((((sessionData.volume - prevVolume) / prevVolume) * 100).toFixed(1));
-                        } else if (sessionData.volume > 0) {
-                            percentChange = 100;
-                        } else {
-                            percentChange = 0;
-                        }
-                    }
-
-                    return {
-                        date,
-                        volume: sessionData.volume,
-                        sessionCount: sessionData.sessionCount,
-                        percentChange,
-                    };
-                });
-
-                return {
-                    workoutId,
-                    workoutName: data.name,
-                    sessions: formattedSessions,
-                };
-            });
+        const result = Array.from(dataPointsMap.values())
+            .map(point => ({
+                ...point,
+                exercises: Array.from(point.exercises.entries()).map(([name, volume]) => ({ name, volume })),
+            }))
+            .sort((a, b) => a.date.localeCompare(b.date));
 
         return NextResponse.json(result, { status: 200 });
     } catch (error) {

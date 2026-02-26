@@ -1,26 +1,31 @@
 import { useQuery } from "@tanstack/react-query";
 import { dashboardKeys } from "../query-keys";
+import { MuscleGroup } from "@/app/generated/prisma/client";
+
+export type VolumeDataPoint = {
+    date: string;
+    workoutId: string;
+    workoutName: string;
+    muscleGroup: MuscleGroup;
+    volume: number;
+    exercises: { name: string; volume: number }[];
+};
 
 export type VolumeSessionData = {
     date: string;
     volume: number;
     sessionCount: number;
     percentChange: number | null;
-};
-
-export type WorkoutVolumeData = {
-    workoutId: string;
-    workoutName: string;
-    sessions: VolumeSessionData[];
+    exercises: { name: string; volume: number }[];
 };
 
 export function useVolumeData() {
     return useQuery({
         queryKey: dashboardKeys.volume(),
-        queryFn: async (): Promise<WorkoutVolumeData[]> => {
+        queryFn: async (): Promise<VolumeDataPoint[]> => {
             const res = await fetch("/api/log/volume");
             if (!res.ok) throw new Error("Failed to fetch volume data");
-            return res.json() as Promise<WorkoutVolumeData[]>;
+            return res.json() as Promise<VolumeDataPoint[]>;
         },
     });
 }
