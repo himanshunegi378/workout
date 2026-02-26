@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { PageHeader } from "@/app/components/ui";
+import { PageHeader, BottomNav } from "@/app/components/ui";
 import { useVolumeData } from "../api/query-hooks/use-volume-data";
 import { VolumeOverviewCard } from "./ui/VolumeOverviewCard";
 import { VolumeChart } from "./ui/VolumeChart";
@@ -31,6 +31,7 @@ export function DashboardContent() {
                     <Loader2 className="w-8 h-8 animate-spin text-accent" />
                     <p className="text-muted-foreground text-sm">Loading your dashboard...</p>
                 </div>
+                <BottomNav />
             </div>
         );
     }
@@ -44,6 +45,7 @@ export function DashboardContent() {
                         <p>Failed to load dashboard data. Please try again.</p>
                     </div>
                 </div>
+                <BottomNav />
             </div>
         );
     }
@@ -106,6 +108,7 @@ export function DashboardContent() {
                     </div>
                 )}
             </div>
+            <BottomNav />
         </div>
     );
 }
