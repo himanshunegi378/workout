@@ -67,6 +67,27 @@ export async function GET(
 }
 ```
 
+## Query Parameters
+
+Always use `URL` to parse search parameters from the request object:
+
+```ts
+export async function GET(request: Request) {
+    const { searchParams } = new URL(request.url);
+    const grouped = searchParams.get("grouped") === "true";
+    const limit = parseInt(searchParams.get("limit") ?? "30");
+    // ...
+}
+```
+
+## Server-side Logic & Grouping
+
+**Prefer server-side processing** for data transformations (like grouping by date) to minimize frontend complexity and bundle size.
+
+1.  **Filter early**: Remove invalid or empty records in the API before sending.
+2.  **Group by key**: Return a structured object/array (e.g., `GroupedSession[]`) that the UI can map over directly.
+3.  **Consistency**: Use the same formatting logic (dates, currencies) on the server to ensure consistency across different views.
+
 ### Slug Naming Rule (CRITICAL)
 
 **Standardize** dynamic segment names across all routes at the same path level. Never mix slug names (e.g., `[id]` vs `[exerciseId]` in `/api/exercises/`).

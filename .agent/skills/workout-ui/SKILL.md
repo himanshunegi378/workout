@@ -61,6 +61,17 @@ const colorClass = muscleColorMap[muscleGroup] ?? "bg-accent";
 ### Portals for Fixed Elements
 When rendering fixed `z-50` overlays (Drawers, Modals, Rest Timers) from *inside* animated containers (e.g., `animate-slide-up` card), **MUST** wrap in `<Portal>` (`@/app/components/ui/Portal`). Without it, the parent's CSS transform traps the overlay.
 
+## Circular Dependency Prevention
+
+**NEVER** define interfaces in a component file if they are needed by hooks or other components. This creates import loops.
+
+1. Create a `types.ts` in the feature root (e.g., `app/features/logging/types.ts`).
+2. Export shared interfaces from there.
+3. Both the component and the API hook should import from `types.ts`.
+4. Use `import type { ... }` where possible to minimize runtime impacts.
+
+Use `pnpm test:cycles` (Madge) to verify the build is clean of cycles.
+
 ## Premium UI & Aesthetics (CRITICAL)
 
 To ensure the app always looks top-notch and premium, strictly follow these visual rules:

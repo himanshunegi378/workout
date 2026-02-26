@@ -65,6 +65,40 @@ export function useWorkoutGroups() {
 }
 ```
 
+## Shared Types (CRITICAL)
+
+To prevent circular dependencies (`Component -> Hook -> Component`), **always extract shared interfaces** to a feature-level `types.ts` file:
+
+```
+app/features/<domain>/
+├── types.ts             ← Exports all shared interfaces
+├── api/
+│   └── query-hooks/
+│       └── use-items.ts  ← Imports interfaces from ../types
+└── components/
+    └── Component.tsx    ← Imports interfaces from ../types
+```
+
+## Query Parameters in Hooks
+
+When passing parameters to the API, use the `URL` object and update the `queryKey` if the parameter affects the result:
+
+```ts
+export function useSessions({ grouped = true }: { grouped?: boolean } = {}) {
+    return useQuery<GroupedSession[]>({
+        queryKey: [...logKeys.sessions(), { grouped }], // Include param in key
+        queryFn: async (): Promise<GroupedSession[]> => {
+            const url = new URL("/api/log/sessions", window.location.origin);
+            if (grouped) url.searchParams.set("grouped", "true");
+            
+            const res = await fetch(url.toString());
+            if (!res.ok) throw new Error("Failed to fetch sessions");
+            return res.json() as Promise<GroupedSession[]>;
+        },
+    });
+}
+```
+
 See **[references/hook-template.md](references/hook-template.md)** for full query + mutation templates.
 
 ## Fetch Pattern Inside Hooks
