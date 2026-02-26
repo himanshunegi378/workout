@@ -15,7 +15,7 @@ export function VolumeZoneLegend() {
                     <div className="w-3 h-3 rounded-full bg-warning shrink-0 ring-4 ring-warning/20" />
                     <div>
                         <div className="text-sm font-medium">Aggressive Push (5-10%)</div>
-                        <div className="text-xs text-muted-foreground">Monitor recovery closely. Don't increase next session.</div>
+                        <div className="text-xs text-muted-foreground">Monitor recovery closely. Don&apos;t increase next session.</div>
                     </div>
                 </div>
                 <div className="flex items-center gap-4">

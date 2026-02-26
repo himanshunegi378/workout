@@ -25,3 +25,12 @@ export interface GroupedSession {
     label: string;
     sessions: SessionWithLogs[];
 }
+
+export interface PaginatedResponse<T> {
+    data: T;
+    pagination: {
+        from: string | null;
+        to: string | null;
+        hasMore: boolean;
+    };
+}

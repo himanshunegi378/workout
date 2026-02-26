@@ -95,6 +95,7 @@ export function VolumeChart({ data }: VolumeChartProps) {
 }
 
 // Custom tooltip to show exact values and % change
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         const data = payload[0].payload as VolumeSessionData;

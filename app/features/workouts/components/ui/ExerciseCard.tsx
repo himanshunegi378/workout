@@ -143,7 +143,7 @@ export function ExerciseCard({
                         );
                         setIsDrawerOpen(false);
                     },
-                    onError: (error: any) => {
+                    onError: (error: Error) => {
                         alert(`Error updating set: ${error.message}`);
                     },
                 }
@@ -163,9 +163,11 @@ export function ExerciseCard({
                     onSuccess: (newLog) => {
                         setLogs((prev) => [...prev, newLog]);
                         setIsDrawerOpen(false);
-                        startTimer(restMin); // Auto-start rest timer
+                        startTimer(restMin, {
+                            closeOnFinish: true
+                        }); // Auto-start rest timer, close on finish
                     },
-                    onError: (error: any) => {
+                    onError: (error: Error) => {
                         alert(`Error saving set: ${error.message}`);
                     },
                 }
@@ -182,7 +184,7 @@ export function ExerciseCard({
                     setLogs((prev) => prev.filter((l) => l.id !== currentLog.id));
                     setIsDrawerOpen(false);
                 },
-                onError: (error: any) => {
+                onError: (error: Error) => {
                     alert(`Error deleting set: ${error.message}`);
                 },
             });

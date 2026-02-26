@@ -65,7 +65,7 @@ export async function GET() {
 
         // Format and calculate percent changes
         const result = Array.from(workoutsMap.entries())
-            .filter(([_, data]) => data.sessions.size > 0)
+            .filter(([, data]) => data.sessions.size > 0)
             .map(([workoutId, data]) => {
                 const sortedSessions = Array.from(data.sessions.entries()).sort(
                     (a, b) => a[0].localeCompare(b[0])

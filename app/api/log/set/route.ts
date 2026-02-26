@@ -67,10 +67,10 @@ export async function POST(request: Request) {
         });
 
         return NextResponse.json(exerciseLog, { status: 201 });
-    } catch (error: any) {
+    } catch (error) {
         console.error("Failed to log set:", error);
         return NextResponse.json(
-            { error: error?.message || "Failed to log set" },
+            { error: error instanceof Error ? error.message : "Failed to log set" },
             { status: 500 }
         );
     }
@@ -120,10 +120,10 @@ export async function DELETE(request: Request) {
         });
 
         return NextResponse.json({ message: "Set deleted successfully" });
-    } catch (error: any) {
+    } catch (error) {
         console.error("Failed to delete set:", error);
         return NextResponse.json(
-            { error: error?.message || "Failed to delete set" },
+            { error: error instanceof Error ? error.message : "Failed to delete set" },
             { status: 500 }
         );
     }
@@ -177,10 +177,10 @@ export async function PATCH(request: Request) {
         });
 
         return NextResponse.json(updatedSet);
-    } catch (error: any) {
+    } catch (error) {
         console.error("Failed to update set:", error);
         return NextResponse.json(
-            { error: error?.message || "Failed to update set" },
+            { error: error instanceof Error ? error.message : "Failed to update set" },
             { status: 500 }
         );
     }

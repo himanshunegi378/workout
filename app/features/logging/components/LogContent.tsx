@@ -3,11 +3,36 @@
 import { Check, Loader2 } from "lucide-react";
 import { EmptyState } from "@/app/components/ui";
 import { SessionCard } from "./ui/SessionCard";
-import { useSessions } from "../api/query-hooks/use-sessions";
-import type { ExerciseLogWithRelations, GroupedSession, SessionWithLogs } from "../types";
+import { useInfiniteSessions } from "../api/query-hooks/use-sessions";
+import type { ExerciseLogWithRelations, SessionWithLogs } from "../types";
 
 export function LogContent() {
-    const { data: grouped, isLoading, isError } = useSessions({ grouped: true });
+    const {
+        data,
+        isLoading,
+        isError,
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage
+    } = useInfiniteSessions({ grouped: true, limit: 10 });
+
+    const grouped = (() => {
+        if (!data?.pages) return [];
+
+        // Flatten and merge groups with the same label
+        const merged = new Map<string, { label: string; sessions: SessionWithLogs[] }>();
+
+        for (const page of data.pages) {
+            for (const group of page.data) {
+                if (!merged.has(group.label)) {
+                    merged.set(group.label, { label: group.label, sessions: [] });
+                }
+                merged.get(group.label)!.sessions.push(...group.sessions);
+            }
+        }
+
+        return Array.from(merged.values());
+    })();
 
     if (isLoading) {
         return (
@@ -39,7 +64,7 @@ export function LogContent() {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 flex flex-col pb-8">
             {grouped.map(({ label, sessions: daySessions }, gi) => (
                 <section
                     key={label}
@@ -70,6 +95,25 @@ export function LogContent() {
                     })}
                 </section>
             ))}
+
+            {hasNextPage && (
+                <div className="pt-4 flex justify-center w-full">
+                    <button
+                        onClick={() => fetchNextPage()}
+                        disabled={isFetchingNextPage}
+                        className="px-4 py-2 text-sm font-medium text-muted-foreground bg-secondary/50 rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 flex items-center gap-2"
+                    >
+                        {isFetchingNextPage ? (
+                            <>
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                Loading...
+                            </>
+                        ) : (
+                            "Load More"
+                        )}
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

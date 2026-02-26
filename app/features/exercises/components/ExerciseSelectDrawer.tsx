@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 import { BottomDrawer, muscleColorMap } from "@/app/components/ui";
 
 interface Exercise {
@@ -69,8 +69,8 @@ export function ExerciseSelectDrawer({
                                     onClose();
                                 }}
                                 className={`w-full text-left flex items-center p-4 rounded-xl transition-all duration-200 active:scale-[0.98] ${selectedId === ex.id
-                                        ? "bg-accent/10 border border-accent/20"
-                                        : "hover:bg-muted border border-transparent"
+                                    ? "bg-accent/10 border border-accent/20"
+                                    : "hover:bg-muted border border-transparent"
                                     }`}
                             >
                                 <div

@@ -24,6 +24,7 @@ interface EditExerciseMetadataDrawerProps {
         restMax: number;
         tempo: string;
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onUpdate?: (newEwm: any) => void;
 }
 
@@ -54,6 +55,7 @@ export function EditExerciseMetadataDrawer({
 
     useEffect(() => {
         if (isOpen) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setExerciseId(initialData.exerciseId);
             setSets(initialData.setsMin);
             setReps(initialData.repsMin);

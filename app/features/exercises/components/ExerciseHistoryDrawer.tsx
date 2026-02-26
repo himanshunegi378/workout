@@ -1,6 +1,6 @@
 "use client";
 
-import { BottomDrawer, PageHeader } from "@/app/components/ui";
+import { BottomDrawer } from "@/app/components/ui";
 import { useExerciseHistory } from "../api/query-hooks/use-exercise-history";
 import { Loader2 } from "lucide-react";
 import { Portal } from "@/app/components/ui/Portal";

@@ -18,3 +18,7 @@
 16. Offline Mode / PWA: Aggressive caching so users can log their workout even if the gym has poor internet/cell reception.
 17. Improve UX: current server component give loading screen that could be handled better with react query and server actions.
 18. write tests for features.
+19. auto close timer on finish [done]
+20. muscle group wise volume change graph.
+21. versioning system for workout exercies instead of instantiation new one on exercise change.
+22. exercies count in workout is wrong.

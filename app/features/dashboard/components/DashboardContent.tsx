@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PageHeader, BottomNav } from "@/app/components/ui";
 import { useVolumeData } from "../api/query-hooks/use-volume-data";
 import { VolumeOverviewCard } from "./ui/VolumeOverviewCard";
@@ -13,14 +13,10 @@ export function DashboardContent() {
     const { data: volumeData, isLoading, error } = useVolumeData();
     const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(null);
 
-    // Auto-select the first workout when data loads
-    useEffect(() => {
-        if (volumeData && volumeData.length > 0 && !selectedWorkoutId) {
-            setSelectedWorkoutId(volumeData[0].workoutId);
-        }
-    }, [volumeData, selectedWorkoutId]);
+    // Auto-select the first workout when data loads if nothing is selected
+    const currentWorkoutId = selectedWorkoutId || (volumeData && volumeData.length > 0 ? volumeData[0].workoutId : null);
 
-    const activeWorkout = volumeData?.find(w => w.workoutId === selectedWorkoutId);
+    const activeWorkout = volumeData?.find(w => w.workoutId === currentWorkoutId);
     const activeSessions = activeWorkout?.sessions ?? [];
 
     if (isLoading) {

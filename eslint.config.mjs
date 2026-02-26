@@ -9,9 +9,11 @@ const eslintConfig = defineConfig([
   {
     plugins: {
       import: importPlugin,
+      "react-compiler": (await import("eslint-plugin-react-compiler")).default,
     },
     rules: {
       "import/no-cycle": "error",
+      "react-compiler/react-compiler": "error",
     },
   },
   // Override default ignores of eslint-config-next.

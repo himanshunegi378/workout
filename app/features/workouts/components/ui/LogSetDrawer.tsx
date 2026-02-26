@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef } from "react";
 import { History } from "lucide-react";
 import { Button, BottomDrawer, NumberStepper } from "@/app/components/ui";
 

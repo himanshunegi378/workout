@@ -7,6 +7,8 @@ export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const grouped = searchParams.get("grouped") === "true";
+        const limit = parseInt(searchParams.get("limit") || "10", 10);
+        const fromDate = searchParams.get("from");
 
         const session = await auth();
         if (!session?.user?.id) {
@@ -15,10 +17,26 @@ export async function GET(request: Request) {
 
         const userId = session.user.id;
 
+        const whereClause: any = {
+            user_id: userId,
+            exerciseLogs: {
+                some: {
+                    OR: [
+                        { exercise: { isNot: null } },
+                        { exerciseWithMetadata: { isNot: null } },
+                    ],
+                },
+            },
+        };
+
+        if (fromDate) {
+            whereClause.date = { lt: new Date(fromDate) };
+        }
+
         const sessions = await prisma.workoutSession.findMany({
-            where: { user_id: userId },
+            where: whereClause,
             orderBy: { date: "desc" },
-            take: 30,
+            take: limit,
             select: {
                 id: true,
                 date: true,
@@ -62,12 +80,18 @@ export async function GET(request: Request) {
             },
         });
 
+        const pagination = {
+            from: sessions.length > 0 ? sessions[0].date.toISOString() : null,
+            to: sessions.length > 0 ? sessions[sessions.length - 1].date.toISOString() : null,
+            hasMore: sessions.length === limit,
+        };
+
         if (grouped) {
-            const groupedSessions = groupByDate(sessions);
-            return NextResponse.json(groupedSessions);
+            const data = groupByDate(sessions);
+            return NextResponse.json({ data, pagination });
         }
 
-        return NextResponse.json(sessions);
+        return NextResponse.json({ data: sessions, pagination });
     } catch (error) {
         console.error("Error fetching sessions:", error);
         return NextResponse.json(

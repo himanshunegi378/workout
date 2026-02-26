@@ -1,6 +1,5 @@
 "use client";
 
-import { Check, AlertCircle } from "lucide-react";
 
 interface SetTrackerProps {
     setsMin: number;

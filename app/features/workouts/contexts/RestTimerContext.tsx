@@ -7,7 +7,7 @@ interface RestTimerContextValue {
     timeLeft: number;
     totalDuration: number;
     isRunning: boolean;
-    startTimer: (seconds: number) => void;
+    startTimer: (seconds: number, options: { closeOnFinish?: boolean }) => void;
     pauseTimer: () => void;
     resumeTimer: () => void;
     addTime: (seconds: number) => void;
@@ -21,6 +21,8 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
     const [timeLeft, setTimeLeft] = useState(0);
     const [totalDuration, setTotalDuration] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
+
+    const [closeOnFinish, setCloseOnFinish] = useState(false);
 
     // Keep a ref so the interval always sees the latest timeLeft without re-creating
     const timeLeftRef = useRef(timeLeft);
@@ -36,6 +38,9 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
                 if (prev <= 1) {
                     clearInterval(interval);
                     setIsRunning(false);
+                    if (closeOnFinish) {
+                        setIsActive(false);
+                    }
                     return 0;
                 }
                 return prev - 1;
@@ -43,11 +48,12 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [isActive, isRunning]);
+    }, [isActive, isRunning, closeOnFinish]);
 
-    const startTimer = useCallback((seconds: number) => {
+    const startTimer = useCallback((seconds: number, options: { closeOnFinish?: boolean }) => {
         setTotalDuration(seconds);
         setTimeLeft(seconds);
+        setCloseOnFinish(options.closeOnFinish || false);
         setIsRunning(true);
         setIsActive(true);
     }, []);
@@ -71,6 +77,7 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
         setIsRunning(false);
         setTimeLeft(0);
         setTotalDuration(0);
+        setCloseOnFinish(false);
     }, []);
 
     return (
