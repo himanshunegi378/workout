@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Hash, Repeat, Timer, Activity, MoreHorizontal } from "lucide-react";
 import { MetadataChip, muscleColorMap } from "@/app/components/ui";
@@ -72,12 +72,16 @@ export function ExerciseCard({
     // Track logs locally for immediate UI feedback
     const [logs, setLogs] = useState<ExerciseLog[]>(initialLogs);
 
+    // Update local logs when initialLogs changes (e.g. on manual refresh or hydration)
+    useEffect(() => {
+        setLogs(initialLogs);
+    }, [initialLogs]);
+
     const { mutate: logSetMutation, isPending: isSaving } = useLogSet();
     const { mutate: updateSetMutation, isPending: isUpdating } = useUpdateLogSet();
     const { mutate: deleteSetMutation, isPending: isDeleting } = useDeleteLogSet();
 
     const currentLog = logs.find((l) => l.set_order_index === activeSetIndex);
-    const completedSets = logs.map((l) => l.set_order_index);
 
     const handleSetClick = async (setIndex: number) => {
         setActiveSetIndex(setIndex);

@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Layers, ClipboardList, Dumbbell, Settings } from "lucide-react";
+import { LayoutDashboard, ClipboardList, Dumbbell, Settings, Layers } from "lucide-react";
 
 const navItems = [
+    { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { href: "/", icon: Layers, label: "Programs" },
     { href: "/log", icon: ClipboardList, label: "Log" },
     { href: "/exercises", icon: Dumbbell, label: "Exercises" },
