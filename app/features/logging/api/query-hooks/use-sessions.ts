@@ -3,11 +3,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { logKeys } from "../query-keys";
 
-export function useSessions() {
-    return useQuery({
+import type { GroupedSession } from "../../types";
+
+export function useSessions({ grouped = true }: { grouped?: boolean } = {}) {
+    return useQuery<GroupedSession[]>({
         queryKey: logKeys.sessions(),
         queryFn: async () => {
-            const res = await fetch("/api/log/sessions");
+            const url = new URL("/api/log/sessions", window.location.origin);
+            if (grouped) url.searchParams.set("grouped", "true");
+
+            const res = await fetch(url.toString());
             if (!res.ok) {
                 throw new Error("Failed to fetch sessions");
             }

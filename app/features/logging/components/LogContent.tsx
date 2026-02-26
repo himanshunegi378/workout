@@ -4,9 +4,10 @@ import { Check, Loader2 } from "lucide-react";
 import { EmptyState } from "@/app/components/ui";
 import { SessionCard } from "./ui/SessionCard";
 import { useSessions } from "../api/query-hooks/use-sessions";
+import type { ExerciseLogWithRelations, GroupedSession, SessionWithLogs } from "../types";
 
 export function LogContent() {
-    const { data: sessions, isLoading, isError } = useSessions();
+    const { data: grouped, isLoading, isError } = useSessions({ grouped: true });
 
     if (isLoading) {
         return (
@@ -27,7 +28,7 @@ export function LogContent() {
         );
     }
 
-    if (!sessions || sessions.length === 0) {
+    if (!grouped || grouped.length === 0) {
         return (
             <EmptyState
                 icon={Check}
@@ -36,8 +37,6 @@ export function LogContent() {
             />
         );
     }
-
-    const grouped = groupByDate(sessions);
 
     return (
         <div className="space-y-6">
@@ -58,8 +57,6 @@ export function LogContent() {
                     {daySessions.map((session) => {
                         const exerciseGroups = groupLogsByExercise(session.exerciseLogs);
 
-                        if (exerciseGroups.length === 0) return null;
-
                         return (
                             <SessionCard
                                 key={session.id}
@@ -79,60 +76,7 @@ export function LogContent() {
 
 // ── Helpers ──
 
-interface ExerciseLogWithRelations {
-    id: string;
-    weight: number | null;
-    reps: number;
-    set_order_index: number;
-    exercise: { id: string; name: string; muscle_group: string } | null;
-    exerciseWithMetadata: {
-        exercise: { id: string; name: string; muscle_group: string };
-    } | null;
-}
-
-interface SessionWithLogs {
-    id: string;
-    date: Date;
-    start_time: Date | null;
-    end_time: Date | null;
-    workout: {
-        name: string;
-        workoutGroup: { name: string };
-    };
-    exerciseLogs: ExerciseLogWithRelations[];
-}
-
-function groupByDate(sessions: SessionWithLogs[]) {
-    const map = new Map<string, { label: string; sessions: SessionWithLogs[] }>();
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    for (const s of sessions) {
-        const d = new Date(s.date);
-        const key = d.toISOString().split("T")[0];
-
-        let label: string;
-        if (key === today.toISOString().split("T")[0]) {
-            label = "Today";
-        } else if (key === yesterday.toISOString().split("T")[0]) {
-            label = "Yesterday";
-        } else {
-            label = d.toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-            });
-        }
-
-        if (!map.has(key)) {
-            map.set(key, { label, sessions: [] });
-        }
-        map.get(key)!.sessions.push(s);
-    }
-
-    return Array.from(map.values());
-}
+export type { GroupedSession, SessionWithLogs, ExerciseLogWithRelations } from "../types";
 
 function groupLogsByExercise(logs: ExerciseLogWithRelations[]) {
     const map = new Map<
