@@ -61,6 +61,15 @@ const colorClass = muscleColorMap[muscleGroup] ?? "bg-accent";
 ### Portals for Fixed Elements
 When rendering fixed `z-50` overlays (Drawers, Modals, Rest Timers) from *inside* animated containers (e.g., `animate-slide-up` card), **MUST** wrap in `<Portal>` (`@/app/components/ui/Portal`). Without it, the parent's CSS transform traps the overlay.
 
+## Premium UI & Aesthetics (CRITICAL)
+
+To ensure the app always looks top-notch and premium, strictly follow these visual rules:
+1. **Depth over Flatness**: Use the custom `elevation-1`, `elevation-2` classes from `globals.css` rather than default `shadow-md`. Use `rounded-3xl` for main hero cards and `rounded-2xl` for nested interactive elements.
+2. **Glassmorphism & Backgrounds**: For heroic components (Welcome headers, Overview cards), use relative positioning with `absolute` behind-the-scenes glowing orbs (e.g., `bg-accent/20 blur-3xl rounded-full`).
+3. **Custom Inputs**: Never use default browser `<select>` or `<input>`. Use `appearance-none` and build custom wrappers with hover/focus states (`focus:ring-2 focus:ring-accent hover:bg-muted/50`).
+4. **Micro-Interactions**: Upgrade static indicators with glowing rings (e.g., `ring-4 ring-success/20`). Use badges with low opacity backgrounds (`bg-opacity-20`).
+5. **Staggered Motion**: Always use `animate-slide-up` on content blocks, staggering them with `style={{ animationDelay: '100ms' }}`.
+
 ## Mobile-First Rules
 
 - Single column layout, cards full width
