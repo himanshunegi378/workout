@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertTriangle, TrendingUp, CheckCircle, Info } from "lucide-react";
-import { VolumeSessionData } from "../../api/query-hooks/use-volume-data";
+import { VolumeSessionData } from "../../types";
 
 interface VolumeInsightCardProps {
     data: VolumeSessionData[];
@@ -70,9 +70,14 @@ export function VolumeInsightCard({ data }: VolumeInsightCardProps) {
     }
 
     return (
-        <div className={`p-4 rounded-2xl border flex gap-3 text-sm items-start elevation-1 shadow-sm ${bgClass} ${textClass}`}>
-            {icon}
-            <p className="leading-relaxed font-medium">{message}</p>
+        <div className={`p-5 rounded-3xl border flex gap-4 text-sm items-start elevation-1 shadow-sm ${bgClass} ${textClass}`}>
+            <div className="bg-background/80 p-2 rounded-2xl shadow-sm backdrop-blur-sm">
+                {icon}
+            </div>
+            <div className="flex flex-col gap-1">
+                <span className="font-semibold tracking-wide uppercase text-xs opacity-80">Coach Insight</span>
+                <p className="leading-relaxed font-medium">{message}</p>
+            </div>
         </div>
     );
 }

@@ -2,8 +2,9 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider        = "prisma-client"
+  output          = "../app/generated/prisma"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -174,4 +175,44 @@ model ExerciseLog {
   workoutSession       WorkoutSession        @relation(fields: [workout_session_id], references: [id])
 
   @@map("exercise_logs")
+}
+
+// ---------------------------------------------------------------------------
+// Views
+// ---------------------------------------------------------------------------
+
+/// Analytics view consolidating log data
+view exercise_analytics_view {
+  log_id             String    @unique
+  workout_session_id String
+  user_id            String
+  session_date       DateTime
+  start_time         DateTime?
+  end_time           DateTime?
+
+  workout_group_id   String
+  workout_group_name String
+
+  workout_id   String
+  workout_name String
+
+  exercise_id   String
+  exercise_name String
+  muscle_group  MuscleGroup
+
+  exercise_with_metadata_id String?
+  reps_min                  Int?
+  reps_max                  Int?
+  sets_min                  Int?
+  sets_max                  Int?
+  rest_min                  Int?
+  rest_max                  Int?
+  tempo                     String?
+  prescribed_order          Int?
+
+  weight             Float
+  reps               Int
+  set_order_index    Int
+  volume             Float
+  is_ad_hoc_exercise Boolean
 }

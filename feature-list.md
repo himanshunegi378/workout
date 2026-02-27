@@ -23,3 +23,4 @@
 21. versioning system for workout exercies instead of instantiation new one on exercise change.
 22. exercies count in workout is wrong.
 23. scalable graph approach like power bi.
+24. supprot fitnotes data import.

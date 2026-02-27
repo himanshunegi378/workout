@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 import type { SessionWithLogs } from "@/app/features/logging/types";
+import { Prisma } from "@/app/generated/prisma/client";
 
 export async function GET(request: Request) {
     try {
@@ -17,7 +18,7 @@ export async function GET(request: Request) {
 
         const userId = session.user.id;
 
-        const whereClause: any = {
+        const whereClause: Prisma.WorkoutSessionWhereInput = {
             user_id: userId,
             exerciseLogs: {
                 some: {

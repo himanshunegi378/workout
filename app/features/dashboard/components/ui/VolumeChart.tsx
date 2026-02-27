@@ -5,13 +5,12 @@ import {
     Bar,
     XAxis,
     YAxis,
-    CartesianGrid,
     Tooltip,
     ResponsiveContainer,
     Cell,
     ReferenceLine
 } from "recharts";
-import { VolumeSessionData } from "../../api/query-hooks/use-volume-data";
+import { VolumeSessionData } from "../../types";
 
 interface VolumeChartProps {
     data: VolumeSessionData[];
@@ -40,9 +39,9 @@ export function VolumeChart({ data }: VolumeChartProps) {
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         data={data}
-                        margin={{ top: 10, right: 0, left: -20, bottom: 0 }}
+                        margin={{ top: 10, right: 0, left: -30, bottom: 0 }}
                     >
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                        {/* Removed CartesianGrid entirely for a cleaner look */}
                         <XAxis
                             dataKey="date"
                             tickFormatter={formatDate}
@@ -69,7 +68,7 @@ export function VolumeChart({ data }: VolumeChartProps) {
                                 label={{ position: 'top', value: '7-Session Avg', fill: 'var(--color-muted-foreground)', fontSize: 10 }}
                             />
                         )}
-                        <Bar dataKey="volume" radius={[4, 4, 0, 0]} maxBarSize={50}>
+                        <Bar dataKey="volume" radius={[8, 8, 8, 8]} maxBarSize={32} background={{ fill: 'var(--color-muted)', radius: 8, opacity: 0.3 }}>
                             {data.map((entry, index) => {
                                 // Determine color based on percent change zones
                                 let fill = "var(--color-accent)"; // Default fallback
