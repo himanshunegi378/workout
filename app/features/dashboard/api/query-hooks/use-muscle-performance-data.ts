@@ -7,10 +7,20 @@ export function useMusclePerformanceData() {
     return useQuery({
         queryKey: ["muscle-performance"],
         queryFn: async (): Promise<MusclePerformanceData[]> => {
-            // Get date 14 days ago for previous week comparison
-            const fourteenDaysAgo = new Date();
-            fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
-            const isoFourteenDaysAgo = fourteenDaysAgo.toISOString().split('T')[0];
+            // Calculate calendar-aligned week boundaries (Sunday to Saturday)
+            const now = new Date();
+
+            // 1. Find start of Current Week (most recent Sunday at 00:00:00)
+            const currentWeekStart = new Date(now);
+            currentWeekStart.setDate(now.getDate() - now.getDay()); // Sunday is 0
+            currentWeekStart.setHours(0, 0, 0, 0);
+
+            // 2. Find start of Last Week (Sunday before that at 00:00:00)
+            const lastWeekStart = new Date(currentWeekStart);
+            lastWeekStart.setDate(currentWeekStart.getDate() - 7);
+
+            // 3. API Filter: We need data from the start of last week until now
+            const isoLastWeekStart = lastWeekStart.toISOString().split('T')[0];
 
             const payload: AnalyticsQueryPayload = {
                 metrics: [
@@ -25,7 +35,7 @@ export function useMusclePerformanceData() {
                     "exercise_name"
                 ],
                 filters: [
-                    { field: "session_date", operator: ">=", value: isoFourteenDaysAgo }
+                    { field: "session_date", operator: ">=", value: isoLastWeekStart }
                 ],
                 order_by: [],
                 limit: 1000,
@@ -43,10 +53,8 @@ export function useMusclePerformanceData() {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const data = json.data as any[];
 
-            // Determine boundary between "current week" (last 7 days) and "last week" (days 8-14)
-            const sevenDaysAgo = new Date();
-            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-            const sevenDaysMs = sevenDaysAgo.getTime();
+            // Determine boundary between "current week" and "last week"
+            const currentWeekMs = currentWeekStart.getTime();
 
             const muscleStats = new Map<string, {
                 currentSets: number,
@@ -71,7 +79,7 @@ export function useMusclePerformanceData() {
 
             for (const row of data) {
                 const rowDateMs = new Date(row.session_date).getTime();
-                const isCurrentWeek = rowDateMs >= sevenDaysMs;
+                const isCurrentWeek = rowDateMs >= currentWeekMs;
                 const mg = row.muscle_group as string;
 
                 if (!muscleStats.has(mg)) {
