@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { PageHeader, BottomNav } from "@/app/components/ui";
 import { useVolumeData } from "../api/query-hooks/use-volume-data";
-import { MusclePerformanceTable } from "./ui/MusclePerformanceTable";
+import { MuscleOutputTable } from "./ui/MuscleOutputTable";
 import { StatGrid } from "./ui/StatGrid";
 import { VolumeChart } from "./ui/VolumeChart";
 import { VolumeZoneLegend } from "./ui/VolumeZoneLegend";
@@ -120,7 +120,7 @@ export function DashboardContent() {
 
                         {activeSessions.length > 0 ? (
                             <div className="flex flex-col gap-6">
-                                <MusclePerformanceTable />
+                                <MuscleOutputTable />
                                 <StatGrid data={activeSessions} />
                                 <VolumeInsightCard data={activeSessions} />
                                 <VolumeChart data={activeSessions} />
