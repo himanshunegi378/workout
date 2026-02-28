@@ -4,21 +4,27 @@ import { useState } from "react";
 import type { MuscleGroup } from "@/app/generated/prisma/client";
 
 const muscleGroups: MuscleGroup[] = [
-    "Chest",
+    "Abs",
     "Back",
+    "Biceps",
+    "Cardio",
+    "Chest",
+    "Forearms",
     "Legs",
     "Shoulders",
-    "Arms",
-    "Core",
+    "Triceps",
 ];
 
 const muscleColorMap: Record<MuscleGroup, string> = {
-    Chest: "bg-muscle-chest",
+    Abs: "bg-muscle-abs",
     Back: "bg-muscle-back",
+    Biceps: "bg-muscle-biceps",
+    Cardio: "bg-muscle-cardio",
+    Chest: "bg-muscle-chest",
+    Forearms: "bg-muscle-forearms",
     Legs: "bg-muscle-legs",
     Shoulders: "bg-muscle-shoulders",
-    Arms: "bg-muscle-arms",
-    Core: "bg-muscle-core",
+    Triceps: "bg-muscle-triceps",
 };
 
 interface MuscleGroupSelectorProps {

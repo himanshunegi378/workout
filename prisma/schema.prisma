@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client"
+  provider        = "prisma-client-js"
   output          = "../app/generated/prisma"
   previewFeatures = ["views"]
 }
@@ -16,12 +16,15 @@ datasource db {
 // ---------------------------------------------------------------------------
 
 enum MuscleGroup {
-  Chest
+  Abs
   Back
+  Biceps
+  Cardio
+  Chest
+  Forearms
   Legs
   Shoulders
-  Arms
-  Core
+  Triceps
 }
 
 // ---------------------------------------------------------------------------
@@ -39,6 +42,7 @@ model User {
   workoutGroups   WorkoutGroup[]
   exercises       Exercise[]
   workoutSessions WorkoutSession[]
+  exerciseLogs    ExerciseLog[]
 
   @@map("users")
 }
@@ -144,11 +148,11 @@ model WorkoutSession {
   date       DateTime  @default(now())
 
   // Foreign keys
-  workout_id String
+  workout_id String?
   user_id    String
 
   // Relations
-  workout      Workout       @relation(fields: [workout_id], references: [id])
+  workout      Workout?      @relation(fields: [workout_id], references: [id])
   user         User          @relation(fields: [user_id], references: [id])
   exerciseLogs ExerciseLog[]
 
@@ -157,22 +161,25 @@ model WorkoutSession {
 
 /// A single logged set within a WorkoutSession.
 model ExerciseLog {
-  id              String @id @default(cuid())
+  id              String   @id @default(cuid())
   weight          Float?
   reps            Int
   set_order_index Int
+  date            DateTime @default(now())
 
   // Foreign keys
   /// Populated for planned exercises (links back to the prescribed metadata).
   exercise_with_metadata_id String?
   /// Populated for ad-hoc exercises added on the fly (no preset metadata).
   exercise_id               String?
-  workout_session_id        String
+  workout_session_id        String?
+  user_id                   String
 
   // Relations
   exerciseWithMetadata ExerciseWithMetadata? @relation(fields: [exercise_with_metadata_id], references: [id])
   exercise             Exercise?             @relation(fields: [exercise_id], references: [id])
-  workoutSession       WorkoutSession        @relation(fields: [workout_session_id], references: [id])
+  workoutSession       WorkoutSession?       @relation(fields: [workout_session_id], references: [id])
+  user                 User                  @relation(fields: [user_id], references: [id])
 
   @@map("exercise_logs")
 }

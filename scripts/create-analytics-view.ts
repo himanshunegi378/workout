@@ -16,8 +16,8 @@ async function main() {
   SELECT
     el.id AS log_id,
     ws.id AS workout_session_id,
-    ws.user_id,
-    ws.date AS session_date,
+    COALESCE(ws.user_id, el.user_id) AS user_id,
+    COALESCE(ws.date, el.date) AS session_date,
     ws.start_time,
     ws.end_time,
     wg.id AS workout_group_id,
@@ -42,9 +42,9 @@ async function main() {
     COALESCE(el.weight * el.reps, 0) AS volume,
     (el.exercise_with_metadata_id IS NULL) AS is_ad_hoc_exercise
   FROM exercise_logs el
-  JOIN workout_sessions ws ON el.workout_session_id = ws.id
-  JOIN workouts w ON ws.workout_id = w.id
-  JOIN workout_groups wg ON w.workout_group_id = wg.id
+  LEFT JOIN workout_sessions ws ON el.workout_session_id = ws.id
+  LEFT JOIN workouts w ON ws.workout_id = w.id
+  LEFT JOIN workout_groups wg ON w.workout_group_id = wg.id
   LEFT JOIN exercise_with_metadata em ON el.exercise_with_metadata_id = em.id
   LEFT JOIN exercises e_planned ON em.exercise_id = e_planned.id
   LEFT JOIN exercises e_adhoc ON el.exercise_id = e_adhoc.id;

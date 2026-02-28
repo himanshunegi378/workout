@@ -2,7 +2,7 @@
 
 import { muscleColorMap } from "@/app/components/ui";
 
-const ALL_GROUPS = ["All", "Chest", "Back", "Legs", "Shoulders", "Arms", "Core"] as const;
+const ALL_GROUPS = ["All", "Abs", "Back", "Biceps", "Cardio", "Chest", "Forearms", "Legs", "Shoulders", "Triceps"] as const;
 type Filter = (typeof ALL_GROUPS)[number];
 
 interface MuscleGroupFilterProps {

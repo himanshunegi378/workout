@@ -8,7 +8,7 @@ import { ExerciseListCard } from "./ui/ExerciseListCard";
 import { EmptyState } from "@/app/components/ui";
 import { Dumbbell } from "lucide-react";
 
-type Filter = "All" | "Chest" | "Back" | "Legs" | "Shoulders" | "Arms" | "Core";
+type Filter = "All" | "Abs" | "Back" | "Biceps" | "Cardio" | "Chest" | "Forearms" | "Legs" | "Shoulders" | "Triceps";
 
 interface Exercise {
     id: string;

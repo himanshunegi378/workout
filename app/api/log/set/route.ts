@@ -19,7 +19,7 @@ export async function POST(request: Request) {
             reps,
         } = body;
 
-        if (!workoutId || setOrderIndex === undefined || !reps) {
+        if (setOrderIndex === undefined || !reps) {
             return NextResponse.json(
                 { error: "Missing required fields" },
                 { status: 400 }
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
         let session = await prisma.workoutSession.findFirst({
             where: {
                 user_id: userId,
-                workout_id: workoutId,
+                workout_id: workoutId || null,
                 date: {
                     gte: today,
                     lt: tomorrow,
@@ -47,17 +47,19 @@ export async function POST(request: Request) {
             session = await prisma.workoutSession.create({
                 data: {
                     user_id: userId,
-                    workout_id: workoutId,
+                    workout_id: workoutId || null,
                     start_time: new Date(),
                     date: new Date(),
                 },
             });
         }
+        const sessionId = session.id;
 
         // Log the set
         const exerciseLog = await prisma.exerciseLog.create({
             data: {
-                workout_session_id: session.id,
+                user_id: userId,
+                workout_session_id: sessionId,
                 exercise_with_metadata_id: exerciseWithMetadataId || null,
                 exercise_id: exerciseId || null,
                 set_order_index: setOrderIndex,
@@ -96,9 +98,6 @@ export async function DELETE(request: Request) {
         // Verify ownership and delete
         const set = await prisma.exerciseLog.findUnique({
             where: { id: setId },
-            include: {
-                workoutSession: true,
-            },
         });
 
         if (!set) {
@@ -108,7 +107,7 @@ export async function DELETE(request: Request) {
             );
         }
 
-        if (set.workoutSession.user_id !== userId) {
+        if (set.user_id !== userId) {
             return NextResponse.json(
                 { error: "Unauthorized" },
                 { status: 403 }
@@ -149,9 +148,6 @@ export async function PATCH(request: Request) {
         // Verify ownership
         const set = await prisma.exerciseLog.findUnique({
             where: { id: setId },
-            include: {
-                workoutSession: true,
-            },
         });
 
         if (!set) {
@@ -161,7 +157,7 @@ export async function PATCH(request: Request) {
             );
         }
 
-        if (set.workoutSession.user_id !== userId) {
+        if (set.user_id !== userId) {
             return NextResponse.json(
                 { error: "Unauthorized" },
                 { status: 403 }

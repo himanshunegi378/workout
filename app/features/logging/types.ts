@@ -17,7 +17,7 @@ export interface SessionWithLogs {
     workout: {
         name: string;
         workoutGroup: { name: string };
-    };
+    } | null;
     exerciseLogs: ExerciseLogWithRelations[];
 }
 

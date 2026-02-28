@@ -20,14 +20,6 @@ export async function GET(request: Request) {
 
         const whereClause: Prisma.WorkoutSessionWhereInput = {
             user_id: userId,
-            exerciseLogs: {
-                some: {
-                    OR: [
-                        { exercise: { isNot: null } },
-                        { exerciseWithMetadata: { isNot: null } },
-                    ],
-                },
-            },
         };
 
         if (fromDate) {

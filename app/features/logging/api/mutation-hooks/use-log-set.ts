@@ -10,7 +10,9 @@ export function useLogSet() {
         mutationFn: logSet,
         onSuccess: (_, variables) => {
             // Invalidate the workout details cache so the list of completed sets updates instantly in SetTracker
-            queryClient.invalidateQueries({ queryKey: workoutKeys.detail(variables.workoutId) });
+            if (variables.workoutId) {
+                queryClient.invalidateQueries({ queryKey: workoutKeys.detail(variables.workoutId) });
+            }
             // Invalidate the global logs lists
             queryClient.invalidateQueries({ queryKey: logKeys.lists() });
         },

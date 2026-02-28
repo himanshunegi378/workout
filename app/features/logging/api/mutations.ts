@@ -1,5 +1,5 @@
 interface LogSetData {
-    workoutId: string;
+    workoutId?: string;
     exerciseWithMetadataId?: string;
     exerciseId?: string;
     setOrderIndex: number;

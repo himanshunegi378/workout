@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getUserId } from "@/lib/auth-helpers";
+import { MuscleGroup } from "@/app/generated/prisma/client";
 
 export async function POST(request: Request) {
     try {
@@ -23,8 +24,7 @@ export async function POST(request: Request) {
             );
         }
 
-        const validGroups = ["Chest", "Back", "Legs", "Shoulders", "Arms", "Core"];
-        if (!muscle_group || !validGroups.includes(muscle_group)) {
+        if (!muscle_group || !Object.values(MuscleGroup).includes(muscle_group as MuscleGroup)) {
             return NextResponse.json(
                 { error: "Valid muscle group is required" },
                 { status: 400 }

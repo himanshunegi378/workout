@@ -38,8 +38,8 @@ async function main() {
         { name: "Machine Row", description: "Horizontal pull variation", muscle_group: MuscleGroup.Back },
         { name: "Flat Dumbbell Press", description: "Standard dumbbell chest press", muscle_group: MuscleGroup.Chest },
         { name: "Chest-Supported Reverse Flyes", description: "Upper back and rear delt focus", muscle_group: MuscleGroup.Back },
-        { name: "Dumbbell Bicep Curls", description: "Isolation for biceps", muscle_group: MuscleGroup.Arms },
-        { name: "Tricep Cable Pushdowns", description: "Isolation for triceps", muscle_group: MuscleGroup.Arms },
+        { name: "Dumbbell Bicep Curls", description: "Isolation for biceps", muscle_group: MuscleGroup.Biceps },
+        { name: "Tricep Cable Pushdowns", description: "Isolation for triceps", muscle_group: MuscleGroup.Triceps },
 
         // Quad + Core
         { name: "Barbell Squats", description: "Compound lower body movement", muscle_group: MuscleGroup.Legs },
@@ -48,7 +48,7 @@ async function main() {
         { name: "Bulgarian Split Squats", description: "Unilateral leg focus", muscle_group: MuscleGroup.Legs },
         { name: "Leg Extensions", description: "Quad isolation", muscle_group: MuscleGroup.Legs },
         { name: "Standing Calf Raises", description: "Calf focus", muscle_group: MuscleGroup.Legs },
-        { name: "Hanging Leg Raises", description: "Abdominal and hip flexor focus", muscle_group: MuscleGroup.Core },
+        { name: "Hanging Leg Raises", description: "Abdominal and hip flexor focus", muscle_group: MuscleGroup.Abs },
 
         // Vertical Focus
         { name: "Overhead Press (DB/BB)", description: "Compound vertical press", muscle_group: MuscleGroup.Shoulders },
@@ -56,8 +56,8 @@ async function main() {
         { name: "Pull-ups", description: "Vertical pull compound", muscle_group: MuscleGroup.Back },
         { name: "Cable Lateral Raises", description: "Lateral delt isolation", muscle_group: MuscleGroup.Shoulders },
         { name: "Seated Cable Row", description: "Horizontal pull variation", muscle_group: MuscleGroup.Back },
-        { name: "Hammer Curls", description: "Brachialis and brachioradialis focus", muscle_group: MuscleGroup.Arms },
-        { name: "Overhead Tricep Extensions", description: "Long head of tricep focus", muscle_group: MuscleGroup.Arms },
+        { name: "Hammer Curls", description: "Brachialis and brachioradialis focus", muscle_group: MuscleGroup.Biceps },
+        { name: "Overhead Tricep Extensions", description: "Long head of tricep focus", muscle_group: MuscleGroup.Triceps },
 
         // Hams/Glutes + Core
         { name: "Trap Bar Deadlift", description: "Hinge variation", muscle_group: MuscleGroup.Legs },
@@ -67,7 +67,7 @@ async function main() {
         { name: "Lying Leg Curls", description: "Hamstring isolation variation", muscle_group: MuscleGroup.Legs },
         { name: "Walking Lunges", description: "Dynamic lower body movement", muscle_group: MuscleGroup.Legs },
         { name: "Seated Calf Raises", description: "Soleus focus", muscle_group: MuscleGroup.Legs },
-        { name: "Plank", description: "Core stability focus", muscle_group: MuscleGroup.Core },
+        { name: "Plank", description: "Core stability focus", muscle_group: MuscleGroup.Abs },
     ];
 
     console.log("Adding exercises...");
@@ -85,7 +85,11 @@ async function main() {
             });
             console.log(`Added: ${ex.name}`);
         } else {
-            console.log(`Skipped (already exists): ${ex.name}`);
+            await prisma.exercise.update({
+                where: { id: existingEx.id },
+                data: { muscle_group: ex.muscle_group },
+            });
+            console.log(`Updated: ${ex.name} -> ${ex.muscle_group}`);
         }
     }
 

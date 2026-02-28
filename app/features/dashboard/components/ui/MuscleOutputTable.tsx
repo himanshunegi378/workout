@@ -150,8 +150,8 @@ export function MuscleOutputTable() {
 
                 <div className="flex items-center gap-4 bg-muted/20 border border-border/30 px-5 py-2.5 rounded-full backdrop-blur-md">
                     <div className="flex -space-x-2">
-                        {['Chest', 'Back', 'Legs'].map((m) => (
-                            <div key={m} className={`w-6 h-6 rounded-full border-2 border-card ${muscleColorMap[m as MusclePerformanceData['muscleGroup']] || 'bg-accent'}`} />
+                        {['Chest', 'Back', 'Legs', 'Abs', 'Shoulders'].slice(0, 3).map((m) => (
+                            <div key={m} className={`w-6 h-6 rounded-full border-2 border-card ${muscleColorMap[m] || 'bg-accent'}`} />
                         ))}
                     </div>
                     <span className="text-[10px] font-black text-foreground uppercase tracking-widest whitespace-nowrap">

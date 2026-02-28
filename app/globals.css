@@ -26,12 +26,15 @@
   --color-info-foreground: #0c0c0e;
 
   /* ── Muscle group colors (decorative) ── */
-  --color-muscle-chest: #ff6b6b;
+  --color-muscle-abs: #a29bfe;
   --color-muscle-back: #4ecdc4;
+  --color-muscle-biceps: #ff8a5c;
+  --color-muscle-cardio: #00d2d3;
+  --color-muscle-chest: #ff6b6b;
+  --color-muscle-forearms: #ffa447;
   --color-muscle-legs: #ffd93d;
   --color-muscle-shoulders: #6c5ce7;
-  --color-muscle-arms: #ff8a5c;
-  --color-muscle-core: #a29bfe;
+  --color-muscle-triceps: #ff5e57;
 
   /* ── Typography ── */
   --font-display: "Outfit", sans-serif;

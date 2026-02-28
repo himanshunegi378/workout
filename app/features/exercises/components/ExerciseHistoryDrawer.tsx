@@ -2,8 +2,10 @@
 
 import { BottomDrawer } from "@/app/components/ui";
 import { useExerciseHistory } from "../api/query-hooks/use-exercise-history";
-import { Loader2 } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { Portal } from "@/app/components/ui/Portal";
+import { useState } from "react";
+import { StandaloneLogDrawer } from "@/app/features/logging/components/ui/StandaloneLogDrawer";
 
 interface ExerciseHistoryDrawerProps {
     exerciseId: string;
@@ -19,6 +21,7 @@ export function ExerciseHistoryDrawer({
     onClose,
 }: ExerciseHistoryDrawerProps) {
     const { data: logs, isLoading, isError } = useExerciseHistory(isOpen ? exerciseId : undefined);
+    const [isStandaloneLogOpen, setIsStandaloneLogOpen] = useState(false);
 
     // Group logs by session date
     const groupedLogs = logs?.reduce((acc, log) => {
@@ -39,16 +42,27 @@ export function ExerciseHistoryDrawer({
             <BottomDrawer isOpen={isOpen} onClose={onClose}>
                 <div className="flex flex-col h-[70vh]">
                     <div className="px-4 py-3 border-b border-border sticky top-0 bg-background/95 backdrop-blur-sm z-10 shrink-0">
-                        <div className="flex items-center gap-3">
-                            <div className="w-1.5 h-8 rounded-full bg-accent" />
-                            <div>
-                                <h2 className="font-display text-lg font-bold text-foreground leading-tight">
-                                    Exercise History
-                                </h2>
-                                <p className="text-sm text-muted-foreground font-medium truncate max-w-[280px]">
-                                    {exerciseName}
-                                </p>
+                        <div className="flex items-center justify-between w-full">
+                            <div className="flex items-center gap-3">
+                                <div className="w-1.5 h-8 rounded-full bg-accent" />
+                                <div>
+                                    <h2 className="font-display text-lg font-bold text-foreground leading-tight">
+                                        Exercise History
+                                    </h2>
+                                    <p className="text-sm text-muted-foreground font-medium truncate max-w-[250px]">
+                                        {exerciseName}
+                                    </p>
+                                </div>
                             </div>
+
+                            {/* Standalone Log Trigger */}
+                            <button
+                                onClick={() => setIsStandaloneLogOpen(true)}
+                                className="w-10 h-10 shrink-0 rounded-full flex items-center justify-center bg-accent/10 text-accent hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+                                title="Log Set"
+                            >
+                                <Plus className="w-5 h-5" />
+                            </button>
                         </div>
                     </div>
 
@@ -110,6 +124,13 @@ export function ExerciseHistoryDrawer({
                     </div>
                 </div>
             </BottomDrawer>
+
+            <StandaloneLogDrawer
+                isOpen={isStandaloneLogOpen}
+                onClose={() => setIsStandaloneLogOpen(false)}
+                exerciseId={exerciseId}
+                exerciseName={exerciseName}
+            />
         </Portal>
     );
 }
