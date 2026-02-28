@@ -36,6 +36,7 @@ interface ExerciseCardProps {
     restMax: number;
     tempo: string;
     initialLogs?: ExerciseLog[];
+    previousLogs?: { id: string; weight: number | null; reps: number; set_order_index: number }[];
 }
 
 export function ExerciseCard({
@@ -53,6 +54,7 @@ export function ExerciseCard({
     restMax,
     tempo,
     initialLogs = [],
+    previousLogs = [],
 }: ExerciseCardProps) {
     const colorClass = muscleColorMap[muscleGroup] ?? "bg-accent";
     const router = useRouter();
@@ -271,6 +273,7 @@ export function ExerciseCard({
                         logs={logs.map(l => ({ set_order_index: l.set_order_index, reps: l.reps }))}
                         targetReps={repsMin}
                         onSetClick={handleSetClick}
+                        previousLogs={previousLogs}
                     />
                 </div>
             </div>

@@ -80,7 +80,57 @@ export async function GET(
             },
         });
 
-        return NextResponse.json({ workout, session: activeSession });
+        const previousLogsByExercise: Record<string, { id: string; weight: number | null; reps: number; set_order_index: number }[]> = {};
+
+        await Promise.all(
+            workout.exercisesWithMetadata.map(async (ewm) => {
+                const lastSessionLog = await prisma.exerciseLog.findFirst({
+                    where: {
+                        user_id: userId,
+                        OR: [
+                            { exercise_id: ewm.exercise_id },
+                            { exerciseWithMetadata: { exercise_id: ewm.exercise_id } }
+                        ],
+                        workoutSession: {
+                            date: { lt: today }
+                        }
+                    },
+                    orderBy: {
+                        workoutSession: {
+                            date: "desc"
+                        }
+                    },
+                    select: {
+                        workout_session_id: true,
+                    }
+                });
+
+                if (lastSessionLog?.workout_session_id) {
+                    const logs = await prisma.exerciseLog.findMany({
+                        where: {
+                            workout_session_id: lastSessionLog.workout_session_id,
+                            user_id: userId,
+                            OR: [
+                                { exercise_id: ewm.exercise_id },
+                                { exerciseWithMetadata: { exercise_id: ewm.exercise_id } }
+                            ],
+                        },
+                        select: {
+                            id: true,
+                            weight: true,
+                            reps: true,
+                            set_order_index: true,
+                        },
+                        orderBy: {
+                            set_order_index: "asc"
+                        }
+                    });
+                    previousLogsByExercise[ewm.exercise_id] = logs;
+                }
+            })
+        );
+
+        return NextResponse.json({ workout, session: activeSession, previousLogsByExercise });
     } catch (error) {
         console.error("Failed to fetch workout details:", error);
         return NextResponse.json(

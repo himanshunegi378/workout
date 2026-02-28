@@ -44,7 +44,7 @@ export function ExerciseListContent({
         notFound();
     }
 
-    const { workout, session } = data;
+    const { workout, session, previousLogsByExercise } = data;
 
     const logsByEwm: Record<string, { id: string; weight: number | null; reps: number; set_order_index: number }[]> = {};
     if (session) {
@@ -114,6 +114,7 @@ export function ExerciseListContent({
                                     restMax={ewm.rest_max ?? 0}
                                     tempo={ewm.tempo ?? ""}
                                     initialLogs={logsByEwm[ewm.id] || []}
+                                    previousLogs={previousLogsByExercise[ewm.exercise_id] || []}
                                 />
                             </div>
                         ))}
