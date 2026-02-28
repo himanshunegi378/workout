@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: Promise<{ groupId: string; workoutId: string }> }
+    { params }: { params: Promise<{ programmeId: string; workoutId: string }> }
 ) {
     try {
         const session = await auth();
@@ -12,13 +12,13 @@ export async function GET(
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { groupId, workoutId } = await params;
+        const { programmeId, workoutId } = await params;
         const userId = session.user.id;
 
         const workout = await prisma.workout.findFirst({
             where: {
                 id: workoutId,
-                workoutGroup: { id: groupId, user_id: userId },
+                programme: { id: programmeId, user_id: userId },
             },
             select: {
                 id: true,

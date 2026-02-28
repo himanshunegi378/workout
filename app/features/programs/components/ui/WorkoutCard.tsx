@@ -3,7 +3,7 @@ import { Activity, ChevronRight, Dumbbell } from "lucide-react";
 
 interface WorkoutCardProps {
     id: string;
-    groupId: string;
+    programmeId: string;
     name: string;
     exercisePreview: string;
     exerciseCount: number;
@@ -11,14 +11,14 @@ interface WorkoutCardProps {
 
 export function WorkoutCard({
     id,
-    groupId,
+    programmeId,
     name,
     exercisePreview,
     exerciseCount,
 }: WorkoutCardProps) {
     return (
         <Link
-            href={`/groups/${groupId}/workouts/${id}`}
+            href={`/programmes/${programmeId}/workouts/${id}`}
             className="block bg-card text-card-foreground rounded-2xl p-4
                        border border-border hover:border-accent/40
                        elevation-2 hover:elevation-4

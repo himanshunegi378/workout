@@ -12,19 +12,19 @@ export async function GET() {
         // Fetch all workouts authored by the user to populate the chart dropdown
         const workouts = await prisma.workout.findMany({
             where: {
-                workoutGroup: {
+                programme: {
                     user_id: userId
                 }
             },
             select: {
                 id: true,
                 name: true,
-                workoutGroup: {
+                programme: {
                     select: { name: true }
                 }
             },
             orderBy: [
-                { workoutGroup: { name: 'asc' } },
+                { programme: { name: 'asc' } },
                 { order_index: 'asc' }
             ]
         });

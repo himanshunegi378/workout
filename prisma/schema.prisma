@@ -39,7 +39,7 @@ model User {
   created_at    DateTime @default(now())
 
   // Relations — everything a user owns
-  workoutGroups   WorkoutGroup[]
+  programmes      Programme[]
   exercises       Exercise[]
   workoutSessions WorkoutSession[]
   exerciseLogs    ExerciseLog[]
@@ -113,10 +113,10 @@ model Workout {
   order_index Int
 
   // Foreign key
-  workout_group_id String
+  programme_id String
 
   // Relations
-  workoutGroup          WorkoutGroup           @relation(fields: [workout_group_id], references: [id])
+  programme             Programme              @relation(fields: [programme_id], references: [id])
   exercisesWithMetadata ExerciseWithMetadata[]
   workoutSessions       WorkoutSession[]
 
@@ -124,7 +124,7 @@ model Workout {
 }
 
 /// A named collection / programme of workouts (e.g. "Push Pull Legs").
-model WorkoutGroup {
+model Programme {
   id          String  @id @default(cuid())
   name        String
   description String?
@@ -136,7 +136,7 @@ model WorkoutGroup {
   // Relations
   workouts Workout[]
 
-  @@map("workout_groups")
+  @@map("programmes")
 }
 
 /// A single logged training session tied to a Workout.
@@ -197,11 +197,11 @@ view exercise_analytics_view {
   start_time         DateTime?
   end_time           DateTime?
 
-  workout_group_id   String
-  workout_group_name String
-
   workout_id   String
   workout_name String
+
+  programme_id   String
+  programme_name String
 
   exercise_id   String
   exercise_name String

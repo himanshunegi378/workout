@@ -30,13 +30,13 @@ See **[references/schema-reference.md](references/schema-reference.md)** for the
 
 ```ts
 // ✅ Correct — fetch only what UI needs
-const groups = await prisma.workoutGroup.findMany({
+const programmes = await prisma.programme.findMany({
     where: { user_id: userId },
     select: { id: true, name: true, description: true },
 });
 
 // ❌ Wrong — fetches entire related models
-const groups = await prisma.workoutGroup.findMany({
+const programmes = await prisma.programme.findMany({
     where: { user_id: userId },
     include: { workouts: true },
 });
@@ -47,7 +47,7 @@ const groups = await prisma.workoutGroup.findMany({
 Every query returning user-owned data **MUST** include `user_id` in the `where` clause:
 
 ```ts
-where: { id: groupId, user_id: userId }
+where: { id: programmeId, user_id: userId }
 ```
 
 ### Enum Types — Never Plain Strings
@@ -80,14 +80,14 @@ where: {
 | `Exercise` | `exercises` | Reusable exercise definition |
 | `ExerciseWithMetadata` | `exercise_with_metadata` | Exercise with prescribed sets/reps/tempo in a workout |
 | `Workout` | `workouts` | Ordered list of exercises |
-| `WorkoutGroup` | `workout_groups` | Programme / collection of workouts |
+| `Programme` | `programmes` | Collection of workouts |
 | `WorkoutSession` | `workout_sessions` | A single logged training session |
 | `ExerciseLog` | `exercise_logs` | A single logged set |
 
 ### Key Relationships
 
 ```
-User ──┬── WorkoutGroup ── Workout ── ExerciseWithMetadata ── Exercise
+User ──┬── Programme ── Workout ── ExerciseWithMetadata ── Exercise
        ├── Exercise
        └── WorkoutSession ── ExerciseLog ──┬── ExerciseWithMetadata (planned)
                                            └── Exercise (ad-hoc)

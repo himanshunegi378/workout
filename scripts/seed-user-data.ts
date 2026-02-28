@@ -95,13 +95,13 @@ async function main() {
 
     // 3. Create "4-Day Upper/Lower Hypertrophy Program" if it doesn't exist
     const groupName = "4-Day Upper/Lower Hypertrophy Program";
-    let program = await prisma.workoutGroup.findFirst({
+    let program = await prisma.programme.findFirst({
         where: { name: groupName, user_id: user.id },
     });
 
     if (!program) {
-        console.log(`Creating Workout Program: ${groupName}...`);
-        program = await prisma.workoutGroup.create({
+        console.log(`Creating Programme: ${groupName}...`);
+        program = await prisma.programme.create({
             data: {
                 name: groupName,
                 description: "Goal: Body Recomposition (Fixing the skinny-fat physique)",
@@ -176,7 +176,7 @@ async function main() {
                 data: {
                     name: wData.name,
                     order_index: wData.order_index,
-                    workout_group_id: program.id,
+                    programme_id: program.id,
                 }
             });
 

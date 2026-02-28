@@ -4,7 +4,7 @@ import { getUserId } from "@/lib/auth-helpers";
 
 export async function POST(
     request: Request,
-    { params }: { params: Promise<{ groupId: string; workoutId: string }> }
+    { params }: { params: Promise<{ programmeId: string; workoutId: string }> }
 ) {
     try {
         const userId = await getUserId();
@@ -15,13 +15,13 @@ export async function POST(
             );
         }
 
-        const { groupId, workoutId } = await params;
+        const { programmeId, workoutId } = await params;
 
         // Verify the workout belongs to the user
         const workout = await prisma.workout.findFirst({
             where: {
                 id: workoutId,
-                workoutGroup: { id: groupId, user_id: userId },
+                programme: { id: programmeId, user_id: userId },
             },
             include: {
                 _count: { select: { exercisesWithMetadata: true } },

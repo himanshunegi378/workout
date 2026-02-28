@@ -1,7 +1,7 @@
 import { Layers, Plus } from "lucide-react";
 import { Button, EmptyState } from "@/app/components/ui";
 
-export function GroupsEmptyState() {
+export function ProgrammesEmptyState() {
     return (
         <EmptyState
             icon={Layers}

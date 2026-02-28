@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { PageHeader, BottomNav, CardSkeletonList } from "@/app/components/ui";
-import { WorkoutGroupList } from "@/app/features/programs/components/WorkoutGroupList";
+import { ProgrammeList } from "@/app/features/programs/components/ProgrammeList";
 
 export default function HomePage() {
     return (
@@ -11,7 +11,7 @@ export default function HomePage() {
                 title="My Programs"
                 action={
                     <Link
-                        href="/groups/new"
+                        href="/programmes/new"
                         className="p-2 rounded-xl hover:bg-muted transition-colors"
                     >
                         <Plus className="w-5 h-5 text-accent" />
@@ -21,7 +21,7 @@ export default function HomePage() {
 
             <main className="max-w-lg mx-auto px-4 py-4">
                 <Suspense fallback={<CardSkeletonList count={4} />}>
-                    <WorkoutGroupList />
+                    <ProgrammeList />
                 </Suspense>
             </main>
 

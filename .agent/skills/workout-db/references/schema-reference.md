@@ -25,7 +25,7 @@ model User {
   password_hash String
   created_at    DateTime @default(now())
 
-  workoutGroups   WorkoutGroup[]
+  programmes      Programme[]
   exercises       Exercise[]
   workoutSessions WorkoutSession[]
 
@@ -89,9 +89,9 @@ model Workout {
   description String?
   order_index Int
 
-  workout_group_id String
+  programme_id String
 
-  workoutGroup          WorkoutGroup           @relation(...)
+  programme             Programme              @relation(...)
   exercisesWithMetadata ExerciseWithMetadata[]
   workoutSessions       WorkoutSession[]
 
@@ -99,10 +99,10 @@ model Workout {
 }
 ```
 
-### WorkoutGroup
-A programme or collection of workouts (e.g., "Push Pull Legs").
+### Programme
+A collection of workouts (e.g., "Push Pull Legs").
 ```prisma
-model WorkoutGroup {
+model Programme {
   id          String  @id @default(cuid())
   name        String
   description String?
@@ -112,7 +112,7 @@ model WorkoutGroup {
 
   workouts Workout[]
 
-  @@map("workout_groups")
+  @@map("programmes")
 }
 ```
 
@@ -162,7 +162,7 @@ model ExerciseLog {
 
 ```
 User
- ├── WorkoutGroup
+ ├── Programme
  │    └── Workout
  │         ├── ExerciseWithMetadata ──→ Exercise
  │         └── WorkoutSession

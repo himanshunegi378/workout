@@ -4,7 +4,7 @@ interface CreateProgramData {
 }
 
 export async function createProgram(data: CreateProgramData) {
-    const res = await fetch("/api/groups", {
+    const res = await fetch("/api/programmes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -12,7 +12,7 @@ export async function createProgram(data: CreateProgramData) {
 
     if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to create workout program");
+        throw new Error(data.error || "Failed to create programme");
     }
 
     return res.json();

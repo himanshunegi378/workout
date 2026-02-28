@@ -18,12 +18,12 @@ export async function POST(request: Request) {
 
         if (!name || typeof name !== "string" || name.trim().length === 0) {
             return NextResponse.json(
-                { error: "Workout group name is required" },
+                { error: "Programme name is required" },
                 { status: 400 }
             );
         }
 
-        const group = await prisma.workoutGroup.create({
+        const programme = await prisma.programme.create({
             data: {
                 name: name.trim(),
                 description: description || null,
@@ -31,11 +31,11 @@ export async function POST(request: Request) {
             },
         });
 
-        return NextResponse.json(group, { status: 201 });
+        return NextResponse.json(programme, { status: 201 });
     } catch (error) {
-        console.error("Failed to create workout group:", error);
+        console.error("Failed to create programme:", error);
         return NextResponse.json(
-            { error: "Failed to create workout group" },
+            { error: "Failed to create programme" },
             { status: 500 }
         );
     }
@@ -51,7 +51,7 @@ export async function GET() {
             );
         }
 
-        const groups = await prisma.workoutGroup.findMany({
+        const programmes = await prisma.programme.findMany({
             where: { user_id: userId },
             select: {
                 id: true,
@@ -64,11 +64,11 @@ export async function GET() {
             orderBy: { name: "asc" },
         });
 
-        return NextResponse.json(groups);
+        return NextResponse.json(programmes);
     } catch (error) {
-        console.error("Failed to fetch workout groups:", error);
+        console.error("Failed to fetch programmes:", error);
         return NextResponse.json(
-            { error: "Failed to fetch workout groups" },
+            { error: "Failed to fetch programmes" },
             { status: 500 }
         );
     }

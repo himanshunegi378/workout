@@ -5,10 +5,10 @@ import Link from "next/link";
 import { Dumbbell, Plus, Loader2 } from "lucide-react";
 import { PageHeader, EmptyState } from "@/app/components/ui";
 import { WorkoutCard } from "./ui/WorkoutCard";
-import { useWorkoutGroup } from "../api/query-hooks/use-workout-group";
+import { useProgramme } from "../api/query-hooks/use-programme";
 
-export function WorkoutListContent({ groupId }: { groupId: string }) {
-    const { data: group, isLoading, isError } = useWorkoutGroup(groupId);
+export function WorkoutListContent({ programmeId }: { programmeId: string }) {
+    const { data: programme, isLoading, isError } = useProgramme(programmeId);
 
     if (isLoading) {
         return (
@@ -22,7 +22,7 @@ export function WorkoutListContent({ groupId }: { groupId: string }) {
         );
     }
 
-    if (isError || !group) {
+    if (isError || !programme) {
         if (isError) {
             return (
                 <>
@@ -30,7 +30,7 @@ export function WorkoutListContent({ groupId }: { groupId: string }) {
                     <EmptyState
                         icon={Dumbbell}
                         title="Something went wrong"
-                        description="Could not load workouts. Please try again."
+                        description="Could not load programme. Please try again."
                     />
                 </>
             );
@@ -41,11 +41,11 @@ export function WorkoutListContent({ groupId }: { groupId: string }) {
     return (
         <>
             <PageHeader
-                title={group.name}
+                title={programme.name}
                 backHref="/"
                 action={
                     <Link
-                        href={`/groups/${groupId}/workouts/new`}
+                        href={`/programmes/${programmeId}/workouts/new`}
                         className="p-2 rounded-xl hover:bg-muted transition-colors"
                     >
                         <Plus className="w-5 h-5 text-accent" />
@@ -54,14 +54,14 @@ export function WorkoutListContent({ groupId }: { groupId: string }) {
             />
 
             <main className="max-w-lg mx-auto px-4 py-4">
-                {group.workouts.length === 0 ? (
+                {programme.workouts.length === 0 ? (
                     <EmptyState
                         icon={Dumbbell}
                         title="No Workouts Yet"
                         description="Add your first workout to this program"
                         action={
                             <Link
-                                href={`/groups/${groupId}/workouts/new`}
+                                href={`/programmes/${programmeId}/workouts/new`}
                                 className="inline-flex items-center justify-center gap-2 px-5 py-3
                                          rounded-xl font-display text-sm font-semibold
                                          transition-all duration-200 active:animate-press
@@ -73,7 +73,7 @@ export function WorkoutListContent({ groupId }: { groupId: string }) {
                     />
                 ) : (
                     <div className="space-y-3">
-                        {group.workouts.map((workout, i) => {
+                        {programme.workouts.map((workout, i) => {
                             const exercisePreview = workout.exercisesWithMetadata
                                 .map((ewm) => ewm.exercise.name)
                                 .join(" · ");
@@ -86,7 +86,7 @@ export function WorkoutListContent({ groupId }: { groupId: string }) {
                                 >
                                     <WorkoutCard
                                         id={workout.id}
-                                        groupId={groupId}
+                                        programmeId={programmeId}
                                         name={workout.name}
                                         exercisePreview={exercisePreview}
                                         exerciseCount={workout._count.exercisesWithMetadata}

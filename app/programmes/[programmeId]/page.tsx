@@ -6,16 +6,16 @@ import { WorkoutListContent } from "@/app/features/programs/components/WorkoutLi
 import { LoadingHeader } from "@/app/features/programs/components/ui/LoadingHeader";
 
 interface PageProps {
-    params: Promise<{ groupId: string }>;
+    params: Promise<{ programmeId: string }>;
 }
 
 export default function WorkoutListPage({ params }: PageProps) {
-    const { groupId } = use(params);
+    const { programmeId } = use(params);
 
     return (
         <div className="min-h-screen pb-20">
             <Suspense fallback={<LoadingHeader />}>
-                <WorkoutListContent groupId={groupId} />
+                <WorkoutListContent programmeId={programmeId} />
             </Suspense>
             <BottomNav />
         </div>

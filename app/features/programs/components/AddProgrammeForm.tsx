@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/app/components/ui";
-import { useCreateProgram } from "../api/mutation-hooks/use-create-program";
+import { useCreateProgramme } from "../api/mutation-hooks/use-create-programme";
 
-export function AddProgramForm() {
+export function AddProgrammeForm() {
     const router = useRouter();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const { mutate: createProgram, isPending, error: mutationError } = useCreateProgram();
+    const { mutate: createProgramme, isPending, error: mutationError } = useCreateProgramme();
 
     const canSubmit = name.trim().length > 0;
 
@@ -17,7 +17,7 @@ export function AddProgramForm() {
         e.preventDefault();
         if (!canSubmit) return;
 
-        createProgram(
+        createProgramme(
             {
                 name: name.trim(),
                 description: description.trim() || null,
@@ -37,12 +37,12 @@ export function AddProgramForm() {
             <div className="space-y-1.5">
                 <label
                     className="text-sm font-medium text-foreground"
-                    htmlFor="group-name"
+                    htmlFor="programme-name"
                 >
                     Program Name
                 </label>
                 <input
-                    id="group-name"
+                    id="programme-name"
                     type="text"
                     placeholder="e.g. Push Pull Legs"
                     value={name}
@@ -59,7 +59,7 @@ export function AddProgramForm() {
             <div className="space-y-1.5">
                 <label
                     className="text-sm font-medium text-foreground"
-                    htmlFor="group-desc"
+                    htmlFor="programme-desc"
                 >
                     Description{" "}
                     <span className="text-muted-foreground font-normal">
@@ -67,7 +67,7 @@ export function AddProgramForm() {
                     </span>
                 </label>
                 <textarea
-                    id="group-desc"
+                    id="programme-desc"
                     rows={3}
                     placeholder="A 3-day split focused on..."
                     value={description}

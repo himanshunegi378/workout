@@ -5,8 +5,8 @@ export const ANALYTICS_DIMENSIONS = [
     "muscle_group",
     "workout_name",
     "workout_id",
-    "workout_group_name",
-    "workout_group_id",
+    "programme_name",
+    "programme_id",
     "session_date",
     "week_start"
 ] as const;

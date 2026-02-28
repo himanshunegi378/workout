@@ -16,7 +16,7 @@ export interface SessionWithLogs {
     end_time: Date | null;
     workout: {
         name: string;
-        workoutGroup: { name: string };
+        programme: { name: string };
     } | null;
     exerciseLogs: ExerciseLogWithRelations[];
 }

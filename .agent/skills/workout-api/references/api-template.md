@@ -17,7 +17,7 @@ export async function GET() {
             );
         }
 
-        const items = await prisma.workoutGroup.findMany({
+        const items = await prisma.programme.findMany({
             where: { user_id: userId },
             select: {
                 id: true,
@@ -47,7 +47,7 @@ import { auth } from "@/auth";
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: Promise<{ groupId: string }> }
+    { params }: { params: Promise<{ programmeId: string }> }
 ) {
     try {
         const session = await auth();
@@ -55,11 +55,11 @@ export async function GET(
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { groupId } = await params;
+        const { programmeId } = await params;
         const userId = session.user.id;
 
-        const group = await prisma.workoutGroup.findFirst({
-            where: { id: groupId, user_id: userId },
+        const programme = await prisma.programme.findFirst({
+            where: { id: programmeId, user_id: userId },
             select: {
                 id: true,
                 name: true,
@@ -67,15 +67,15 @@ export async function GET(
             },
         });
 
-        if (!group) {
+        if (!programme) {
             return NextResponse.json({ error: "Not found" }, { status: 404 });
         }
 
-        return NextResponse.json(group);
+        return NextResponse.json(programme);
     } catch (error) {
-        console.error("Failed to fetch group:", error);
+        console.error("Failed to fetch programme:", error);
         return NextResponse.json(
-            { error: "Failed to fetch group" },
+            { error: "Failed to fetch programme" },
             { status: 500 }
         );
     }
@@ -110,7 +110,7 @@ export async function POST(request: Request) {
             );
         }
 
-        const item = await prisma.workoutGroup.create({
+        const item = await prisma.programme.create({
             data: {
                 name: name.trim(),
                 description: description || null,

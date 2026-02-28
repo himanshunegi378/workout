@@ -88,7 +88,7 @@ export function LogContent() {
                                 <SessionCard
                                     key={session.id}
                                     workoutName={session.workout?.name ?? "Ad-hoc Exercises"}
-                                    groupName={session.workout?.workoutGroup?.name ?? "Quick Log"}
+                                    groupName={session.workout?.programme?.name ?? "Quick Log"}
                                     startTime={session.start_time}
                                     endTime={session.end_time}
                                     exerciseGroups={exerciseGroups}

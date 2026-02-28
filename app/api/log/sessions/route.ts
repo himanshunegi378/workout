@@ -38,7 +38,7 @@ export async function GET(request: Request) {
                 workout: {
                     select: {
                         name: true,
-                        workoutGroup: {
+                        programme: {
                             select: { name: true },
                         },
                     },

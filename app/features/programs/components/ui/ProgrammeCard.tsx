@@ -1,17 +1,17 @@
 import Link from "next/link";
 import { ChevronRight, Dumbbell } from "lucide-react";
 
-interface GroupCardProps {
+interface ProgrammeCardProps {
     id: string;
     name: string;
     description: string | null;
     workoutCount: number;
 }
 
-export function GroupCard({ id, name, description, workoutCount }: GroupCardProps) {
+export function ProgrammeCard({ id, name, description, workoutCount }: ProgrammeCardProps) {
     return (
         <Link
-            href={`/groups/${id}`}
+            href={`/programmes/${id}`}
             className="block bg-card text-card-foreground rounded-2xl p-4
                        border border-border hover:border-accent/40
                        elevation-2 hover:elevation-4

@@ -4,7 +4,7 @@ import { getUserId } from "@/lib/auth-helpers";
 
 export async function POST(
     request: Request,
-    { params }: { params: Promise<{ groupId: string }> }
+    { params }: { params: Promise<{ programmeId: string }> }
 ) {
     try {
         const userId = await getUserId();
@@ -15,11 +15,11 @@ export async function POST(
             );
         }
 
-        const { groupId } = await params;
+        const { programmeId } = await params;
 
-        // Verify group belongs to user
-        const group = await prisma.workoutGroup.findFirst({
-            where: { id: groupId, user_id: userId },
+        // Verify programme belongs to user
+        const programme = await prisma.programme.findFirst({
+            where: { id: programmeId, user_id: userId },
             include: {
                 _count: {
                     select: { workouts: true },
@@ -27,9 +27,9 @@ export async function POST(
             },
         });
 
-        if (!group) {
+        if (!programme) {
             return NextResponse.json(
-                { error: "Workout program not found" },
+                { error: "Programme not found" },
                 { status: 404 }
             );
         }
@@ -45,13 +45,13 @@ export async function POST(
         }
 
         // Calculate order index based on existing workouts
-        const orderIndex = group._count.workouts;
+        const orderIndex = programme._count.workouts;
 
         const workout = await prisma.workout.create({
             data: {
                 name: name.trim(),
                 description: description || null,
-                workout_group_id: groupId,
+                programme_id: programmeId,
                 order_index: orderIndex,
             },
         });

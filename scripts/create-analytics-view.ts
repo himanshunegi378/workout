@@ -20,8 +20,8 @@ async function main() {
     COALESCE(ws.date, el.date) AS session_date,
     ws.start_time,
     ws.end_time,
-    wg.id AS workout_group_id,
-    wg.name AS workout_group_name,
+    wg.id AS programme_id,
+    wg.name AS programme_name,
     w.id AS workout_id,
     w.name AS workout_name,
     COALESCE(e_planned.id, e_adhoc.id) AS exercise_id,
@@ -44,7 +44,7 @@ async function main() {
   FROM exercise_logs el
   LEFT JOIN workout_sessions ws ON el.workout_session_id = ws.id
   LEFT JOIN workouts w ON ws.workout_id = w.id
-  LEFT JOIN workout_groups wg ON w.workout_group_id = wg.id
+  LEFT JOIN programmes wg ON w.programme_id = wg.id
   LEFT JOIN exercise_with_metadata em ON el.exercise_with_metadata_id = em.id
   LEFT JOIN exercises e_planned ON em.exercise_id = e_planned.id
   LEFT JOIN exercises e_adhoc ON el.exercise_id = e_adhoc.id;

@@ -4,7 +4,7 @@ import { queryKeys } from "../query-keys";
 export interface WorkoutOption {
     id: string;
     name: string;
-    workoutGroup: {
+    programme: {
         name: string;
     };
 }
