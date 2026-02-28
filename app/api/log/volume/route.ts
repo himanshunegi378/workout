@@ -57,8 +57,8 @@ export async function GET() {
         }>();
 
         for (const session of sessions) {
-            const workoutId = session.workout.id;
-            const workoutName = session.workout.name;
+            const workoutId = session.workout?.id || "adhoc";
+            const workoutName = session.workout?.name || "Ad-hoc Session";
             const dateStr = session.date.toISOString().split("T")[0];
 
             for (const log of session.exerciseLogs) {
