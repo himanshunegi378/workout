@@ -3,8 +3,8 @@ interface CreateWorkoutData {
     description?: string | null;
 }
 
-export async function createWorkout(groupId: string, data: CreateWorkoutData) {
-    const res = await fetch(`/api/groups/${groupId}/workouts`, {
+export async function createWorkout(programmeId: string, data: CreateWorkoutData) {
+    const res = await fetch(`/api/programmes/${programmeId}/workouts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

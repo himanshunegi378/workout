@@ -43,18 +43,23 @@ export async function GET(request: Request) {
                         },
                     },
                 },
-                exerciseLogs: {
-                    orderBy: { set_order_index: "asc" },
+                sessionExerciseLogs: {
                     select: {
                         id: true,
-                        weight: true,
-                        reps: true,
-                        set_order_index: true,
-                        exercise: {
+                        exercise_with_metadata_id: true,
+                        exerciseLog: {
                             select: {
                                 id: true,
-                                name: true,
-                                muscle_group: true,
+                                weight: true,
+                                reps: true,
+                                set_order_index: true,
+                                exercise: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        muscle_group: true,
+                                    },
+                                },
                             },
                         },
                         exerciseWithMetadata: {
@@ -106,8 +111,8 @@ function groupByDate(sessions: SessionWithLogs[]) {
 
     for (const s of sessions) {
         // Filter out sessions with no valid exercise logs
-        const hasLogs = s.exerciseLogs.some((log) =>
-            log.exerciseWithMetadata?.exercise || log.exercise
+        const hasLogs = s.sessionExerciseLogs.some((sel) =>
+            sel.exerciseWithMetadata?.exercise || sel.exerciseLog?.exercise
         );
         if (!hasLogs) continue;
 

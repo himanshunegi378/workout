@@ -55,17 +55,29 @@ export async function POST(request: Request) {
         }
         const sessionId = session.id;
 
-        // Log the set
-        const exerciseLog = await prisma.exerciseLog.create({
-            data: {
-                user_id: userId,
-                workout_session_id: sessionId,
-                exercise_with_metadata_id: exerciseWithMetadataId || null,
-                exercise_id: exerciseId || null,
-                set_order_index: setOrderIndex,
-                weight: weight ? parseFloat(weight) : null,
-                reps: parseInt(reps),
-            },
+        // Log the set and create its unique SessionExerciseLog in a transaction
+        const exerciseLog = await prisma.$transaction(async (tx) => {
+            const el = await tx.exerciseLog.create({
+                data: {
+                    user_id: userId,
+                    exerciseId: exerciseId || null,
+                    set_order_index: setOrderIndex,
+                    weight: weight ? parseFloat(weight) : null,
+                    reps: parseInt(reps),
+                },
+            });
+
+            await tx.sessionExerciseLog.create({
+                data: {
+                    id: `sel_${el.id}`,
+                    workout_session_id: sessionId,
+                    exercise_with_metadata_id: exerciseWithMetadataId || null,
+                    user_id: userId,
+                    exercise_log_id: el.id,
+                },
+            });
+
+            return el;
         });
 
         return NextResponse.json(exerciseLog, { status: 201 });
@@ -95,7 +107,7 @@ export async function DELETE(request: Request) {
             );
         }
 
-        // Verify ownership and delete
+        // Verify ownership
         const set = await prisma.exerciseLog.findUnique({
             where: { id: setId },
         });
@@ -114,6 +126,7 @@ export async function DELETE(request: Request) {
             );
         }
 
+        // Delete the log. Cascading delete will remove the associated SessionExerciseLog.
         await prisma.exerciseLog.delete({
             where: { id: setId },
         });

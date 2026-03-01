@@ -5,12 +5,12 @@ import { Plus } from "lucide-react";
 import { AddExerciseDrawer } from "./AddExerciseDrawer";
 
 interface AddExerciseTriggerProps {
-    groupId: string;
+    programmeId: string;
     workoutId: string;
     variant: "icon" | "button";
 }
 
-export function AddExerciseTrigger({ groupId, workoutId, variant }: AddExerciseTriggerProps) {
+export function AddExerciseTrigger({ programmeId, workoutId, variant }: AddExerciseTriggerProps) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -37,7 +37,7 @@ export function AddExerciseTrigger({ groupId, workoutId, variant }: AddExerciseT
             <AddExerciseDrawer
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
-                groupId={groupId}
+                programmeId={programmeId}
                 workoutId={workoutId}
             />
         </>

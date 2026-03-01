@@ -6,10 +6,10 @@ import { Button } from "@/app/components/ui";
 import { useCreateWorkout } from "../api/mutation-hooks/use-create-workout";
 
 interface AddWorkoutFormProps {
-    groupId: string;
+    programmeId: string;
 }
 
-export function AddWorkoutForm({ groupId }: AddWorkoutFormProps) {
+export function AddWorkoutForm({ programmeId }: AddWorkoutFormProps) {
     const router = useRouter();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -23,7 +23,7 @@ export function AddWorkoutForm({ groupId }: AddWorkoutFormProps) {
 
         createWorkout(
             {
-                groupId,
+                programmeId,
                 data: {
                     name: name.trim(),
                     description: description.trim() || null,
@@ -31,7 +31,7 @@ export function AddWorkoutForm({ groupId }: AddWorkoutFormProps) {
             },
             {
                 onSuccess: () => {
-                    router.push(`/groups/${groupId}`);
+                    router.push(`/programmes/${programmeId}`);
                     router.refresh();
                 },
             }

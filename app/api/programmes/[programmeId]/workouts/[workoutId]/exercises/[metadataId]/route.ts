@@ -4,7 +4,7 @@ import { getUserId } from "@/lib/auth-helpers";
 
 export async function PATCH(
     request: Request,
-    { params }: { params: Promise<{ groupId: string; workoutId: string; metadataId: string }> }
+    { params }: { params: Promise<{ programmeId: string; workoutId: string; metadataId: string }> }
 ) {
     try {
         const userId = await getUserId();

@@ -8,18 +8,18 @@ import { AddExerciseTrigger } from "../../exercises/components/AddExerciseTrigge
 import { useWorkoutDetails } from "../api/query-hooks/use-workout-details";
 
 export function ExerciseListContent({
-    groupId,
+    programmeId,
     workoutId,
 }: {
-    groupId: string;
+    programmeId: string;
     workoutId: string;
 }) {
-    const { data, isLoading, isError } = useWorkoutDetails(groupId, workoutId);
+    const { data, isLoading, isError } = useWorkoutDetails(programmeId, workoutId);
 
     if (isLoading) {
         return (
             <>
-                <PageHeader title="Loading..." backHref={`/groups/${groupId}`} />
+                <PageHeader title="Loading..." backHref={`/programmes/${programmeId}`} />
                 <div className="min-h-screen flex flex-col pt-24 items-center gap-4">
                     <Loader2 className="w-8 h-8 animate-spin text-accent" />
                     <span className="text-sm text-muted-foreground animate-pulse font-medium">Preparing training session...</span>
@@ -32,7 +32,7 @@ export function ExerciseListContent({
         if (isError) {
             return (
                 <>
-                    <PageHeader title="Error" backHref={`/groups/${groupId}`} />
+                    <PageHeader title="Error" backHref={`/programmes/${programmeId}`} />
                     <EmptyState
                         icon={Activity}
                         title="Something went wrong"
@@ -48,29 +48,26 @@ export function ExerciseListContent({
 
     const logsByEwm: Record<string, { id: string; weight: number | null; reps: number; set_order_index: number }[]> = {};
     if (session) {
-        session.exerciseLogs.forEach((log) => {
-            if (log.exercise_with_metadata_id) {
-                if (!logsByEwm[log.exercise_with_metadata_id]) {
-                    logsByEwm[log.exercise_with_metadata_id] = [];
+        session.sessionExerciseLogs.forEach((sel) => {
+            if (sel.exercise_with_metadata_id && sel.exerciseLog) {
+                if (!logsByEwm[sel.exercise_with_metadata_id]) {
+                    logsByEwm[sel.exercise_with_metadata_id] = [];
                 }
-                logsByEwm[log.exercise_with_metadata_id].push({
-                    id: log.id,
-                    weight: log.weight,
-                    reps: log.reps,
-                    set_order_index: log.set_order_index,
-                });
+                logsByEwm[sel.exercise_with_metadata_id].push(sel.exerciseLog);
             }
         });
+        // Sort sets by order index
+        Object.values(logsByEwm).forEach(sets => sets.sort((a, b) => a.set_order_index - b.set_order_index));
     }
 
     return (
         <>
             <PageHeader
                 title={workout.name}
-                backHref={`/groups/${groupId}`}
+                backHref={`/programmes/${programmeId}`}
                 action={
                     <AddExerciseTrigger
-                        groupId={groupId}
+                        programmeId={programmeId}
                         workoutId={workoutId}
                         variant="icon"
                     />
@@ -85,7 +82,7 @@ export function ExerciseListContent({
                         description="Add exercises to this workout to get started"
                         action={
                             <AddExerciseTrigger
-                                groupId={groupId}
+                                programmeId={programmeId}
                                 workoutId={workoutId}
                                 variant="button"
                             />
@@ -101,7 +98,7 @@ export function ExerciseListContent({
                             >
                                 <ExerciseCard
                                     workoutId={workoutId}
-                                    groupId={groupId}
+                                    programmeId={programmeId}
                                     ewmId={ewm.id}
                                     exerciseId={ewm.exercise_id}
                                     name={ewm.exercise.name}

@@ -30,8 +30,8 @@ interface AddExerciseToWorkoutData {
     tempo: string;
 }
 
-export async function addExerciseToWorkout(groupId: string, workoutId: string, data: AddExerciseToWorkoutData) {
-    const res = await fetch(`/api/groups/${groupId}/workouts/${workoutId}/exercises`, {
+export async function addExerciseToWorkout(programmeId: string, workoutId: string, data: AddExerciseToWorkoutData) {
+    const res = await fetch(`/api/programmes/${programmeId}/workouts/${workoutId}/exercises`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -57,13 +57,13 @@ export interface EditExerciseMetadataData {
 }
 
 export async function editExerciseMetadata(
-    groupId: string,
+    programmeId: string,
     workoutId: string,
     metadataId: string,
     data: EditExerciseMetadataData
 ) {
     const res = await fetch(
-        `/api/groups/${groupId}/workouts/${workoutId}/exercises/${metadataId}`,
+        `/api/programmes/${programmeId}/workouts/${workoutId}/exercises/${metadataId}`,
         {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },

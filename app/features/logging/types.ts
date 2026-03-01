@@ -1,9 +1,13 @@
-export interface ExerciseLogWithRelations {
+export interface SessionExerciseLogWithRelations {
     id: string;
-    weight: number | null;
-    reps: number;
-    set_order_index: number;
-    exercise: { id: string; name: string; muscle_group: string } | null;
+    exercise_with_metadata_id: string | null;
+    exerciseLog: {
+        id: string;
+        weight: number | null;
+        reps: number;
+        set_order_index: number;
+        exercise: { id: string; name: string; muscle_group: string } | null;
+    } | null;
     exerciseWithMetadata: {
         exercise: { id: string; name: string; muscle_group: string };
     } | null;
@@ -18,7 +22,7 @@ export interface SessionWithLogs {
         name: string;
         programme: { name: string };
     } | null;
-    exerciseLogs: ExerciseLogWithRelations[];
+    sessionExerciseLogs: SessionExerciseLogWithRelations[];
 }
 
 export interface GroupedSession {

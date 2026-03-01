@@ -68,13 +68,18 @@ export async function GET(
             },
             select: {
                 id: true,
-                exerciseLogs: {
+                sessionExerciseLogs: {
                     select: {
                         id: true,
-                        weight: true,
-                        reps: true,
                         exercise_with_metadata_id: true,
-                        set_order_index: true,
+                        exerciseLog: {
+                            select: {
+                                id: true,
+                                weight: true,
+                                reps: true,
+                                set_order_index: true,
+                            },
+                        },
                     },
                 },
             },
@@ -84,12 +89,12 @@ export async function GET(
 
         await Promise.all(
             workout.exercisesWithMetadata.map(async (ewm) => {
-                const lastSessionLog = await prisma.exerciseLog.findFirst({
+                const lastSessionLog = await prisma.sessionExerciseLog.findFirst({
                     where: {
                         user_id: userId,
                         OR: [
-                            { exercise_id: ewm.exercise_id },
-                            { exerciseWithMetadata: { exercise_id: ewm.exercise_id } }
+                            { exerciseLog: { exerciseId: ewm.exercise_id } },
+                            { exercise_with_metadata_id: ewm.id }
                         ],
                         workoutSession: {
                             date: { lt: today }
@@ -106,25 +111,32 @@ export async function GET(
                 });
 
                 if (lastSessionLog?.workout_session_id) {
-                    const logs = await prisma.exerciseLog.findMany({
+                    const sessionLogs = await prisma.sessionExerciseLog.findMany({
                         where: {
                             workout_session_id: lastSessionLog.workout_session_id,
                             user_id: userId,
                             OR: [
-                                { exercise_id: ewm.exercise_id },
-                                { exerciseWithMetadata: { exercise_id: ewm.exercise_id } }
+                                { exerciseLog: { exerciseId: ewm.exercise_id } },
+                                { exercise_with_metadata_id: ewm.id }
                             ],
                         },
-                        select: {
-                            id: true,
-                            weight: true,
-                            reps: true,
-                            set_order_index: true,
-                        },
-                        orderBy: {
-                            set_order_index: "asc"
+                        include: {
+                            exerciseLog: {
+                                select: {
+                                    id: true,
+                                    weight: true,
+                                    reps: true,
+                                    set_order_index: true,
+                                }
+                            }
                         }
                     });
+
+                    const logs = sessionLogs
+                        .map(sl => sl.exerciseLog)
+                        .filter((log): log is NonNullable<typeof log> => log !== null)
+                        .sort((a, b) => a.set_order_index - b.set_order_index);
+
                     previousLogsByExercise[ewm.exercise_id] = logs;
                 }
             })

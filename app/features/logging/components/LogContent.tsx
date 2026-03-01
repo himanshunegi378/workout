@@ -5,7 +5,7 @@ import { EmptyState } from "@/app/components/ui";
 import { SessionCard } from "./ui/SessionCard";
 import { useInfiniteSessions } from "../api/query-hooks/use-sessions";
 import { QuickLogActions } from "./ui/QuickLogActions";
-import type { ExerciseLogWithRelations, SessionWithLogs } from "../types";
+import type { SessionWithLogs } from "../types";
 
 export function LogContent() {
     const {
@@ -82,7 +82,25 @@ export function LogContent() {
                         </div>
 
                         {daySessions.map((session) => {
-                            const exerciseGroups = groupLogsByExercise(session.exerciseLogs);
+                            const groupsMap = new Map<string, {
+                                exercise: { id: string; name: string; muscle_group: string };
+                                sets: { id: string; weight: number | null; reps: number; set_order_index: number }[];
+                            }>();
+
+                            for (const sel of session.sessionExerciseLogs) {
+                                const exercise = sel.exerciseWithMetadata?.exercise ?? sel.exerciseLog?.exercise;
+                                if (!exercise || !sel.exerciseLog) continue;
+
+                                if (!groupsMap.has(exercise.id)) {
+                                    groupsMap.set(exercise.id, { exercise, sets: [] });
+                                }
+                                groupsMap.get(exercise.id)!.sets.push(sel.exerciseLog);
+                            }
+
+                            const exerciseGroups = Array.from(groupsMap.values()).map(group => ({
+                                ...group,
+                                sets: group.sets.sort((a, b) => a.set_order_index - b.set_order_index)
+                            }));
 
                             return (
                                 <SessionCard
@@ -126,26 +144,4 @@ export function LogContent() {
 
 // ── Helpers ──
 
-export type { GroupedSession, SessionWithLogs, ExerciseLogWithRelations } from "../types";
-
-function groupLogsByExercise(logs: ExerciseLogWithRelations[]) {
-    const map = new Map<
-        string,
-        {
-            exercise: { id: string; name: string; muscle_group: string };
-            sets: ExerciseLogWithRelations[];
-        }
-    >();
-
-    for (const log of logs) {
-        const exercise = log.exerciseWithMetadata?.exercise ?? log.exercise;
-        if (!exercise) continue;
-
-        if (!map.has(exercise.id)) {
-            map.set(exercise.id, { exercise, sets: [] });
-        }
-        map.get(exercise.id)!.sets.push(log);
-    }
-
-    return Array.from(map.values());
-}
+export type { GroupedSession, SessionWithLogs, SessionExerciseLogWithRelations } from "../types";

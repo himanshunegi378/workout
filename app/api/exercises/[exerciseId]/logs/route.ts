@@ -16,35 +16,42 @@ export async function GET(
 
         const logs = await prisma.exerciseLog.findMany({
             where: {
+                user_id: session.user.id,
                 OR: [
-                    { exercise_id: exerciseId },
-                    { exerciseWithMetadata: { exercise_id: exerciseId } }
+                    { exerciseId: exerciseId },
+                    {
+                        sessionExerciseLog: {
+                            exerciseWithMetadata: {
+                                exercise_id: exerciseId
+                            }
+                        }
+                    }
                 ],
-                workoutSession: {
-                    user_id: session.user.id,
-                },
             },
             orderBy: [
-                { workoutSession: { date: "desc" } },
+                { sessionExerciseLog: { workoutSession: { date: "desc" } } },
                 { set_order_index: "asc" },
             ],
             include: {
-                workoutSession: {
-                    select: {
-                        date: true,
-                        start_time: true,
-                    },
-                },
-                exerciseWithMetadata: {
-                    select: {
-                        reps_min: true,
-                        reps_max: true,
-                        sets_min: true,
-                        sets_max: true,
-
-                        tempo: true,
-                        rest_min: true,
-                        rest_max: true,
+                sessionExerciseLog: {
+                    include: {
+                        workoutSession: {
+                            select: {
+                                date: true,
+                                start_time: true,
+                            },
+                        },
+                        exerciseWithMetadata: {
+                            select: {
+                                reps_min: true,
+                                reps_max: true,
+                                sets_min: true,
+                                sets_max: true,
+                                tempo: true,
+                                rest_min: true,
+                                rest_max: true,
+                            },
+                        },
                     },
                 },
             },

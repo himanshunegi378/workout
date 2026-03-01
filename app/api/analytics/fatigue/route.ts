@@ -42,7 +42,13 @@ export async function GET(request: Request) {
                 },
                 OR: [
                     { exercise: { muscle_group: { not: "Cardio" } } },
-                    { exerciseWithMetadata: { exercise: { muscle_group: { not: "Cardio" } } } }
+                    {
+                        sessionExerciseLog: {
+                            exerciseWithMetadata: {
+                                exercise: { muscle_group: { not: "Cardio" } }
+                            }
+                        }
+                    }
                 ]
             },
             select: {

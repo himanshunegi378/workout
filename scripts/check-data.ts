@@ -17,9 +17,9 @@ async function checkData() {
 
         // Check if logs are linked
         const logsWithJunction = await (prisma as any).exerciseLog.count({
-            where: { session_exercise_log_id: { not: "" } }
+            where: { sessionExerciseLog: { isNot: null } }
         });
-        console.log(`Logs with Junction ID: ${logsWithJunction}`);
+        console.log(`Logs with Junction: ${logsWithJunction}`);
 
         // Try to query raw to see if old columns exist
         try {
@@ -37,7 +37,7 @@ async function checkData() {
         const sampleJunctions = await (prisma as any).sessionExerciseLog.findMany({
             take: 3,
             include: {
-                exerciseLogs: true,
+                exerciseLog: true,
                 workoutSession: {
                     select: { id: true, date: true }
                 }

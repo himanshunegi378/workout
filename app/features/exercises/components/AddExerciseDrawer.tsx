@@ -10,11 +10,11 @@ import { ExerciseSelectDrawer } from "./ExerciseSelectDrawer";
 interface AddExerciseDrawerProps {
     isOpen: boolean;
     onClose: () => void;
-    groupId: string;
+    programmeId: string;
     workoutId: string;
 }
 
-export function AddExerciseDrawer({ isOpen, onClose, groupId, workoutId }: AddExerciseDrawerProps) {
+export function AddExerciseDrawer({ isOpen, onClose, programmeId, workoutId }: AddExerciseDrawerProps) {
     const { data: exercises = [] } = useExercises();
 
     const [exerciseId, setExerciseId] = useState("");
@@ -36,7 +36,7 @@ export function AddExerciseDrawer({ isOpen, onClose, groupId, workoutId }: AddEx
 
         addExercise(
             {
-                groupId,
+                programmeId,
                 workoutId,
                 data: {
                     exercise_id: exerciseId,

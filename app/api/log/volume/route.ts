@@ -19,14 +19,18 @@ export async function GET() {
                         name: true,
                     },
                 },
-                exerciseLogs: {
+                sessionExerciseLogs: {
                     select: {
-                        weight: true,
-                        reps: true,
-                        exercise: {
+                        exerciseLog: {
                             select: {
-                                name: true,
-                                muscle_group: true,
+                                weight: true,
+                                reps: true,
+                                exercise: {
+                                    select: {
+                                        name: true,
+                                        muscle_group: true,
+                                    },
+                                },
                             },
                         },
                         exerciseWithMetadata: {
@@ -61,16 +65,19 @@ export async function GET() {
             const workoutName = session.workout?.name || "Ad-hoc Session";
             const dateStr = session.date.toISOString().split("T")[0];
 
-            for (const log of session.exerciseLogs) {
+            for (const sel of session.sessionExerciseLogs) {
+                const muscleGroup = sel.exerciseLog?.exercise?.muscle_group || sel.exerciseWithMetadata?.exercise.muscle_group;
+                if (!muscleGroup) continue;
+
+                const exerciseName = sel.exerciseLog?.exercise?.name || sel.exerciseWithMetadata?.exercise.name || "Unknown Exercise";
+                const key = `${dateStr}-${workoutId}-${muscleGroup}`;
+
+                const log = sel.exerciseLog;
+                if (!log) continue;
+
                 const weight = log.weight ?? 0;
                 const volume = weight * log.reps;
                 if (volume === 0) continue;
-
-                const muscleGroup = log.exercise?.muscle_group || log.exerciseWithMetadata?.exercise.muscle_group;
-                if (!muscleGroup) continue;
-
-                const exerciseName = log.exercise?.name || log.exerciseWithMetadata?.exercise.name || "Unknown Exercise";
-                const key = `${dateStr}-${workoutId}-${muscleGroup}`;
 
                 if (!dataPointsMap.has(key)) {
                     dataPointsMap.set(key, {

@@ -29,16 +29,20 @@ export async function GET(
         // Find the absolute latest log for this exercise across all sessions
         const latestLog = await prisma.exerciseLog.findFirst({
             where: {
+                user_id: userId,
                 OR: [
-                    { exercise_id: exerciseId },
-                    { exerciseWithMetadata: { exercise_id: exerciseId } }
+                    { exerciseId: exerciseId },
+                    {
+                        sessionExerciseLog: {
+                            exerciseWithMetadata: {
+                                exercise_id: exerciseId
+                            }
+                        }
+                    }
                 ],
-                workoutSession: {
-                    user_id: userId,
-                },
             },
             orderBy: {
-                id: "desc", // Sort by newest
+                date: "desc",
             },
             select: {
                 weight: true,

@@ -3,13 +3,13 @@ import { editExerciseMetadata, EditExerciseMetadataData } from "../mutations";
 import { workoutKeys } from "@/app/features/workouts/api/query-keys";
 
 interface UseEditExerciseMetadataProps {
-    groupId: string;
+    programmeId: string;
     workoutId: string;
     metadataId: string;
 }
 
 export function useEditExerciseMetadata({
-    groupId,
+    programmeId,
     workoutId,
     metadataId,
 }: UseEditExerciseMetadataProps) {
@@ -17,7 +17,7 @@ export function useEditExerciseMetadata({
 
     return useMutation({
         mutationFn: (data: EditExerciseMetadataData) =>
-            editExerciseMetadata(groupId, workoutId, metadataId, data),
+            editExerciseMetadata(programmeId, workoutId, metadataId, data),
         onSuccess: () => {
             // Invalidate the workout details to reflect the updated metadata
             queryClient.invalidateQueries({

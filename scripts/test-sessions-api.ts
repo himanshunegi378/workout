@@ -23,20 +23,19 @@ async function test() {
                     select: {
                         id: true,
                         exercise_with_metadata_id: true,
-                        exercise_id: true,
                         exerciseLog: {
                             select: {
                                 id: true,
                                 weight: true,
                                 reps: true,
                                 set_order_index: true,
-                            },
-                        },
-                        exercise: {
-                            select: {
-                                id: true,
-                                name: true,
-                                muscle_group: true,
+                                exercise: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        muscle_group: true,
+                                    },
+                                },
                             },
                         },
                         exerciseWithMetadata: {
@@ -59,7 +58,7 @@ async function test() {
         if (sessions.length > 0) {
             const s = sessions[0];
             const hasLogs = s.sessionExerciseLogs.some((sel) =>
-                sel.exerciseWithMetadata?.exercise || sel.exercise
+                sel.exerciseWithMetadata?.exercise || sel.exerciseLog?.exercise
             );
             console.log(`Session 0 has logs? ${hasLogs}`);
             if (!hasLogs) {

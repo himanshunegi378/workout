@@ -25,25 +25,29 @@ type WorkoutDetailsResponse = {
     };
     session: {
         id: string;
-        exerciseLogs: {
+        sessionExerciseLogs: {
             id: string;
-            weight: number | null;
-            reps: number;
             exercise_with_metadata_id: string | null;
-            set_order_index: number;
+            exercise_id: string | null;
+            exerciseLog: {
+                id: string;
+                weight: number | null;
+                reps: number;
+                set_order_index: number;
+            } | null;
         }[];
     } | null;
     previousLogsByExercise: Record<string, { id: string; weight: number | null; reps: number; set_order_index: number }[]>;
 };
 
-export function useWorkoutDetails(groupId: string, workoutId: string) {
+export function useWorkoutDetails(programmeId: string, workoutId: string) {
     return useQuery({
         queryKey: workoutKeys.detail(workoutId),
         queryFn: async (): Promise<WorkoutDetailsResponse> => {
-            const res = await fetch(`/api/groups/${groupId}/workouts/${workoutId}/details`);
+            const res = await fetch(`/api/programmes/${programmeId}/workouts/${workoutId}/details`);
             if (!res.ok) throw new Error("Failed to fetch workout details");
             return res.json() as Promise<WorkoutDetailsResponse>;
         },
-        enabled: !!groupId && !!workoutId,
+        enabled: !!programmeId && !!workoutId,
     });
 }
