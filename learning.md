@@ -42,3 +42,22 @@ Created `exercise_analytics_view` in test DB using correct SQL. Fixed fatigue te
 
 ### Result
 118/118 integration tests pass across 8 files (6.76s). All 18 API routes are covered.
+
+## [2026-03-01 18:52]
+
+### Context
+Setting up UI component testing with Vitest (jsdom), MSW 2.x, and React Testing Library for the workout app.
+
+### Learning
+1. **`jsdom` must be installed explicitly** — vitest's `environment: "jsdom"` requires the `jsdom` package as a peer dependency. It is NOT bundled with vitest. Run `pnpm add -D jsdom` separately.
+2. **Separate vitest config per test type** — using `vitest.ui.config.ts` (jsdom, UI tests) alongside `vitest.integration.config.ts` (node, API tests) keeps environments cleanly isolated and avoids interference.
+3. **MSW lifecycle in setup file** — `beforeAll(server.listen)`, `afterEach(server.resetHandlers)`, `afterAll(server.close)` ensures handler overrides in individual tests don't leak to other tests.
+4. **`renderWithProviders` should create fresh QueryClient per render** — using `useState` like the production `QueryProvider` is wrong for tests. Instead, instantiate `new QueryClient({ defaultOptions: { queries: { retry: false } } })` directly in the wrapper to ensure test isolation and prevent retries from masking failures.
+5. **Mock `next/link` for jsdom tests** — Next.js `Link` component depends on the router context which isn't available in jsdom. Mocking it as a plain `<a>` tag works for component-level tests.
+6. **`@testing-library/jest-dom/vitest`** — import this path (not just `@testing-library/jest-dom`) for automatic vitest `expect` extension without manual `expect.extend()`.
+
+### Action Taken
+Created `vitest.ui.config.ts`, `tests/ui/setup.ts`, MSW handlers/server, `renderWithProviders` utility, and 4 example test files.
+
+### Result
+20/20 UI tests pass across 4 files (1.75s). Setup is fully isolated from the existing 118 integration tests.
