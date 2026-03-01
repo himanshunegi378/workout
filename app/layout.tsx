@@ -6,6 +6,7 @@ import { QueryProvider } from "@/app/components/providers/QueryProvider";
 import { RestTimerProvider } from "@/app/features/workouts/contexts/RestTimerContext";
 import { RestTimerOverlay } from "@/app/features/workouts/components/ui/RestTimer";
 import { BottomDrawerProvider } from "@/app/components/ui";
+import { PWARegistration } from "@/app/components/PWARegistration";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -21,6 +22,22 @@ const jakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Workout Tracker",
   description: "Track your workout programs, exercises, and progress",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Workout Tracker",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport = {
+  themeColor: "#09090b",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
@@ -41,6 +58,7 @@ export default function RootLayout({
                   {children}
                 </BottomDrawerProvider>
                 <RestTimerOverlay />
+                <PWARegistration />
               </RestTimerProvider>
             </QueryProvider>
           </SessionProvider>

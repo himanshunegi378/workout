@@ -62,6 +62,7 @@ export function WorkoutListContent({ programmeId }: { programmeId: string }) {
                         action={
                             <Link
                                 href={`/programmes/${programmeId}/workouts/new`}
+                                prefetch={true}
                                 className="inline-flex items-center justify-center gap-2 px-5 py-3
                                          rounded-xl font-display text-sm font-semibold
                                          transition-all duration-200 active:animate-press
