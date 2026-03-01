@@ -10,7 +10,7 @@ import { ExerciseSelectDrawer } from "@/app/features/exercises/components/Exerci
 interface EditExerciseMetadataDrawerProps {
     isOpen: boolean;
     onClose: () => void;
-    groupId: string;
+    programmeId: string;
     workoutId: string;
     metadataId: string;
     exerciseName: string;
@@ -31,7 +31,7 @@ interface EditExerciseMetadataDrawerProps {
 export function EditExerciseMetadataDrawer({
     isOpen,
     onClose,
-    groupId,
+    programmeId,
     workoutId,
     metadataId,
     exerciseName,
@@ -48,7 +48,7 @@ export function EditExerciseMetadataDrawer({
     const { data: exercises = [] } = useExercises();
     const selectedExercise = exercises.find((ex: { id: string; name: string; muscle_group: string }) => ex.id === exerciseId);
     const { mutate: editMetadata, isPending } = useEditExerciseMetadata({
-        groupId,
+        programmeId,
         workoutId,
         metadataId,
     });

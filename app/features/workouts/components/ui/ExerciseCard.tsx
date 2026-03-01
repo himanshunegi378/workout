@@ -23,7 +23,7 @@ interface ExerciseLog {
 
 interface ExerciseCardProps {
     workoutId: string;
-    groupId: string;
+    programmeId: string;
     ewmId: string; // ExerciseWithMetadata ID
     exerciseId: string;
     name: string;
@@ -41,7 +41,7 @@ interface ExerciseCardProps {
 
 export function ExerciseCard({
     workoutId,
-    groupId,
+    programmeId,
     ewmId: _ewmId,
     exerciseId,
     name,
@@ -298,7 +298,7 @@ export function ExerciseCard({
             <EditExerciseMetadataDrawer
                 isOpen={isEditDrawerOpen}
                 onClose={() => setIsEditDrawerOpen(false)}
-                groupId={groupId}
+                programmeId={programmeId}
                 workoutId={workoutId}
                 metadataId={ewmId}
                 exerciseName={name}

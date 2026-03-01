@@ -6,16 +6,16 @@ import { ExerciseListContent } from "@/app/features/workouts/components/Exercise
 import { LoadingState } from "@/app/features/workouts/components/ui/LoadingState";
 
 interface PageProps {
-    params: Promise<{ groupId: string; workoutId: string }>;
+    params: Promise<{ programmeId: string; workoutId: string }>;
 }
 
 export default function ExerciseListPage({ params }: PageProps) {
-    const { groupId, workoutId } = use(params);
+    const { programmeId, workoutId } = use(params);
 
     return (
         <div className="min-h-screen pb-20">
-            <Suspense fallback={<LoadingState groupId={groupId} />}>
-                <ExerciseListContent groupId={groupId} workoutId={workoutId} />
+            <Suspense fallback={<LoadingState programmeId={programmeId} />}>
+                <ExerciseListContent programmeId={programmeId} workoutId={workoutId} />
             </Suspense>
             <BottomNav />
         </div>

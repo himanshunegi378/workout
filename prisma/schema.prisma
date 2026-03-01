@@ -39,10 +39,11 @@ model User {
   created_at    DateTime @default(now())
 
   // Relations — everything a user owns
-  programmes      Programme[]
-  exercises       Exercise[]
-  workoutSessions WorkoutSession[]
-  exerciseLogs    ExerciseLog[]
+  programmes          Programme[]
+  exercises           Exercise[]
+  workoutSessions     WorkoutSession[]
+  sessionExerciseLogs SessionExerciseLog[]
+  exerciseLogs        ExerciseLog[]
 
   @@map("users")
 }
@@ -63,6 +64,62 @@ model Exercise {
   exerciseLogs          ExerciseLog[]
 
   @@map("exercises")
+}
+
+/// A named collection / programme of workouts (e.g. "Push Pull Legs").
+model Programme {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+
+  // Owner
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  // Relations
+  workouts Workout[]
+
+  @@map("programmes")
+}
+
+/// A named workout containing an ordered list of exercises.
+model Workout {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+
+  /// Position of this workout within its parent WorkoutGroup
+  order_index Int
+
+  // Foreign key
+  programme_id String
+
+  // Relations
+  programme             Programme              @relation(fields: [programme_id], references: [id])
+  exercisesWithMetadata ExerciseWithMetadata[]
+  workoutSessions       WorkoutSession[]
+
+  @@map("workouts")
+}
+
+/// A single logged training session tied to a Workout.
+model WorkoutSession {
+  id         String    @id @default(cuid())
+  start_time DateTime?
+  end_time   DateTime?
+  notes      String?
+  date       DateTime  @default(now())
+
+  // Foreign keys
+  workout_id String?
+  user_id    String
+
+  // Relations
+  workout             Workout?             @relation(fields: [workout_id], references: [id])
+  user                User                 @relation(fields: [user_id], references: [id])
+  sessionExerciseLogs SessionExerciseLog[]
+
+  @@map("workout_sessions")
 }
 
 /// An exercise as it appears inside a specific Workout, with prescribed
@@ -96,67 +153,11 @@ model ExerciseWithMetadata {
   workout_id  String
 
   // Relations
-  exercise     Exercise      @relation(fields: [exercise_id], references: [id])
-  workout      Workout       @relation(fields: [workout_id], references: [id])
-  exerciseLogs ExerciseLog[]
+  exercise            Exercise             @relation(fields: [exercise_id], references: [id])
+  workout             Workout              @relation(fields: [workout_id], references: [id])
+  sessionExerciseLogs SessionExerciseLog[]
 
   @@map("exercise_with_metadata")
-}
-
-/// A named workout containing an ordered list of exercises.
-model Workout {
-  id          String  @id @default(cuid())
-  name        String
-  description String?
-
-  /// Position of this workout within its parent WorkoutGroup
-  order_index Int
-
-  // Foreign key
-  programme_id String
-
-  // Relations
-  programme             Programme              @relation(fields: [programme_id], references: [id])
-  exercisesWithMetadata ExerciseWithMetadata[]
-  workoutSessions       WorkoutSession[]
-
-  @@map("workouts")
-}
-
-/// A named collection / programme of workouts (e.g. "Push Pull Legs").
-model Programme {
-  id          String  @id @default(cuid())
-  name        String
-  description String?
-
-  // Owner
-  user_id String
-  user    User   @relation(fields: [user_id], references: [id])
-
-  // Relations
-  workouts Workout[]
-
-  @@map("programmes")
-}
-
-/// A single logged training session tied to a Workout.
-model WorkoutSession {
-  id         String    @id @default(cuid())
-  start_time DateTime?
-  end_time   DateTime?
-  notes      String?
-  date       DateTime  @default(now())
-
-  // Foreign keys
-  workout_id String?
-  user_id    String
-
-  // Relations
-  workout      Workout?      @relation(fields: [workout_id], references: [id])
-  user         User          @relation(fields: [user_id], references: [id])
-  exerciseLogs ExerciseLog[]
-
-  @@map("workout_sessions")
 }
 
 /// A single logged set within a WorkoutSession.
@@ -168,20 +169,36 @@ model ExerciseLog {
   date            DateTime @default(now())
 
   // Foreign keys
-  /// Populated for planned exercises (links back to the prescribed metadata).
+  user_id String
+
+  // Relations
+  sessionExerciseLog SessionExerciseLog?
+  user               User                @relation(fields: [user_id], references: [id])
+  exercise           Exercise?           @relation(fields: [exerciseId], references: [id])
+  exerciseId         String?
+
+  @@map("exercise_logs")
+}
+
+/// A junction model representing a single exercise being performed within a session.
+/// Acts as a parent/container for all sets (ExerciseLog) of that exercise.
+model SessionExerciseLog {
+  id    String  @id @default(cuid())
+  notes String?
+
+  // Foreign keys
+  workout_session_id        String
   exercise_with_metadata_id String?
-  /// Populated for ad-hoc exercises added on the fly (no preset metadata).
-  exercise_id               String?
-  workout_session_id        String?
   user_id                   String
 
   // Relations
+  workoutSession       WorkoutSession        @relation(fields: [workout_session_id], references: [id], onDelete: Cascade)
   exerciseWithMetadata ExerciseWithMetadata? @relation(fields: [exercise_with_metadata_id], references: [id])
-  exercise             Exercise?             @relation(fields: [exercise_id], references: [id])
-  workoutSession       WorkoutSession?       @relation(fields: [workout_session_id], references: [id])
   user                 User                  @relation(fields: [user_id], references: [id])
+  exercise_log_id      String?               @unique
+  exerciseLog          ExerciseLog?          @relation(fields: [exercise_log_id], references: [id], onDelete: Cascade)
 
-  @@map("exercise_logs")
+  @@map("session_exercise_logs")
 }
 
 // ---------------------------------------------------------------------------
