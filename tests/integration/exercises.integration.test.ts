@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { GET, POST } from "@/app/api/exercises/route";
 import prisma from "@/lib/prisma";
 import { authenticateAs, unauthenticate } from "@/tests/helpers/auth-utils";
-import { createMockRequest, jsonReq } from "@/tests/helpers/request-utils";
-import { seedSession, seedUser, TEST_USER_DATA, OTHER_USER_DATA } from "@/tests/helpers/seed-utils";
+import { jsonReq } from "@/tests/helpers/request-utils";
+import { seedUser, TEST_USER_DATA, OTHER_USER_DATA } from "@/tests/helpers/seed-utils";
 
 // ---------------------------------------------------------------------------
 // Integration Tests
@@ -174,7 +174,6 @@ describe("Exercises API — Integration", () => {
                 ],
             });
 
-            const request = createMockRequest("http://localhost:3000/api/exercises");
             const response = await GET();
             const data = await response.json();
 

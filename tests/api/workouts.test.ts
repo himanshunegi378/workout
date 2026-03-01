@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { expect, it, describe, vi } from "vitest";
 import { GET as getWorkouts } from "@/app/api/workouts/route";
 import prisma from "@/lib/prisma";
 import { getUserId } from "@/lib/auth-helpers";
-import { createMockRequest } from "@/tests/helpers/request-utils";
 
 vi.mock("@/lib/auth-helpers", async (importOriginal) => {
     const actual = await importOriginal<any>();

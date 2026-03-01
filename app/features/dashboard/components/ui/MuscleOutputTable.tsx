@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { TrendingUp, TrendingDown, Minus, Activity, Loader2, Zap } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, Activity, Loader2 } from 'lucide-react';
 import { BottomDrawer, muscleColorMap } from "@/app/components/ui";
 import { useMusclePerformanceData } from "../../api/query-hooks/use-muscle-performance-data";
 import { MusclePerformanceData, ExercisePerformanceData, TrendStatus } from "../../types";

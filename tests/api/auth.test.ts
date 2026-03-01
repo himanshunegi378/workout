@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { expect, it, describe, vi } from "vitest";
 import { POST as signup } from "@/app/api/auth/signup/route";
 import prisma from "@/lib/prisma";
-import bcrypt from "bcryptjs";
 import { createMockRequest } from "@/tests/helpers/request-utils";
 
 vi.mock("bcryptjs", () => ({

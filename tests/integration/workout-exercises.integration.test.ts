@@ -116,7 +116,7 @@ describe("POST exercise to workout — Integration", () => {
     });
 
     it("should add an exercise to workout with auto order_index and return 201", async () => {
-        const { programme, workout, exercise } = await seedProgramChain(userId);
+        const { programme, workout } = await seedProgramChain(userId);
         // One EWM already exists → next should be order_index 1
         const newEx = await prisma.exercise.create({
             data: { name: "Row", muscle_group: MuscleGroup.Back, user_id: userId },

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { expect, it, describe, vi } from "vitest";
 import { GET as getExercises, POST as createExercise } from "@/app/api/exercises/route";
 import { GET as getLastLog } from "@/app/api/exercises/[exerciseId]/last-log/route";
@@ -13,8 +14,8 @@ describe("Exercises API", () => {
 
     describe("GET /api/exercises", () => {
         it("should return 401 if not authenticated", async () => {
-            vi.mocked(auth).mockResolvedValue(null);
-            const request = createMockRequest("http://localhost:3000/api/exercises");
+            vi.mocked(auth).mockResolvedValue(null as any);
+            createMockRequest("http://localhost:3000/api/exercises");
             const response = await getExercises();
             expect(response.status).toBe(401);
         });

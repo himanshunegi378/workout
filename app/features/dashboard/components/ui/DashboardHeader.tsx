@@ -7,6 +7,7 @@ export function DashboardHeader() {
     const [dateString, setDateString] = useState<string | null>(null);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setDateString(new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }));
     }, []);
 

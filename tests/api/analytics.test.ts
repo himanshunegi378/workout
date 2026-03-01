@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { expect, it, describe, vi } from "vitest";
 import { GET as getFatigue } from "@/app/api/analytics/fatigue/route";
 import { POST as queryAnalytics } from "@/app/api/analytics/query/route";

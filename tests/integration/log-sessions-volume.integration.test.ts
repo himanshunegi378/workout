@@ -5,7 +5,6 @@ import prisma from "@/lib/prisma";
 import { authenticateAs, unauthenticate } from "@/tests/helpers/auth-utils";
 import { createMockRequest } from "@/tests/helpers/request-utils";
 import { seedUser, seedSession } from "@/tests/helpers/seed-utils";
-import { MuscleGroup } from "@/app/generated/prisma/client";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -135,7 +134,6 @@ describe("GET /api/log/volume — Integration", () => {
 
     it("should return 401 when not authenticated", async () => {
         unauthenticate();
-        const req = createMockRequest("http://localhost:3000/api/log/volume");
         expect((await getVolume()).status).toBe(401);
     });
 

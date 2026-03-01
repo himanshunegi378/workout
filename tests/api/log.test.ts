@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { expect, it, describe, vi } from "vitest";
 import { GET as getSessions } from "@/app/api/log/sessions/route";
 import { POST as logSet, DELETE as deleteSet, PATCH as updateSet } from "@/app/api/log/set/route";

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
     BarChart,
     Bar,
@@ -19,15 +19,11 @@ export function SessionVolumeChart() {
     const { data: workouts, isLoading: loadingWorkouts } = useWorkouts();
     const [selectedWorkoutId, setSelectedWorkoutId] = useState<string>("");
 
-    // Auto-select the first workout when data loads if none selected
-    useEffect(() => {
-        if (workouts && workouts.length > 0 && !selectedWorkoutId) {
-            setSelectedWorkoutId(workouts[0].id);
-        }
-    }, [workouts, selectedWorkoutId]);
+    // Use derived state for selection: manual selection takes precedence, otherwise first workout
+    const effectiveWorkoutId = selectedWorkoutId || workouts?.[0]?.id || "";
 
     const { data: sessionData, isLoading: loadingVolume, isFetching } = useSessionVolume(
-        selectedWorkoutId || undefined,
+        effectiveWorkoutId || undefined,
         15 // Fetch last 15 sessions
     );
 
@@ -76,7 +72,7 @@ export function SessionVolumeChart() {
                     ) : (
                         <div className="relative w-full sm:w-48">
                             <select
-                                value={selectedWorkoutId}
+                                value={effectiveWorkoutId}
                                 onChange={handleWorkoutChange}
                                 className="w-full appearance-none bg-background border border-border text-foreground text-sm rounded-xl px-4 py-2.5 pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                             >

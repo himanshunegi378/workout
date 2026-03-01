@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { expect, it, describe, vi } from "vitest";
 import { GET as getProgrammes, POST as createProgramme } from "@/app/api/programmes/route";
 import { GET as getProgramme } from "@/app/api/programmes/[programmeId]/route";

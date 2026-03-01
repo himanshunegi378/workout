@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { expect, it, describe, vi } from "vitest";
 import { POST } from "@/app/api/exercises/route";
 import prisma from "@/lib/prisma";
@@ -10,7 +11,7 @@ describe("Diagnostic API Test", () => {
         vi.mocked(auth).mockResolvedValue({
             user: { id: "test-user-id" },
             expires: "any",
-        });
+        } as any);
 
         // Mock Prisma create
         const mockExercise = {
