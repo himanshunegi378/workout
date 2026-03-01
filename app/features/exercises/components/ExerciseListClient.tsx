@@ -87,7 +87,7 @@ export function ExerciseListClient({ exercises }: ExerciseListClientProps) {
                         <div
                             key={ex.id}
                             className="animate-slide-up"
-                            style={{ animationDelay: `${i * 40}ms` }}
+                            style={{ animationDelay: `${(i < 10 ? i : 10) * 40}ms` }}
                         >
                             <ExerciseListCard
                                 name={ex.name}
