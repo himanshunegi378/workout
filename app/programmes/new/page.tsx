@@ -1,3 +1,4 @@
+"use client";
 import { PageHeader, BottomNav } from "@/app/components/ui";
 import { AddProgrammeForm } from "@/app/features/programs/components/AddProgrammeForm";
 
