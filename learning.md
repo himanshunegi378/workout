@@ -61,3 +61,21 @@ Created `vitest.ui.config.ts`, `tests/ui/setup.ts`, MSW handlers/server, `render
 
 ### Result
 20/20 UI tests pass across 4 files (1.75s). Setup is fully isolated from the existing 118 integration tests.
+
+## [2026-03-01 20:25]
+
+### Context
+Implementing a reliable background rest timer with performance-based accuracy, persistence, and notifications using `react-timer-hook`.
+
+### Learning
+1. **`react-timer-hook` and Timestamp-based Reliability:** When building timers that must survive background throttling or sleep mode, using a library like `react-timer-hook` that accepts an `expiryTimestamp` (Date object) is superior to `setInterval` tick-counting. It naturally synchronizes with the system clock.
+2. **Hydration State Recovery Pattern:** In Next.js/React, when restoring state from `localStorage` (like an active timer), the hydration must happen in a `useEffect` to avoid SSR/CSR mismatch. Grouping individual state variables into a single `state` object reduces cascading renders and satisfies strict "setState in effect" lint rules.
+3. **Visibility Change Synchronization:** Passive timers (even timestamp-based ones) may not trigger completion callbacks (like `onExpire`) if the tab is inactive when the time elapses. A `visibilitychange` listener that manually checks `expiry < now` is essential for immediate "catch-up" when the user returns.
+4. **Mocking System Time in Vitest:** `vi.setSystemTime` is powerful for testing background jumps, but it does NOT automatically trigger `setInterval` callbacks. To let hooks like `useTimer` react to a time jump in a fake-timer environment, `vi.advanceTimersByTime(100)` is required to force the internal `react-timer-hook` effect to run.
+5. **System Notifications in jsdom:** `Notification` is not available in the default `jsdom` environment. It must be manually mocked on `global.Notification` with `requestPermission` and `permission` properties for reliable testing.
+
+### Action Taken
+Implemented `RestTimerProvider` using `react-timer-hook`, added `localStorage` persistence, and 100% test coverage for BC/AC requirements.
+
+### Result
+6/6 timer tests pass, satisfying all background accuracy and edge-case requirements.

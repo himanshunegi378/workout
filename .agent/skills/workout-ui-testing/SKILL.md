@@ -66,10 +66,12 @@ app/components/ui/
 
 ## Workflow: Adding MSW coverage for a new API domain
 
-1. **Create a resolver** at `app/features/<domain>/__tests__/mocks/<domain>.resolver.ts`.
+1. **Analyze API endpoint payload and response** to understand the exact request shape, response structures, and status codes required for accurate mocking.
+
+2. **Create a resolver** at `app/features/<domain>/__tests__/mocks/<domain>.resolver.ts`.
    See **[references/resolver-pattern.md](references/resolver-pattern.md)** for the exact template.
 
-2. **Create a feature handlers file** at `app/features/<domain>/__tests__/mocks/handlers.ts`:
+3. **Create a feature handlers file** at `app/features/<domain>/__tests__/mocks/handlers.ts`:
    ```ts
    import { http } from "msw";
    import { programme } from "./programme.resolver";
@@ -80,7 +82,7 @@ app/components/ui/
    ];
    ```
 
-3. **Register in the global aggregator** `tests/ui/mocks/handlers.ts`:
+4. **Register in the global aggregator** `tests/ui/mocks/handlers.ts`:
    ```ts
    import { programmeHandlers } from "@/app/features/programs/__tests__/mocks/handlers";
 
@@ -90,7 +92,7 @@ app/components/ui/
    ];
    ```
 
-4. **Override per-test** inside any test file:
+5. **Override per-test** inside any test file:
    ```ts
    import { server } from "@/tests/ui/mocks/server";
    import { exercise } from "./mocks/exercise.resolver"; // relative — same __tests__ folder

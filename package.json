@@ -31,6 +31,7 @@
     "pg": "^8.18.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-timer-hook": "^4.0.5",
     "recharts": "^3.7.0",
     "zod": "^4.3.6"
   },
