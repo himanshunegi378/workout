@@ -53,6 +53,7 @@ export async function GET(request: Request) {
                                 weight: true,
                                 reps: true,
                                 set_order_index: true,
+                                pr_type: true,
                                 exercise: {
                                     select: {
                                         id: true,

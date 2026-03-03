@@ -1,6 +1,6 @@
 'use client'
 
-import { Check, Trash2 } from "lucide-react";
+import { Check, Trash2, Trophy } from "lucide-react";
 import { muscleColorMap } from "@/app/components/ui";
 import { useDeleteLogSet } from "../../api/mutation-hooks/use-delete-log-set";
 import { useState } from "react";
@@ -10,9 +10,10 @@ interface SetRowProps {
     index: number;
     weight: number | null;
     reps: number;
+    prType?: string | null;
 }
 
-export function SetRow({ id, index, weight, reps }: SetRowProps) {
+export function SetRow({ id, index, weight, reps, prType }: SetRowProps) {
     const { mutate: deleteSet, isPending } = useDeleteLogSet();
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -27,8 +28,17 @@ export function SetRow({ id, index, weight, reps }: SetRowProps) {
 
     return (
         <div className={`flex items-center gap-3 group transition-opacity ${isDeleting || isPending ? "opacity-50 pointer-events-none" : ""}`}>
-            <span className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-semibold text-muted-foreground">
-                {index}
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold
+                ${prType
+                    ? "bg-accent/20 text-accent ring-1 ring-accent/30"
+                    : "bg-muted text-muted-foreground"
+                }`}
+            >
+                {prType ? (
+                    <Trophy className="w-3.5 h-3.5 stroke-[2.5]" />
+                ) : (
+                    index
+                )}
             </span>
             <div className="flex-1 flex items-center gap-2">
                 <span className="font-display text-sm font-semibold text-foreground">
@@ -62,7 +72,7 @@ interface ExerciseLogGroupProps {
     exerciseId: string;
     exerciseName: string;
     muscleGroup: string;
-    sets: { id: string; weight: number | null; reps: number }[];
+    sets: { id: string; weight: number | null; reps: number; pr_type?: string | null }[];
 }
 
 export function ExerciseLogGroup({ exerciseId, exerciseName, muscleGroup, sets }: ExerciseLogGroupProps) {
@@ -88,6 +98,7 @@ export function ExerciseLogGroup({ exerciseId, exerciseName, muscleGroup, sets }
                         index={si + 1}
                         weight={log.weight}
                         reps={log.reps}
+                        prType={log.pr_type}
                     />
                 ))}
             </div>

@@ -48,7 +48,7 @@ async function main() {
   LEFT JOIN programmes p ON w.programme_id = p.id
   LEFT JOIN exercise_with_metadata em ON sel.exercise_with_metadata_id = em.id
   LEFT JOIN exercises e_planned ON em.exercise_id = e_planned.id
-  LEFT JOIN exercises e_adhoc ON sel.exercise_id = e_adhoc.id;
+  LEFT JOIN exercises e_adhoc ON el."exerciseId" = e_adhoc.id;
   `);
 
   console.log("exercise_analytics_view created successfully.");

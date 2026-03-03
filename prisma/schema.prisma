@@ -167,6 +167,7 @@ model ExerciseLog {
   reps            Int
   set_order_index Int
   date            DateTime @default(now())
+  pr_type         String?
 
   // Foreign keys
   user_id String

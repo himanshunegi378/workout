@@ -2,7 +2,7 @@
 
 import { BottomDrawer } from "@/app/components/ui";
 import { useExerciseHistory } from "../api/query-hooks/use-exercise-history";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, Trophy } from "lucide-react";
 import { Portal } from "@/app/components/ui/Portal";
 import { useState } from "react";
 import { StandaloneLogDrawer } from "@/app/features/logging/components/ui/StandaloneLogDrawer";
@@ -100,8 +100,16 @@ export function ExerciseHistoryDrawer({
                                             {sessionLogs.map((log) => (
                                                 <div key={log.id} className="flex items-center justify-between text-base py-2 border-b border-border/30 last:border-0 last:pb-0">
                                                     <div className="flex items-center gap-4">
-                                                        <span className="w-6 h-6 rounded flex items-center justify-center bg-muted text-xs font-bold text-muted-foreground">
-                                                            {log.set_order_index}
+                                                        <span className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold
+                                                            ${log.pr_type
+                                                                ? "bg-accent/20 text-accent ring-1 ring-accent/30"
+                                                                : "bg-muted text-muted-foreground"}`}
+                                                        >
+                                                            {log.pr_type ? (
+                                                                <Trophy className="w-3.5 h-3.5 stroke-[2.5]" />
+                                                            ) : (
+                                                                log.set_order_index
+                                                            )}
                                                         </span>
                                                         <div className="flex items-baseline gap-1.5">
                                                             <span className="font-display font-bold text-foreground">

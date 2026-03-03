@@ -9,6 +9,7 @@ interface ExerciseLogWithHistory {
         date: string;
         start_time: string | null;
     };
+    pr_type?: string | null;
     exerciseWithMetadata: {
         reps_min: number;
         reps_max: number;

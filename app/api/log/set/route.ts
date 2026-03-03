@@ -65,6 +65,7 @@ export async function POST(request: Request) {
                     set_order_index: setOrderIndex,
                     weight: weight ? parseFloat(weight) : null,
                     reps: parseInt(reps),
+                    pr_type: null, // Initial, will update below
                 },
             });
 
@@ -110,9 +111,17 @@ export async function POST(request: Request) {
                 bestWeight: historicalBest._max.weight ?? null,
                 bestReps: historicalBest._max.reps ?? null,
             });
+
+            // Update the log with the detected PR type
+            if (prType) {
+                await prisma.exerciseLog.update({
+                    where: { id: exerciseLog.id },
+                    data: { pr_type: prType },
+                });
+            }
         }
 
-        return NextResponse.json({ ...exerciseLog, pr: prType }, { status: 201 });
+        return NextResponse.json({ ...exerciseLog, pr_type: prType, pr: prType }, { status: 201 });
     } catch (error) {
         console.error("Failed to log set:", error);
         return NextResponse.json(

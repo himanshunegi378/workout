@@ -5,6 +5,8 @@ import { Loader2 } from "lucide-react";
 import { BottomDrawer } from "@/app/components/ui";
 import { Portal } from "@/app/components/ui/Portal";
 import { useLogSet } from "../../api/mutation-hooks/use-log-set";
+import { usePRCelebration } from "@/app/features/personal-records/PRCelebrationContext";
+import type { PRType } from "@/lib/pr-utils";
 
 interface StandaloneLogDrawerProps {
     isOpen: boolean;
@@ -17,6 +19,7 @@ export function StandaloneLogDrawer({ isOpen, onClose, exerciseId, exerciseName 
     const [weight, setWeight] = useState("");
     const [reps, setReps] = useState("");
 
+    const { celebrate } = usePRCelebration();
     const { mutate: logSet, isPending } = useLogSet();
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -30,10 +33,14 @@ export function StandaloneLogDrawer({ isOpen, onClose, exerciseId, exerciseName 
             weight: weight || "0",
             reps: reps,
         }, {
-            onSuccess: () => {
+            onSuccess: (newLog: { pr: PRType | null }) => {
                 setWeight("");
                 setReps("");
                 onClose();
+
+                if (newLog.pr) {
+                    celebrate(newLog.pr, exerciseName);
+                }
             }
         });
     };

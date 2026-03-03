@@ -79,3 +79,21 @@ Implemented `RestTimerProvider` using `react-timer-hook`, added `localStorage` p
 
 ### Result
 6/6 timer tests pass, satisfying all background accuracy and edge-case requirements.
+## [2026-03-03 16:55]
+
+### Context
+Implementing Personal Records (PRs) auto-detection and celebration for weight, reps, and estimated 1RM.
+
+### Learning
+1. **Server-side PR detection pattern:** Query `prisma.exerciseLog.aggregate({ _max: { weight, reps } })` excluding the current log ID to get historical bests, then compare using a pure utility function `detectPR()`. Returning a `pr` field in the log creation response avoids extra client-side requests and race conditions.
+2. **detectPR priority order:** `weight > reps > estimated_1rm`. Weight is a more common success metric for lifters, followed by rep endurance. Estimated 1RM (Epley) serves as a composite strength indicator when volume improves without a single PR.
+3. **Epley formula edge case:** When reps === 1, return the weight exactly. The standard formula `weight * (1 + 1/30)` overestimates a 1-rep set by ~3.3%, which is mathematically incorrect for a direct max test.
+4. **Context-based UI celebration:** `PRCelebrationContext` + `PRCelebrationOverlay` in the root layout allows any component (like `ExerciseCard` or `StandaloneLogDrawer`) to trigger an animation with `celebrate(type, name)` without prop-drilling callbacks into deep drawer hierarchies.
+5. **Auto-dismiss with `useRef` timer:** When using `setTimeout` for auto-dismissing toast-like UI, use `useRef<ReturnType<typeof setTimeout>>` to track the timer ID. This allows clearing the previous timer if a second PR is logged rapidly, preventing "ghost" dismissals that leave the UI in an inconsistent state.
+6. **No new DB model needed:** PR recognition is computed on-the-fly from existing `exercise_logs`. This follows YAGNI (You Ain't Gonna Need It) by avoiding schema complexity until long-term historical charts (Task 11) require persistent bests.
+
+### Action Taken
+Implemented `lib/pr-utils.ts` (with TDD), updated logging API route, created celebration context/components, and wired triggers into both structured and ad-hoc logging UIs.
+
+### Result
+PRs are automatically detected and celebrated with an animated overlay, enhancing user motivation across all three performance axes.
