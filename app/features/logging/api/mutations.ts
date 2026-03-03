@@ -6,6 +6,7 @@ interface LogSetData {
     setOrderIndex: number;
     weight: string;
     reps: string;
+    rpe?: string;
 }
 
 export async function logSet(data: LogSetData) {
@@ -42,7 +43,7 @@ export async function deleteLogSet(setId: string) {
     return res.json();
 }
 
-export async function updateLogSet(data: { setId: string; weight: string; reps: string }) {
+export async function updateLogSet(data: { setId: string; weight: string; reps: string; rpe?: string }) {
     const res = await fetch("/api/log/set", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },

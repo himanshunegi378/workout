@@ -19,6 +19,7 @@ export async function POST(request: Request) {
             setOrderIndex,
             weight,
             reps,
+            rpe,
         } = body;
 
         if (setOrderIndex === undefined || !reps) {
@@ -83,6 +84,7 @@ export async function POST(request: Request) {
                     set_order_index: setOrderIndex,
                     weight: weight ? parseFloat(weight) : null,
                     reps: parseInt(reps),
+                    rpe: rpe ? parseFloat(rpe) : null,
                     pr_type: null, // Initial, will update below
                 },
             });
@@ -208,7 +210,7 @@ export async function PATCH(request: Request) {
         }
 
         const body = await request.json();
-        const { setId, weight, reps } = body;
+        const { setId, weight, reps, rpe } = body;
 
         if (!setId || reps === undefined) {
             return NextResponse.json(
@@ -241,6 +243,7 @@ export async function PATCH(request: Request) {
             data: {
                 weight: weight ? parseFloat(weight) : null,
                 reps: parseInt(reps),
+                rpe: rpe ? parseFloat(rpe) : null,
             },
         });
 

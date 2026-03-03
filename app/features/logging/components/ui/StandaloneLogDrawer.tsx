@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Loader2, History, Target } from "lucide-react";
-import { BottomDrawer, NumberStepper, Button } from "@/app/components/ui";
+import { BottomDrawer, NumberStepper, Button, RPESelector } from "@/app/components/ui";
 import { Portal } from "@/app/components/ui/Portal";
 import { useLogSet } from "../../api/mutation-hooks/use-log-set";
 import { usePRCelebration } from "@/app/features/personal-records/PRCelebrationContext";
@@ -20,6 +20,7 @@ interface LastLog {
     id: string;
     weight: number | null;
     reps: number;
+    rpe: number | null;
 }
 
 export function StandaloneLogDrawer({ isOpen, onClose, exerciseId, exerciseName }: StandaloneLogDrawerProps) {
@@ -27,7 +28,7 @@ export function StandaloneLogDrawer({ isOpen, onClose, exerciseId, exerciseName 
     const { mutate: logSet, isPending } = useLogSet();
     const { data: lastLog } = useLastLog(exerciseId, isOpen);
 
-    const handleSubmit = (weight: string, reps: string) => {
+    const handleSubmit = (weight: string, reps: string, rpe: string | null) => {
         if (!reps || reps === "0") return;
 
         logSet({
@@ -35,6 +36,7 @@ export function StandaloneLogDrawer({ isOpen, onClose, exerciseId, exerciseName 
             setOrderIndex: 1,
             weight: weight || "0",
             reps: reps,
+            rpe: rpe || undefined,
         }, {
             onSuccess: (newLog: { pr: PRType | null }) => {
                 onClose();
@@ -73,18 +75,20 @@ export function StandaloneLogDrawer({ isOpen, onClose, exerciseId, exerciseName 
 
 interface LogFormProps {
     lastLog?: LastLog;
-    onSubmit: (weight: string, reps: string) => void;
+    onSubmit: (weight: string, reps: string, rpe: string | null) => void;
     isPending: boolean;
 }
 
 function LogForm({ lastLog, onSubmit, isPending }: LogFormProps) {
     const [weight, setWeight] = useState(lastLog?.weight?.toString() || "0");
     const [reps, setReps] = useState(lastLog?.reps?.toString() || "0");
+    const [rpe, setRpe] = useState<number | null>(lastLog?.rpe || null);
 
     const handleFillPrevious = () => {
         if (lastLog) {
             setWeight(lastLog.weight?.toString() || "0");
             setReps(lastLog.reps?.toString() || "0");
+            setRpe(lastLog.rpe);
         }
     };
 
@@ -132,10 +136,14 @@ function LogForm({ lastLog, onSubmit, isPending }: LogFormProps) {
                 />
             </div>
 
+            <div className="mb-8">
+                <RPESelector value={rpe} onChange={setRpe} />
+            </div>
+
             <Button
                 variant="primary"
                 className="w-full py-4 text-lg font-bold shadow-lg shadow-accent/20"
-                onClick={() => onSubmit(weight, reps)}
+                onClick={() => onSubmit(weight, reps, rpe?.toString() || null)}
                 disabled={isPending || !reps || reps === "0"}
             >
                 {isPending ? (

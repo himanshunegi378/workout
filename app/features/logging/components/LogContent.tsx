@@ -84,7 +84,7 @@ export function LogContent() {
                         {daySessions.map((session) => {
                             const groupsMap = new Map<string, {
                                 exercise: { id: string; name: string; muscle_group: string };
-                                sets: { id: string; weight: number | null; reps: number; set_order_index: number }[];
+                                sets: { id: string; weight: number | null; reps: number; rpe: number | null; set_order_index: number }[];
                             }>();
 
                             for (const sel of session.sessionExerciseLogs) {

@@ -46,7 +46,7 @@ export function ExerciseListContent({
 
     const { workout, session, previousLogsByExercise } = data;
 
-    const logsByEwm: Record<string, { id: string; weight: number | null; reps: number; set_order_index: number }[]> = {};
+    const logsByEwm: Record<string, { id: string; weight: number | null; reps: number; rpe: number | null; set_order_index: number }[]> = {};
     if (session) {
         session.sessionExerciseLogs.forEach((sel) => {
             if (sel.exercise_with_metadata_id && sel.exerciseLog) {

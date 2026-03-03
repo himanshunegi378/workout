@@ -7,7 +7,7 @@ interface SessionCardProps {
     endTime: Date | null;
     exerciseGroups: {
         exercise: { id: string; name: string; muscle_group: string };
-        sets: { id: string; weight: number | null; reps: number }[];
+        sets: { id: string; weight: number | null; rpe: number | null; reps: number }[];
     }[];
 }
 

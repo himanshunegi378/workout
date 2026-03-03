@@ -1,7 +1,7 @@
 "use client";
 
 import { History, Target } from "lucide-react";
-import { Button, BottomDrawer, NumberStepper } from "@/app/components/ui";
+import { Button, BottomDrawer, NumberStepper, RPESelector } from "@/app/components/ui";
 
 interface LogSetDrawerProps {
     isOpen: boolean;
@@ -12,6 +12,8 @@ interface LogSetDrawerProps {
     setWeight: (w: string) => void;
     reps: string;
     setReps: (r: string) => void;
+    rpe: number | null;
+    setRpe: (r: number | null) => void;
     onSave: () => void;
     onDelete?: () => void;
     isSaving: boolean;
@@ -29,6 +31,8 @@ export function LogSetDrawer({
     setWeight,
     reps,
     setReps,
+    rpe,
+    setRpe,
     onSave,
     onDelete,
     isSaving,
@@ -96,6 +100,10 @@ export function LogSetDrawer({
                         max={100}
                         step={1}
                     />
+                </div>
+
+                <div className="mb-6">
+                    <RPESelector value={rpe} onChange={setRpe} />
                 </div>
 
                 <div className="flex flex-col gap-3">

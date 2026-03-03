@@ -1,13 +1,7 @@
-# Task Tracker
+# Task Tracker - RPE Tracking
 
-| # | Task | Status |
-|---|------|--------|
-| 1 | Pure utility (TDD) — 1RM formula + PR detection logic | ✅ |
-| 2 | Extend POST /api/log/set to return `pr` field | ✅ |
-| 3 | Create PRCelebrationContext | ✅ |
-| 4 | Create PRCelebrationOverlay + CSS animations | ✅ |
-| 5 | Wire provider + overlay into root layout | ✅ |
-| 6 | Trigger celebration from ExerciseCard | ✅ |
-| 7 | Trigger celebration from StandaloneLogDrawer | ✅ |
-| 8 | Mark feature done in feature-list.md | ✅ |
-| 9 | Update learning.md | ✅ |
+| Task | Status | Description |
+| :--- | :--- | :--- |
+| Task 1 | ✅ completed | Schema and API (Prisma, Route, Hook) |
+| Task 2 | ✅ completed | RPESelector Component |
+| Task 3 | ✅ completed | Integration and Display (Drawers, History) |

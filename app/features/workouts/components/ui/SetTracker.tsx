@@ -4,7 +4,7 @@
 interface SetTrackerProps {
     setsMin: number;
     setsMax: number;
-    logs: { set_order_index: number; reps: number }[];
+    logs: { set_order_index: number; reps: number; rpe: number | null }[];
     targetReps: number;
     onSetClick: (setIndex: number) => void;
     previousLogs?: { id: string; weight: number | null; reps: number; set_order_index: number }[];
@@ -44,6 +44,11 @@ export function SetTracker({ setsMin, setsMax, logs, targetReps, onSetClick, pre
                             {isCompleted ? (
                                 <div className="flex flex-col items-center justify-center leading-none">
                                     <span className="font-display font-bold text-sm">{log.reps}</span>
+                                    {log.rpe && (
+                                        <span className="absolute -top-1 -right-1 flex items-center justify-center bg-indigo-500 text-[8px] text-white w-4 h-4 rounded-full border border-card font-bold shadow-sm">
+                                            {log.rpe}
+                                        </span>
+                                    )}
                                 </div>
                             ) : (
                                 <span className="font-display font-semibold text-sm">{i + 1}</span>

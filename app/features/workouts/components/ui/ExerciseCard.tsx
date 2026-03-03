@@ -21,6 +21,7 @@ interface ExerciseLog {
     weight: number | null;
     reps: number;
     set_order_index: number;
+    rpe: number | null;
 }
 
 interface ExerciseCardProps {
@@ -69,6 +70,7 @@ export function ExerciseCard({
     const [activeSetIndex, setActiveSetIndex] = useState(0);
     const [weight, setWeight] = useState("");
     const [reps, setReps] = useState("");
+    const [rpe, setRpe] = useState<number | null>(null);
     const [previousLog, setPreviousLog] = useState<{ weight: number | null; reps: number } | null>(null);
 
     const { startTimer } = useRestTimer();
@@ -98,6 +100,7 @@ export function ExerciseCard({
         if (log) {
             initialWeight = log.weight?.toString() || "";
             initialReps = log.reps.toString();
+            setRpe(log.rpe);
         } else {
             // Default to previous set in current session
             const previousSetLog = logs
@@ -107,6 +110,9 @@ export function ExerciseCard({
             if (previousSetLog) {
                 initialWeight = previousSetLog.weight?.toString() || "";
                 initialReps = previousSetLog.reps.toString();
+                setRpe(previousSetLog.rpe);
+            } else {
+                setRpe(null);
             }
         }
 
@@ -139,6 +145,7 @@ export function ExerciseCard({
             id: currentLog?.id || optimisticId,
             weight: parseFloat(weight) || null,
             reps: parseInt(reps),
+            rpe: rpe,
             set_order_index: activeSetIndex,
         };
 
@@ -154,6 +161,7 @@ export function ExerciseCard({
                     setId: currentLog.id,
                     weight,
                     reps,
+                    rpe: rpe?.toString(),
                 },
                 {
                     onError: (error: Error) => {
@@ -182,6 +190,7 @@ export function ExerciseCard({
                     setOrderIndex: activeSetIndex,
                     weight: weight,
                     reps: reps,
+                    rpe: rpe?.toString(),
                 },
                 {
                     onSuccess: (newLog: ExerciseLog & { pr: PRType | null }) => {
@@ -293,7 +302,7 @@ export function ExerciseCard({
                     <SetTracker
                         setsMin={setsMin}
                         setsMax={setsMax}
-                        logs={logs.map(l => ({ set_order_index: l.set_order_index, reps: l.reps }))}
+                        logs={logs.map(l => ({ set_order_index: l.set_order_index, reps: l.reps, rpe: l.rpe }))}
                         targetReps={repsMin}
                         onSetClick={handleSetClick}
                         previousLogs={previousLogs}
@@ -310,6 +319,8 @@ export function ExerciseCard({
                 setWeight={setWeight}
                 reps={reps}
                 setReps={setReps}
+                rpe={rpe}
+                setRpe={setRpe}
                 onSave={handleSaveSet}
                 onDelete={handleDeleteSet}
                 isSaving={isSaving || isUpdating}

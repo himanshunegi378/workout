@@ -64,6 +64,7 @@ export async function GET(
                                         id: true,
                                         weight: true,
                                         reps: true,
+                                        rpe: true,
                                         set_order_index: true,
                                         date: true,
                                         sessionExerciseLog: {
@@ -93,6 +94,7 @@ export async function GET(
                                         id: true,
                                         weight: true,
                                         reps: true,
+                                        rpe: true,
                                         set_order_index: true,
                                     },
                                 },
@@ -115,6 +117,7 @@ export async function GET(
             id: string;
             weight: number | null;
             reps: number;
+            rpe: number | null;
             set_order_index: number;
         }
 
@@ -134,6 +137,7 @@ export async function GET(
                             id: l.id,
                             weight: l.weight,
                             reps: l.reps,
+                            rpe: l.rpe,
                             set_order_index: l.set_order_index
                         }))
                         .sort((a, b) => a.set_order_index - b.set_order_index);

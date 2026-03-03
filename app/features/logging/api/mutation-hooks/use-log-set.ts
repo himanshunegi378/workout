@@ -15,6 +15,7 @@ export function useLogSet() {
             setOrderIndex: number;
             weight: string;
             reps: string;
+            rpe?: string;
             id?: string
         }) => {
             if (!newLogData.workoutId) return;
@@ -36,6 +37,7 @@ export function useLogSet() {
                         id: newLogData.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36).substring(7)),
                         weight: parseFloat(newLogData.weight) || null,
                         reps: parseInt(newLogData.reps),
+                        rpe: newLogData.rpe ? parseFloat(newLogData.rpe) : null,
                         set_order_index: newLogData.setOrderIndex,
                     };
 

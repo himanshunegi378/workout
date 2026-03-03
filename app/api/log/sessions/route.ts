@@ -52,6 +52,7 @@ export async function GET(request: Request) {
                                 id: true,
                                 weight: true,
                                 reps: true,
+                                rpe: true,
                                 set_order_index: true,
                                 pr_type: true,
                                 exercise: {

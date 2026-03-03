@@ -5,6 +5,7 @@ export interface SessionExerciseLogWithRelations {
         id: string;
         weight: number | null;
         reps: number;
+        rpe: number | null;
         set_order_index: number;
         pr_type?: string | null;
         exercise: { id: string; name: string; muscle_group: string } | null;

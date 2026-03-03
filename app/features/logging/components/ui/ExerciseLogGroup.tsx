@@ -10,10 +10,11 @@ interface SetRowProps {
     index: number;
     weight: number | null;
     reps: number;
+    rpe: number | null;
     prType?: string | null;
 }
 
-export function SetRow({ id, index, weight, reps, prType }: SetRowProps) {
+export function SetRow({ id, index, weight, reps, rpe, prType }: SetRowProps) {
     const { mutate: deleteSet, isPending } = useDeleteLogSet();
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -48,6 +49,11 @@ export function SetRow({ id, index, weight, reps, prType }: SetRowProps) {
                 <span className="font-display text-sm font-semibold text-foreground">
                     {reps}
                 </span>
+                {rpe && (
+                    <span className="text-[10px] bg-indigo-500/10 text-indigo-500 px-1.5 py-0.5 rounded-md font-bold border border-indigo-500/20">
+                        @{rpe}
+                    </span>
+                )}
             </div>
 
             <div className="flex items-center gap-2">
@@ -72,7 +78,7 @@ interface ExerciseLogGroupProps {
     exerciseId: string;
     exerciseName: string;
     muscleGroup: string;
-    sets: { id: string; weight: number | null; reps: number; pr_type?: string | null }[];
+    sets: { id: string; weight: number | null; reps: number; rpe: number | null; pr_type?: string | null }[];
 }
 
 export function ExerciseLogGroup({ exerciseId, exerciseName, muscleGroup, sets }: ExerciseLogGroupProps) {
@@ -98,6 +104,7 @@ export function ExerciseLogGroup({ exerciseId, exerciseName, muscleGroup, sets }
                         index={si + 1}
                         weight={log.weight}
                         reps={log.reps}
+                        rpe={log.rpe}
                         prType={log.pr_type}
                     />
                 ))}

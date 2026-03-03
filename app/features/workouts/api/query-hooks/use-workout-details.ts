@@ -33,11 +33,12 @@ type WorkoutDetailsResponse = {
                 id: string;
                 weight: number | null;
                 reps: number;
+                rpe: number | null;
                 set_order_index: number;
             } | null;
         }[];
     } | null;
-    previousLogsByExercise: Record<string, { id: string; weight: number | null; reps: number; set_order_index: number }[]>;
+    previousLogsByExercise: Record<string, { id: string; weight: number | null; reps: number; rpe: number | null; set_order_index: number }[]>;
 };
 
 export function useWorkoutDetails(programmeId: string, workoutId: string) {

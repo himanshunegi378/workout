@@ -166,6 +166,7 @@ model ExerciseLog {
   weight          Float?
   reps            Int
   set_order_index Int
+  rpe             Float?
   date            DateTime @default(now())
   pr_type         String?
 

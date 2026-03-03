@@ -45,8 +45,10 @@ export async function GET(
                 date: "desc",
             },
             select: {
+                id: true,
                 weight: true,
                 reps: true,
+                rpe: true,
             },
         });
 
