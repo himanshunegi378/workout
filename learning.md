@@ -132,3 +132,19 @@ Improving the UI of Quick Log actions and unifying the logging experience across
 
 ### Result
 A significantly more professional, "premium" logging flow that feels integrated and intuitive on mobile.
+
+## [2026-03-03 22:55]
+
+### Context
+Implementing robust offline-first behavior for the workout logging API (`/api/log/set`).
+
+### Learning
+1. **Mutation Pausing (TanStack Query v5):** Setting `networkMode: 'offlineFirst'` on mutations is NOT enough to pause them when offline if `retry` is disabled (default for mutations is 0). You must set `retry` (e.g., `retry: 3`) for the mutation to enter a "paused" state instead of failing immediately with a "fetch failed" error.
+2. **Double-Layer Optimistic Updates:** For a seamless offline experience, optimistic updates should happen at both the Global Cache level (`onMutate` in `useMutation`) and the Local Component level (`setLogs` in `ExerciseCard`). Local state provides the most immediate feedback, while global cache updates ensure the UI remains consistent if the user navigates away and back while the mutation is still sync-pending.
+3. **Idempotency Keys:** Client-generated IDs (UUIDs) are mandatory for offline-first sync. By passing the same ID in the initial request and all retries, the server can safely handle duplicate requests that might occur during sync resumption after app restarts.
+
+### Action Taken
+Modified `QueryProvider` to enable mutation retries, added comprehensive `onMutate`/`onError` logic to `useLogSet` mutation hook, and implemented immediate local state updates and timer triggers in `ExerciseCard`.
+
+### Result
+Workout sets appear in the UI and trigger the rest timer instantly even when offline, with the network request pausing silently in the background and resuming automatically upon reconnection.
