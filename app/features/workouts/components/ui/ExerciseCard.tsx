@@ -11,6 +11,8 @@ import { useUpdateLogSet } from "@/app/features/logging/api/mutation-hooks/use-u
 import { useDeleteLogSet } from "@/app/features/logging/api/mutation-hooks/use-delete-log-set";
 import { getLastLog } from "@/app/features/logging/api/query-hooks/use-last-log";
 import { useRestTimer } from "@/app/features/workouts/contexts/RestTimerContext";
+import { usePRCelebration } from "@/app/features/personal-records/PRCelebrationContext";
+import type { PRType } from "@/lib/pr-utils";
 
 import { EditExerciseMetadataDrawer } from "./EditExerciseMetadataDrawer";
 
@@ -70,6 +72,7 @@ export function ExerciseCard({
     const [previousLog, setPreviousLog] = useState<{ weight: number | null; reps: number } | null>(null);
 
     const { startTimer } = useRestTimer();
+    const { celebrate } = usePRCelebration();
 
     // Track logs locally for immediate UI feedback
     const [logs, setLogs] = useState<ExerciseLog[]>(initialLogs);
@@ -162,12 +165,16 @@ export function ExerciseCard({
                     reps: reps,
                 },
                 {
-                    onSuccess: (newLog) => {
+                    onSuccess: (newLog: ExerciseLog & { pr: PRType | null }) => {
                         setLogs((prev) => [...prev, newLog]);
                         setIsDrawerOpen(false);
                         startTimer(restMin, {
                             closeOnFinish: true
                         }); // Auto-start rest timer, close on finish
+                        // Celebrate PR if one was detected server-side
+                        if (newLog.pr) {
+                            celebrate(newLog.pr, name);
+                        }
                     },
                     onError: (error: Error) => {
                         alert(`Error saving set: ${error.message}`);
