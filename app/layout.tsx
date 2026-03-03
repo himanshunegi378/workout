@@ -7,6 +7,8 @@ import { RestTimerProvider } from "@/app/features/workouts/contexts/RestTimerCon
 import { RestTimerOverlay } from "@/app/features/workouts/components/ui/RestTimer";
 import { BottomDrawerProvider } from "@/app/components/ui";
 import { PWARegistration } from "@/app/components/PWARegistration";
+import { PRCelebrationProvider } from "@/app/features/personal-records/PRCelebrationContext";
+import { PRCelebrationOverlay } from "@/app/features/personal-records/PRCelebrationOverlay";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -54,11 +56,14 @@ export default function RootLayout({
           <SessionProvider>
             <QueryProvider>
               <RestTimerProvider>
-                <BottomDrawerProvider>
-                  {children}
-                </BottomDrawerProvider>
-                <RestTimerOverlay />
-                <PWARegistration />
+                <PRCelebrationProvider>
+                  <BottomDrawerProvider>
+                    {children}
+                  </BottomDrawerProvider>
+                  <PRCelebrationOverlay />
+                  <RestTimerOverlay />
+                  <PWARegistration />
+                </PRCelebrationProvider>
               </RestTimerProvider>
             </QueryProvider>
           </SessionProvider>

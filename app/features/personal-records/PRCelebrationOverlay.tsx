@@ -58,7 +58,7 @@ export function PRCelebrationOverlay() {
         <Portal>
             {/* Backdrop */}
             <div
-                className="fixed inset-0 z-[9998] bg-black/50 backdrop-blur-sm animate-fade-in"
+                className="fixed inset-0 z-9998 bg-black/50 backdrop-blur-sm animate-fade-in"
                 onClick={dismiss}
                 aria-hidden="true"
             />
@@ -68,7 +68,7 @@ export function PRCelebrationOverlay() {
                 role="status"
                 aria-live="polite"
                 aria-label={`Personal record: ${config.label} for ${celebration.exerciseName}`}
-                className="fixed inset-x-0 bottom-24 z-[9999] flex justify-center px-5 pointer-events-none"
+                className="fixed inset-x-0 bottom-24 z-9999 flex justify-center px-5 pointer-events-none"
             >
                 <div
                     className="pointer-events-auto relative w-full max-w-sm bg-card border border-border rounded-3xl p-7 elevation-5 text-center overflow-hidden"
