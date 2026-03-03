@@ -148,3 +148,20 @@ Modified `QueryProvider` to enable mutation retries, added comprehensive `onMuta
 
 ### Result
 Workout sets appear in the UI and trigger the rest timer instantly even when offline, with the network request pausing silently in the background and resuming automatically upon reconnection.
+
+## [2026-03-03 23:30]
+
+### Context
+Implementing RPE (Rate of Perceived Exertion) tracking across the database, API, and UI.
+
+### Learning
+1. **Model Field Consistency**: When adding new fields like `rpe Float?` to existing Prisma models, ensure all related API select blocks (especially deeply nested ones in `/details` or `/sessions` routes) are updated. Missing a single nested select can lead to subtle UI bugs where historical data seems missing.
+2. **Type Safety with Optional Strings**: When passing optional numeric state (like `rpe: number | null`) to a TanStack Query mutation that expects an optional string (`rpe?: string`), the pattern `rpe: rpe || undefined` is cleaner than `rpe: rpe?.toString() || null` to avoid TypeScript's "null is not assignable to string | undefined" error.
+3. **UI Micro-Badges**: For complex data display in small UI elements (like a set tracker circle), using a small absolute-positioned badge (e.g., top-right of the circle) for secondary metrics like RPE (@10) provides high information density without cluttering the main value (reps).
+4. **Horizontal Pill Selectors**: For a fixed scale of 1-10, a horizontal scrollable pill selector is superior to a numeric stepper or dropdown for mobile UX. It reduces taps from 3+ to 1 and provides immediate visual context of the effort scale.
+
+### Action Taken
+Updated Prisma schema, modified 4 API routes, created `RPESelector` component, and integrated RPE display into 3 major UI views.
+
+### Result
+Seamless RPE tracking is now live across the entire workout logging and history experience with a premium, mobile-first feel.
