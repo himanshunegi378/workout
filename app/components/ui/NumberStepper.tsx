@@ -58,9 +58,9 @@ export function NumberStepper({
 
     return (
         <div className="flex flex-col gap-2 w-full">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between min-h-[26px]">
                 {label && <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{label}</label>}
-                {stepOptions.length > 1 && (
+                {stepOptions.length > 0 ? (
                     <div className="flex bg-muted/50 p-0.5 rounded-lg border border-border/50">
                         {stepOptions.map((opt) => (
                             <button
@@ -76,6 +76,8 @@ export function NumberStepper({
                             </button>
                         ))}
                     </div>
+                ) : (
+                    <div className="h-6" /> // Placeholder to maintain vertical alignment
                 )}
             </div>
 
@@ -89,7 +91,7 @@ export function NumberStepper({
                     <Minus className="w-5 h-5" />
                 </button>
                 <div className="flex-1 grid grid-cols-[1fr_auto_1fr] items-center">
-                    <div /> {/* Spacer to force center alignment */}
+                    <div className="w-8" /> {/* Fixed-width spacer for symmetry */}
                     <input
                         type="number"
                         inputMode="decimal"
@@ -98,8 +100,8 @@ export function NumberStepper({
                         onBlur={handleInputBlur}
                         className="w-16 bg-transparent text-center font-display font-semibold text-lg text-foreground focus:outline-none focus:ring-1 focus:ring-accent rounded-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
-                    <div className="text-left pl-0.5">
-                        {suffix && <span className="text-sm text-muted-foreground font-semibold">{suffix}</span>}
+                    <div className="flex items-center w-8 pl-1">
+                        {suffix && <span className="text-sm text-muted-foreground font-semibold uppercase">{suffix}</span>}
                     </div>
                 </div>
                 <button

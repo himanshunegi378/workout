@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
-import { BottomDrawer } from "@/app/components/ui";
+import { Loader2, History, Target } from "lucide-react";
+import { BottomDrawer, NumberStepper, Button } from "@/app/components/ui";
 import { Portal } from "@/app/components/ui/Portal";
 import { useLogSet } from "../../api/mutation-hooks/use-log-set";
 import { usePRCelebration } from "@/app/features/personal-records/PRCelebrationContext";
+import { useLastLog } from "../../api/query-hooks/use-last-log";
 import type { PRType } from "@/lib/pr-utils";
 
 interface StandaloneLogDrawerProps {
@@ -15,29 +16,28 @@ interface StandaloneLogDrawerProps {
     exerciseName: string;
 }
 
-export function StandaloneLogDrawer({ isOpen, onClose, exerciseId, exerciseName }: StandaloneLogDrawerProps) {
-    const [weight, setWeight] = useState("");
-    const [reps, setReps] = useState("");
+interface LastLog {
+    id: string;
+    weight: number | null;
+    reps: number;
+}
 
+export function StandaloneLogDrawer({ isOpen, onClose, exerciseId, exerciseName }: StandaloneLogDrawerProps) {
     const { celebrate } = usePRCelebration();
     const { mutate: logSet, isPending } = useLogSet();
+    const { data: lastLog } = useLastLog(exerciseId, isOpen);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (!reps) return;
+    const handleSubmit = (weight: string, reps: string) => {
+        if (!reps || reps === "0") return;
 
         logSet({
             exerciseId,
-            setOrderIndex: 1, // Standalone logs are their own entity, so index 1 is fine
+            setOrderIndex: 1,
             weight: weight || "0",
             reps: reps,
         }, {
             onSuccess: (newLog: { pr: PRType | null }) => {
-                setWeight("");
-                setReps("");
                 onClose();
-
                 if (newLog.pr) {
                     celebrate(newLog.pr, exerciseName);
                 }
@@ -47,74 +47,106 @@ export function StandaloneLogDrawer({ isOpen, onClose, exerciseId, exerciseName 
 
     return (
         <Portal>
-            <BottomDrawer isOpen={isOpen} onClose={onClose}>
-                <div className="flex flex-col">
-                    <div className="px-5 py-4 border-b border-border bg-background/95 backdrop-blur-sm relative overflow-hidden">
-                        {/* Glow effect */}
-                        <div className="absolute -top-10 -right-10 w-32 h-32 bg-accent/20 blur-3xl rounded-full pointer-events-none" />
-
-                        <div className="relative z-10">
-                            <h2 className="font-display text-xl font-bold text-foreground">Log Set</h2>
-                            <p className="text-sm text-muted-foreground font-medium mt-0.5">{exerciseName}</p>
+            <BottomDrawer isOpen={isOpen} onClose={onClose} title="Quick Log">
+                <div className="flex flex-col -mt-4">
+                    <div className="flex items-center gap-3 mb-6 bg-accent/5 p-3 rounded-2xl border border-accent/10">
+                        <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
+                            <Target className="w-5 h-5 text-accent" />
+                        </div>
+                        <div>
+                            <p className="text-xs font-bold text-accent uppercase tracking-wider">Exercise</p>
+                            <h3 className="font-display font-bold text-foreground truncate">{exerciseName}</h3>
                         </div>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="p-5 space-y-6">
-                        <div className="space-y-4 text-left">
-                            <div>
-                                <label className="block text-sm font-semibold text-muted-foreground mb-2 px-1">Weight (kg) <span className="text-muted-foreground/50 font-normal">— Optional</span></label>
-                                <input
-                                    type="number"
-                                    inputMode="decimal"
-                                    step="0.5"
-                                    value={weight}
-                                    onChange={(e) => setWeight(e.target.value)}
-                                    placeholder="e.g. 60"
-                                    className="w-full bg-muted border border-border rounded-xl px-4 py-3.5
-                                        text-foreground font-display text-lg font-semibold transition-all duration-200
-                                        placeholder:text-muted-foreground/30 placeholder:font-normal
-                                        focus:outline-none focus:ring-2 focus:ring-accent focus:bg-background"
-                                    disabled={isPending}
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-semibold text-muted-foreground mb-2 px-1">Reps</label>
-                                <input
-                                    type="number"
-                                    inputMode="numeric"
-                                    required
-                                    value={reps}
-                                    onChange={(e) => setReps(e.target.value)}
-                                    placeholder="e.g. 10"
-                                    className="w-full bg-muted border border-border rounded-xl px-4 py-3.5
-                                        text-foreground font-display text-lg font-semibold transition-all duration-200
-                                        placeholder:text-muted-foreground/30 placeholder:font-normal
-                                        focus:outline-none focus:ring-2 focus:ring-accent focus:bg-background"
-                                    disabled={isPending}
-                                />
-                            </div>
-                        </div>
-
-                        <button
-                            type="submit"
-                            disabled={!reps || isPending}
-                            className="w-full bg-accent hover:bg-accent-hover text-accent-foreground font-display font-bold
-                                py-4 px-6 rounded-xl flex items-center justify-center gap-2 text-lg tracking-wide
-                                transition-all duration-300 disabled:opacity-50 active:scale-[0.98] elevation-1"
-                        >
-                            {isPending ? (
-                                <>
-                                    <Loader2 className="w-5 h-5 animate-spin" />
-                                    Saving...
-                                </>
-                            ) : (
-                                "Save Set"
-                            )}
-                        </button>
-                    </form>
+                    <LogForm
+                        key={exerciseId + (lastLog?.id || "empty")}
+                        lastLog={lastLog}
+                        onSubmit={handleSubmit}
+                        isPending={isPending}
+                    />
                 </div>
             </BottomDrawer>
         </Portal>
+    );
+}
+
+interface LogFormProps {
+    lastLog?: LastLog;
+    onSubmit: (weight: string, reps: string) => void;
+    isPending: boolean;
+}
+
+function LogForm({ lastLog, onSubmit, isPending }: LogFormProps) {
+    const [weight, setWeight] = useState(lastLog?.weight?.toString() || "0");
+    const [reps, setReps] = useState(lastLog?.reps?.toString() || "0");
+
+    const handleFillPrevious = () => {
+        if (lastLog) {
+            setWeight(lastLog.weight?.toString() || "0");
+            setReps(lastLog.reps?.toString() || "0");
+        }
+    };
+
+    const weightNum = parseFloat(weight) || 0;
+    const repsNum = parseInt(reps) || 0;
+
+    return (
+        <>
+            {lastLog && (
+                <button
+                    type="button"
+                    onClick={handleFillPrevious}
+                    className="w-full mb-6 flex items-center justify-between p-4 rounded-xl bg-muted/50 border border-border/50 text-sm transition-all active:scale-[0.98] hover:bg-muted"
+                >
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                        <History className="w-4 h-4" />
+                        <span className="font-medium">Recent performance</span>
+                    </div>
+                    <span className="font-bold text-foreground">
+                        {lastLog.weight ? `${lastLog.weight}kg × ` : ""}
+                        {lastLog.reps} reps
+                    </span>
+                </button>
+            )}
+
+            <div className="grid grid-cols-2 gap-4 mb-8">
+                <NumberStepper
+                    label="Weight"
+                    value={weightNum}
+                    onChange={(val) => setWeight(val.toString())}
+                    min={0}
+                    max={500}
+                    step={2.5}
+                    suffix="kg"
+                    stepOptions={[2.5, 5]}
+                />
+
+                <NumberStepper
+                    label="Reps"
+                    value={repsNum}
+                    onChange={(val) => setReps(val.toString())}
+                    min={0}
+                    max={100}
+                    step={1}
+                />
+            </div>
+
+            <Button
+                variant="primary"
+                className="w-full py-4 text-lg font-bold shadow-lg shadow-accent/20"
+                onClick={() => onSubmit(weight, reps)}
+                disabled={isPending || !reps || reps === "0"}
+            >
+                {isPending ? (
+                    <div className="flex items-center gap-2 justify-center">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span>Logging Set...</span>
+                    </div>
+                ) : (
+                    "Log Set"
+                )}
+            </Button>
+        </>
     );
 }

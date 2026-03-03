@@ -133,8 +133,22 @@ export function ExerciseCard({
     const handleSaveSet = () => {
         if (!reps) return;
 
+        // Create optimistic log entry
+        const optimisticId = (typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36).substring(7));
+        const newLogEntry: ExerciseLog = {
+            id: currentLog?.id || optimisticId,
+            weight: parseFloat(weight) || null,
+            reps: parseInt(reps),
+            set_order_index: activeSetIndex,
+        };
+
         if (currentLog) {
-            // Update existing set
+            // Update existing set - Optimistic UI
+            setLogs((prev) =>
+                prev.map((l) => (l.id === currentLog.id ? newLogEntry : l))
+            );
+            setIsDrawerOpen(false);
+
             updateSetMutation(
                 {
                     setId: currentLog.id,
@@ -142,21 +156,26 @@ export function ExerciseCard({
                     reps,
                 },
                 {
-                    onSuccess: (updated: ExerciseLog) => {
-                        setLogs((prev) =>
-                            prev.map((l) => (l.id === updated.id ? updated : l))
-                        );
-                        setIsDrawerOpen(false);
-                    },
                     onError: (error: Error) => {
+                        // Silent fail for network errors, let background sync retry
+                        if (error.message.includes("fetch") || !navigator.onLine) return;
                         alert(`Error updating set: ${error.message}`);
                     },
                 }
             );
         } else {
-            // Create new set
+            // Create new set - Optimistic UI
+            setLogs((prev) => [...prev, newLogEntry]);
+            setIsDrawerOpen(false);
+
+            // Start rest timer immediately for better UX
+            startTimer(restMin, {
+                closeOnFinish: true
+            });
+
             logSetMutation(
                 {
+                    id: optimisticId, // Pass the same ID for client/server consistency
                     workoutId,
                     exerciseWithMetadataId: ewmId,
                     exerciseId,
@@ -166,17 +185,14 @@ export function ExerciseCard({
                 },
                 {
                     onSuccess: (newLog: ExerciseLog & { pr: PRType | null }) => {
-                        setLogs((prev) => [...prev, newLog]);
-                        setIsDrawerOpen(false);
-                        startTimer(restMin, {
-                            closeOnFinish: true
-                        }); // Auto-start rest timer, close on finish
                         // Celebrate PR if one was detected server-side
                         if (newLog.pr) {
                             celebrate(newLog.pr, name);
                         }
                     },
                     onError: (error: Error) => {
+                        // Silent fail for network errors, let background sync retry
+                        if (error.message.includes("fetch") || !navigator.onLine) return;
                         alert(`Error saving set: ${error.message}`);
                     },
                 }

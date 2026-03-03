@@ -33,6 +33,7 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
                     mutations: {
                         // Crucial for offline: Mutations will pause when offline and resume when online
                         networkMode: 'offlineFirst',
+                        retry: 3,
                     }
                 },
             })

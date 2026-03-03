@@ -113,3 +113,22 @@ Upgraded `QueryProvider` to use `idb-keyval`, added idempotency checks to all PO
 
 ### Result
 App supports persistent, duplicate-safe offline workout logging that survives tab closure and device restarts.
+## [2026-03-03 22:50]
+
+### Context
+Improving the UI of Quick Log actions and unifying the logging experience across the app.
+
+### Learning
+1.  **Unified Component Design**: Sharing structural elements like "Exercise Headers" (Target icon + Label) across different drawers (`LogSetDrawer` and `StandaloneLogDrawer`) creates a much more cohesive premium feel.
+2.  **Modern FAB Aesthetics**: Adding a pulse background glow and subtle rotation on active state significantly enhances the "premium" perception of a Floating Action Button.
+3.  **Refactoring for Lint Compliance**: To avoid "cascading render" warnings when initializing state from async data, extracting the form into a sub-component and passing data as props is a superior pattern to `useEffect` + `setState`.
+4.  **Touch-Friendly Inputs**: Replacing numeric inputs with customized `NumberStepper` components is essential for a high-quality mobile workout experience.
+
+### Action Taken
+1.  Redesigned `QuickLogFAB` with a glow effect and improved animations.
+2.  Overhauled `StandaloneLogDrawer` to use `NumberStepper` and `useLastLog`.
+3.  Reskinned `LogSetDrawer` to match the new premium design language.
+4.  Fixed React lint errors by optimizing state initialization.
+
+### Result
+A significantly more professional, "premium" logging flow that feels integrated and intuitive on mobile.

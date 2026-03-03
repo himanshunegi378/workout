@@ -1,6 +1,6 @@
 "use client";
 
-import { History } from "lucide-react";
+import { History, Target } from "lucide-react";
 import { Button, BottomDrawer, NumberStepper } from "@/app/components/ui";
 
 interface LogSetDrawerProps {
@@ -47,68 +47,81 @@ export function LogSetDrawer({
     const repsNum = parseInt(reps) || 0;
 
     return (
-        <BottomDrawer isOpen={isOpen} onClose={onClose} title={`Log Set ${setIndex + 1}`}>
-            <p className="text-sm text-muted-foreground -mt-4 mb-6">{exerciseName}</p>
-
-            {previousLog && (
-                <button
-                    onClick={fillPrevious}
-                    className="w-full mb-6 flex items-center justify-between p-3 rounded-xl bg-accent/10 border border-accent/20 text-sm text-accent transition-colors active:bg-accent/20"
-                >
-                    <div className="flex items-center gap-2">
-                        <History className="w-4 h-4" />
-                        <span>Previous:</span>
+        <BottomDrawer isOpen={isOpen} onClose={onClose} title={isEdit ? "Edit Set" : `Log Set ${setIndex + 1}`}>
+            <div className="flex flex-col -mt-4">
+                <div className="flex items-center gap-3 mb-6 bg-accent/5 p-3 rounded-2xl border border-accent/10">
+                    <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
+                        <Target className="w-5 h-5 text-accent" />
                     </div>
-                    <span className="font-semibold">
-                        {previousLog.weight ? `${previousLog.weight}kg × ` : ""}
-                        {previousLog.reps} reps
-                    </span>
-                </button>
-            )}
+                    <div>
+                        <p className="text-xs font-bold text-accent uppercase tracking-wider">Exercise</p>
+                        <h3 className="font-display font-bold text-foreground truncate">{exerciseName}</h3>
+                    </div>
+                </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-8">
-                {/* Weight Input */}
-                <NumberStepper
-                    label="Weight"
-                    value={weightNum}
-                    onChange={(val) => setWeight(val.toString())}
-                    min={0}
-                    max={500}
-                    step={5}
-                    suffix="kg"
-                    stepOptions={[5]}
-                />
-
-                {/* Reps Input */}
-                <NumberStepper
-                    label="Reps"
-                    value={repsNum}
-                    onChange={(val) => setReps(val.toString())}
-                    min={0}
-                    max={100}
-                    step={1}
-                />
-            </div>
-
-            <div className="flex flex-col gap-3">
-                <Button
-                    variant="primary"
-                    className="w-full py-4 text-base"
-                    onClick={onSave}
-                    disabled={isSaving || isDeleting || !reps}
-                >
-                    {isSaving ? "Saving..." : isEdit ? "Update Set" : "Save Set"}
-                </Button>
-
-                {isEdit && onDelete && (
+                {previousLog && (
                     <button
-                        onClick={onDelete}
-                        disabled={isSaving || isDeleting}
-                        className="w-full py-3 text-sm font-semibold text-destructive hover:bg-destructive/10 rounded-xl transition-all disabled:opacity-50"
+                        type="button"
+                        onClick={fillPrevious}
+                        className="w-full mb-6 flex items-center justify-between p-4 rounded-xl bg-muted/50 border border-border/50 text-sm transition-all active:scale-[0.98] hover:bg-muted"
                     >
-                        {isDeleting ? "Deleting..." : "Delete Set"}
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                            <History className="w-4 h-4" />
+                            <span className="font-medium">Previous performance</span>
+                        </div>
+                        <span className="font-bold text-foreground">
+                            {previousLog.weight ? `${previousLog.weight}kg × ` : ""}
+                            {previousLog.reps} reps
+                        </span>
                     </button>
                 )}
+
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                    <NumberStepper
+                        label="Weight"
+                        value={weightNum}
+                        onChange={(val) => setWeight(val.toString())}
+                        min={0}
+                        max={500}
+                        step={2.5}
+                        suffix="kg"
+                        stepOptions={[2.5, 5]}
+                    />
+
+                    <NumberStepper
+                        label="Reps"
+                        value={repsNum}
+                        onChange={(val) => setReps(val.toString())}
+                        min={0}
+                        max={100}
+                        step={1}
+                    />
+                </div>
+
+                <div className="flex flex-col gap-3">
+                    <Button
+                        variant="primary"
+                        className="w-full py-4 text-lg font-bold shadow-lg shadow-accent/20"
+                        onClick={onSave}
+                        disabled={isSaving || isDeleting || !reps}
+                    >
+                        {isSaving ? (
+                            <div className="flex items-center gap-2 justify-center">
+                                <span className="animate-pulse">Saving...</span>
+                            </div>
+                        ) : isEdit ? "Update Set" : "Save Set"}
+                    </Button>
+
+                    {isEdit && onDelete && (
+                        <button
+                            onClick={onDelete}
+                            disabled={isSaving || isDeleting}
+                            className="w-full py-3 text-sm font-semibold text-destructive hover:bg-destructive/10 rounded-xl transition-all disabled:opacity-50"
+                        >
+                            {isDeleting ? "Deleting..." : "Delete Set"}
+                        </button>
+                    )}
+                </div>
             </div>
         </BottomDrawer>
     );
