@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getUserId } from "@/lib/auth-helpers";
+import { detectPR } from "@/lib/pr-utils";
 
 export async function POST(request: Request) {
     try {
@@ -80,7 +81,38 @@ export async function POST(request: Request) {
             return el;
         });
 
-        return NextResponse.json(exerciseLog, { status: 201 });
+        // --- PR Detection ---
+        // Query historical best weight and best reps for this exercise,
+        // EXCLUDING the log we just created to compare only past history.
+        let prType: string | null = null;
+        if (exerciseId) {
+            const historicalBest = await prisma.exerciseLog.aggregate({
+                _max: { weight: true, reps: true },
+                where: {
+                    user_id: userId,
+                    id: { not: exerciseLog.id },
+                    OR: [
+                        { exerciseId: exerciseId },
+                        {
+                            sessionExerciseLog: {
+                                exerciseWithMetadata: {
+                                    exercise_id: exerciseId,
+                                },
+                            },
+                        },
+                    ],
+                },
+            });
+
+            prType = detectPR({
+                weight: exerciseLog.weight,
+                reps: exerciseLog.reps,
+                bestWeight: historicalBest._max.weight ?? null,
+                bestReps: historicalBest._max.reps ?? null,
+            });
+        }
+
+        return NextResponse.json({ ...exerciseLog, pr: prType }, { status: 201 });
     } catch (error) {
         console.error("Failed to log set:", error);
         return NextResponse.json(
