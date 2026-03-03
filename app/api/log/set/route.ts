@@ -12,6 +12,7 @@ export async function POST(request: Request) {
 
         const body = await request.json();
         const {
+            id, // Client-generated ID for idempotency/offline sync
             workoutId,
             exerciseWithMetadataId,
             exerciseId,
@@ -25,6 +26,22 @@ export async function POST(request: Request) {
                 { error: "Missing required fields" },
                 { status: 400 }
             );
+        }
+
+        // --- Idempotency Check ---
+        if (id) {
+            const existingLog = await prisma.exerciseLog.findUnique({
+                where: { id: id },
+                include: { sessionExerciseLog: true }
+            });
+
+            if (existingLog) {
+                if (existingLog.user_id !== userId) {
+                    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+                }
+                // Already exists, return successful 200 (idempotent)
+                return NextResponse.json({ ...existingLog, pr: existingLog.pr_type }, { status: 200 });
+            }
         }
 
         // Get today's start and end to find or create a daily session
@@ -60,6 +77,7 @@ export async function POST(request: Request) {
         const exerciseLog = await prisma.$transaction(async (tx) => {
             const el = await tx.exerciseLog.create({
                 data: {
+                    id: id || undefined, // Use provided ID or let Prisma generate one
                     user_id: userId,
                     exerciseId: exerciseId || null,
                     set_order_index: setOrderIndex,

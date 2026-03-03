@@ -32,9 +32,14 @@ export async function GET(
                 { sessionExerciseLog: { workoutSession: { date: "desc" } } },
                 { set_order_index: "asc" },
             ],
-            include: {
+            select: {
+                id: true,
+                weight: true,
+                reps: true,
+                set_order_index: true,
+                pr_type: true,
                 sessionExerciseLog: {
-                    include: {
+                    select: {
                         workoutSession: {
                             select: {
                                 date: true,
@@ -57,7 +62,18 @@ export async function GET(
             },
         });
 
-        return NextResponse.json(logs);
+        // Flatten the structure for the frontend
+        const flattenedLogs = logs.map(log => ({
+            id: log.id,
+            weight: log.weight,
+            reps: log.reps,
+            set_order_index: log.set_order_index,
+            pr_type: log.pr_type,
+            workoutSession: log.sessionExerciseLog?.workoutSession ?? { date: new Date().toISOString(), start_time: null },
+            exerciseWithMetadata: log.sessionExerciseLog?.exerciseWithMetadata ?? null,
+        }));
+
+        return NextResponse.json(flattenedLogs);
     } catch (error) {
         console.error("Error fetching exercise logs:", error);
         return NextResponse.json(

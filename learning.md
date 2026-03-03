@@ -97,3 +97,19 @@ Implemented `lib/pr-utils.ts` (with TDD), updated logging API route, created cel
 
 ### Result
 PRs are automatically detected and celebrated with an animated overlay, enhancing user motivation across all three performance axes.
+
+## [2026-03-03 19:10]
+
+### Context
+Upgrading to Offline-First PWA using Serwist and IndexedDB for Next.js 16.
+
+### Learning
+1. **Turbopack vs. Webpack-based PWA Plugins:** Next.js 16 (Turbopack by default) will error if it detects a custom Webpack config (added by Serwist) without an explicit `turbopack` config. Setting `turbopack: {}` in `nextConfig` silences this and falls back safely to Webpack for dev/build when using plugins.
+2. **IndexedDB vs. LocalStorage:** For high-volume workout data (multiple sessions, exercises, and logs), `IndexedDB` (via `idb-keyval`) is mandatory to avoid the 5MB browser limit and prevent main-thread UI stuttering.
+3. **Idempotency Keys for Offline Sync:** Using client-generated UUIDs ensures that mutations can be safely re-fired multiple times (e.g., during "Sync resumed" after app restart) without creating duplicate records on the server.
+
+### Action Taken
+Upgraded `QueryProvider` to use `idb-keyval`, added idempotency checks to all POST API routes, and configured `next.config.ts` for Serwist support with Turbopack silence.
+
+### Result
+App supports persistent, duplicate-safe offline workout logging that survives tab closure and device restarts.

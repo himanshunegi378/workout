@@ -1,4 +1,5 @@
 interface LogSetData {
+    id?: string; // Client-generated UUID for offline-first sync
     workoutId?: string;
     exerciseWithMetadataId?: string;
     exerciseId?: string;
@@ -8,10 +9,16 @@ interface LogSetData {
 }
 
 export async function logSet(data: LogSetData) {
+    // Generate an ID if not provided, ensuring every mutation attempt is unique
+    const payload = {
+        ...data,
+        id: data.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36).substring(7))
+    };
+
     const res = await fetch("/api/log/set", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
     });
 
     if (!res.ok) {

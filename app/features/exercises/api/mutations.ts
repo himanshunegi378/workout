@@ -1,25 +1,32 @@
 interface CreateExerciseData {
+    id?: string;
     name: string;
     description: string | null;
     muscle_group: string;
 }
 
 export async function createExercise(data: CreateExerciseData) {
+    const payload = {
+        ...data,
+        id: data.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36).substring(7))
+    };
+
     const res = await fetch("/api/exercises", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to create exercise");
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to create exercise");
     }
 
     return res.json();
 }
 
 interface AddExerciseToWorkoutData {
+    id?: string;
     exercise_id: string;
     sets_min: number;
     sets_max: number;
@@ -31,10 +38,15 @@ interface AddExerciseToWorkoutData {
 }
 
 export async function addExerciseToWorkout(programmeId: string, workoutId: string, data: AddExerciseToWorkoutData) {
+    const payload = {
+        ...data,
+        id: data.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36).substring(7))
+    };
+
     const res = await fetch(`/api/programmes/${programmeId}/workouts/${workoutId}/exercises`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
     });
 
     if (!res.ok) {

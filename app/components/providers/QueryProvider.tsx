@@ -4,7 +4,17 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { useState, useMemo } from "react";
+import { get, set, del } from "idb-keyval";
 
+/**
+ * Custom storage object that implements the interface required by createAsyncStoragePersister,
+ * mapping onto the promise-based idb-keyval library.
+ */
+const idbStorage = {
+    getItem: (key: string) => get(key),
+    setItem: (key: string, value: string) => set(key, value),
+    removeItem: (key: string) => del(key),
+};
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
     const [queryClient] = useState(
@@ -12,30 +22,37 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
             new QueryClient({
                 defaultOptions: {
                     queries: {
-                        // gcTime specifies how long unused data remains in the cache.
                         gcTime: 1000 * 60 * 60 * 24 * 7, // 1 week
+                        staleTime: 1000 * 60 * 5, // 5 minutes
+                        retry: (failureCount, error: Error & { status?: number }) => {
+                            // Only retry if it's a network error or a 5xx server error
+                            if ((error?.status ?? 0) >= 500 || !navigator.onLine) return true;
+                            return failureCount < 3;
+                        },
                     },
+                    mutations: {
+                        // Crucial for offline: Mutations will pause when offline and resume when online
+                        networkMode: 'offlineFirst',
+                    }
                 },
             })
     );
 
     const persister = useMemo(() => {
-        // Only run on the client side in Next.js.
         if (typeof window !== "undefined") {
             try {
                 return createAsyncStoragePersister({
-                    storage: window.localStorage,
-                    key: "WORKOUT_QUERY_CACHE_V1", // Descriptive versioned key
+                    storage: idbStorage,
+                    key: "WORKOUT_QUERY_CACHE_V2", // Bumped version for IndexedDB shift
                 });
             } catch (err) {
-                console.error("Query Persister error:", err);
+                console.error("Query Persister (IndexedDB) error:", err);
                 return null;
             }
         }
         return null;
     }, []);
 
-    // SSR or fallback when persistence is unavailable.
     if (!persister) {
         return (
             <QueryClientProvider client={queryClient}>
@@ -50,6 +67,10 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
             persistOptions={{
                 persister,
                 maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+            }}
+            onSuccess={() => {
+                // Resume any mutations that were paused during the last session
+                queryClient.resumePausedMutations();
             }}
         >
             {children}

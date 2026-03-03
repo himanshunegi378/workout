@@ -14,7 +14,7 @@ export async function POST(request: Request) {
 
         const body = await request.json();
 
-        const { name, description } = body;
+        const { id, name, description } = body;
 
         if (!name || typeof name !== "string" || name.trim().length === 0) {
             return NextResponse.json(
@@ -23,8 +23,22 @@ export async function POST(request: Request) {
             );
         }
 
+        // --- Idempotency Check ---
+        if (id) {
+            const existing = await prisma.programme.findUnique({
+                where: { id }
+            });
+            if (existing) {
+                if (existing.user_id !== userId) {
+                    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+                }
+                return NextResponse.json(existing, { status: 200 });
+            }
+        }
+
         const programme = await prisma.programme.create({
             data: {
+                id: id || undefined,
                 name: name.trim(),
                 description: description || null,
                 user_id: userId,

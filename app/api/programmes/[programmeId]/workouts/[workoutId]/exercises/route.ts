@@ -37,6 +37,7 @@ export async function POST(
 
         const body = await request.json();
         const {
+            id,
             exercise_id,
             sets_min,
             sets_max,
@@ -46,6 +47,21 @@ export async function POST(
             rest_max,
             tempo,
         } = body;
+
+        // --- Idempotency Check ---
+        if (id) {
+            const existing = await prisma.exerciseWithMetadata.findUnique({
+                where: { id }
+            });
+            if (existing) {
+                // Verify ownership via workout relationship
+                const workoutVerify = await prisma.workout.findFirst({
+                    where: { id: existing.workout_id, programme: { user_id: userId } }
+                });
+                if (!workoutVerify) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+                return NextResponse.json(existing, { status: 200 });
+            }
+        }
 
         if (!exercise_id) {
             return NextResponse.json(
@@ -58,6 +74,7 @@ export async function POST(
 
         const ewm = await prisma.exerciseWithMetadata.create({
             data: {
+                id: id || undefined,
                 exercise_id,
                 workout_id: workoutId,
                 sets_min,

@@ -35,7 +35,7 @@ export async function POST(
         }
 
         const body = await request.json();
-        const { name, description } = body;
+        const { id, name, description } = body;
 
         if (!name || typeof name !== "string" || name.trim().length === 0) {
             return NextResponse.json(
@@ -44,11 +44,29 @@ export async function POST(
             );
         }
 
+        // --- Idempotency Check ---
+        if (id) {
+            const existing = await prisma.workout.findUnique({
+                where: { id }
+            });
+            if (existing) {
+                // Verify owner
+                const prog = await prisma.programme.findUnique({
+                    where: { id: existing.programme_id }
+                });
+                if (!prog || prog.user_id !== userId) {
+                    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+                }
+                return NextResponse.json(existing, { status: 200 });
+            }
+        }
+
         // Calculate order index based on existing workouts
         const orderIndex = programme._count.workouts;
 
         const workout = await prisma.workout.create({
             data: {
+                id: id || undefined,
                 name: name.trim(),
                 description: description || null,
                 programme_id: programmeId,

@@ -25,7 +25,7 @@ export function ExerciseHistoryDrawer({
 
     // Group logs by session date
     const groupedLogs = logs?.reduce((acc, log) => {
-        const dateStr = new Date(log.workoutSession.date).toLocaleDateString("en-US", {
+        const dateStr = new Date(log.workoutSession?.date ?? new Date()).toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
             year: "numeric"
