@@ -6,11 +6,13 @@ import { Dumbbell, Plus, Loader2 } from "lucide-react";
 import { PageHeader, EmptyState } from "@/app/components/ui";
 import { WorkoutCard } from "./ui/WorkoutCard";
 import { useProgramme } from "../api/query-hooks/use-programme";
+import { useIsRestoring } from "@tanstack/react-query";
 
 export function WorkoutListContent({ programmeId }: { programmeId: string }) {
+    const isRestoring = useIsRestoring();
     const { data: programme, isLoading, isError } = useProgramme(programmeId);
 
-    if (isLoading) {
+    if (isRestoring || isLoading) {
         return (
             <>
                 <PageHeader title="Loading..." backHref="/" />

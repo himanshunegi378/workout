@@ -197,3 +197,20 @@ Ran `pnpm test:api`, identified the root cause of the 22 test failures as a miss
 
 ### Result
 The failing tests are documented in a report file, and the root cause of the failures (schema mismatch) is identified.
+
+## [2026-03-04 20:38]
+
+### Context
+Diagnosing why `/programmes/[programmeId]` was returning a Next.js 404 page despite the route existing and `curl` returning HTTP 200.
+
+### Learning
+1. **`PersistQueryClientProvider` + `notFound()` race condition**: When using `PersistQueryClientProvider` (for IndexedDB persistence), the provider starts with `isRestoring = true`. During this restoration phase, TanStack Query **pauses all queries**. This means on the initial render: `isLoading = false`, `isError = false`, `data = undefined`. If a component calls `notFound()` when data is `undefined`, it fires incorrectly before the query even runs.
+2. **`useIsRestoring()` is the fix**: Always guard `notFound()` (and similar null-data branches) with `useIsRestoring()` from `@tanstack/react-query` when using a persisted query client. The correct guard: `if (isRestoring || isLoading) return <LoadingUI>;`
+3. **`useIsRestoring` lives in `@tanstack/react-query`**: Despite the context coming from `PersistQueryClientProvider`, the hook is exported by the core `@tanstack/react-query` package, NOT from `@tanstack/react-query-persist-client`.
+4. **`curl` can fool you**: The HTTP 200 from `curl` on the page URL only confirms the server-side route exists. The actual 404 was triggered client-side by React after hydration when the query state transition hit the `notFound()` branch.
+
+### Action Taken
+Added `useIsRestoring()` from `@tanstack/react-query` to `WorkoutListContent.tsx` and updated the loading guard from `if (isLoading)` to `if (isRestoring || isLoading)`.
+
+### Result
+The programme detail page no longer shows a false 404. The loading spinner displays correctly while cache is being restored from IndexedDB.
