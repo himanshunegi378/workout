@@ -165,3 +165,20 @@ Updated Prisma schema, modified 4 API routes, created `RPESelector` component, a
 
 ### Result
 Seamless RPE tracking is now live across the entire workout logging and history experience with a premium, mobile-first feel.
+
+## [2026-03-04 19:20]
+
+### Context
+Deleting a git worktree (`lint-fix`) and cleaning up the workspace.
+
+### Learning
+1. **Worktree Registration Verification**: Always use `git worktree list` to verify if a directory is actually registered as a git worktree. If `git worktree remove` fails with "not a working tree," it may have been partially removed or manually created. In such cases, `rm -rf` (after checking for uncommitted work) is the correct path for filesystem cleanup.
+2. **Metadata Staleness**: `ADDITIONAL_METADATA` (like `Active Document`) can sometimes point to files in a worktree that has already been partially dismantled or whose state has changed between turns. Always verify the filesystem state before acting on metadata paths.
+3. **Branch Persistence**: Deleting a worktree does not (and should not, unless specified) delete the associated branch. Branches likely contain committed work that isn't yet merged into `main`.
+
+### Action Taken
+Verified the worktree status, pruned stale worktree metadata (if any), and removed the `.worktrees/lint-fix` directory.
+
+### Result
+Workspace is cleaned of the temporary `lint-fix` directory and the associated `fix/lint-errors` branch has been deleted.
+
