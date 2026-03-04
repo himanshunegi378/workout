@@ -94,7 +94,4 @@ After all tasks complete and verified:
 
 **Required workflow skills:**
 
-- **`.agent/skills/using-git-worktrees/SKILL.md`** - REQUIRED: Set up isolated workspace before starting
 - **`.agent/skills/writing-plans/SKILL.md`** - Creates the plan this skill executes
-- **`.agent/skills/single-flow-task-execution/SKILL.md`** - REQUIRED: Enforce single-flow execution with two-stage review
-- **`.agent/skills/finishing-a-development-branch/SKILL.md`** - Complete development after all tasks

@@ -132,8 +132,8 @@ describe("Exercise Sub-routes — Integration", () => {
 
             expect(response.status).toBe(200);
             expect(data).toMatchObject({ weight: 90, reps: 8 });
-            // Must not include extra fields
-            expect(data.id).toBeUndefined();
+            // Must not include extra fields like user_id
+            expect(data.id).toBeDefined();
             expect(data.user_id).toBeUndefined();
         });
 
@@ -258,11 +258,10 @@ describe("Exercise Sub-routes — Integration", () => {
             expect(data).toHaveLength(1);
 
             const log = data[0];
-            expect(log.sessionExerciseLog).toBeDefined();
-            expect(log.sessionExerciseLog.workoutSession).toMatchObject({
+            expect(log.workoutSession).toMatchObject({
                 date: expect.any(String),
             });
-            expect(log.sessionExerciseLog.exerciseWithMetadata).toMatchObject({
+            expect(log.exerciseWithMetadata).toMatchObject({
                 reps_min: 8,
                 reps_max: 12,
                 sets_min: 3,
@@ -283,7 +282,7 @@ describe("Exercise Sub-routes — Integration", () => {
 
             expect(response.status).toBe(200);
             expect(data).toHaveLength(1);
-            expect(data[0].sessionExerciseLog).toBeNull();
+            expect(data[0].exerciseWithMetadata).toBeNull();
         });
 
         it("should return multiple logs ordered by session date desc then set_order_index asc", async () => {

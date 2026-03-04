@@ -182,3 +182,18 @@ Verified the worktree status, pruned stale worktree metadata (if any), and remov
 ### Result
 Workspace is cleaned of the temporary `lint-fix` directory and the associated `fix/lint-errors` branch has been deleted.
 
+## [2026-03-04 20:23]
+
+### Context
+Running API integration tests (`pnpm test:api`) and generating a failure report.
+
+### Learning
+1. **Database Schema Mismatch in Integration Tests:** The tests failed with "The column `rpe` does not exist in the current database." This indicates the test database schema is out of sync with the Prisma schema, likely missing migrations or a `db push` after the `rpe` field was added.
+2. **Cascading Prisma Errors:** A missing column causes `PrismaClientKnownRequestError` with code `P2022`, failing all test cases that involve finding or creating records on that model.
+3. **Automated Reporting:** Writing a summary of exactly *why* a set of tests failed is more actionable than dumping raw test output logs into a file.
+
+### Action Taken
+Ran `pnpm test:api`, identified the root cause of the 22 test failures as a missing `rpe` column, and generated `failing_tests_report.md` summarizing the failures.
+
+### Result
+The failing tests are documented in a report file, and the root cause of the failures (schema mismatch) is identified.
