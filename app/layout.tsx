@@ -6,7 +6,7 @@ import { QueryProvider } from "@/app/components/providers/QueryProvider";
 import { RestTimerProvider } from "@/app/features/workouts/contexts/RestTimerContext";
 import { RestTimerOverlay } from "@/app/features/workouts/components/ui/RestTimer";
 import { BottomDrawerProvider } from "@/app/components/ui";
-import { PWARegistration } from "@/app/components/PWARegistration";
+
 import { PRCelebrationProvider } from "@/app/features/personal-records/PRCelebrationContext";
 import { PRCelebrationOverlay } from "@/app/features/personal-records/PRCelebrationOverlay";
 import "./globals.css";
@@ -62,7 +62,7 @@ export default function RootLayout({
                   </BottomDrawerProvider>
                   <PRCelebrationOverlay />
                   <RestTimerOverlay />
-                  <PWARegistration />
+
                 </PRCelebrationProvider>
               </RestTimerProvider>
             </QueryProvider>
