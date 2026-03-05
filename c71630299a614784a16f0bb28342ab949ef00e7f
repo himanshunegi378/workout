@@ -1,0 +1,25 @@
+app/features/workouts/api/query-hooks/use-workout-details.ts
+  ee037cb80f5d1b45 28-29
+app/features/logging/api/mutation-hooks/use-log-set.ts
+  ee037cb80f5d1b45 53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "c71630299a614784a16f0bb28342ab949ef00e7f",
+  "prompts": {
+    "ee037cb80f5d1b45": {
+      "agent_id": {
+        "tool": "gemini",
+        "id": "44b553a9-5aae-4b35-98d6-470cb5ad40f8",
+        "model": "gemini-3-flash-preview"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 3,
+      "total_deletions": 1,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    }
+  }
+}
