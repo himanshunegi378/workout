@@ -1,0 +1,48 @@
+app/features/workouts/contexts/RestTimerContext.tsx
+  ee037cb80f5d1b45 3,42-43,49-58,61-66,72-79,84-88,130-131,133-138,140-142,146
+app/features/logging/api/mutation-hooks/use-log-set.ts
+  ee037cb80f5d1b45 5,28,32,66,80
+.agent/skills/writing-skills/render-graphs.js
+  ee037cb80f5d1b45 16
+app/features/workouts/api/query-hooks/use-workout-details.ts
+  ee037cb80f5d1b45 4
+app/features/logging/components/ui/SessionCard.tsx
+  ee037cb80f5d1b45 68
+app/features/workouts/components/ui/ExerciseCard.tsx
+  ee037cb80f5d1b45 129
+app/features/workouts/components/ExerciseListContent.tsx
+  ee037cb80f5d1b45 9-11,64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.8",
+  "base_commit_sha": "026ab68f2df4adf78b607546ef98951e73863261",
+  "prompts": {
+    "b6e35e29e34217ad": {
+      "agent_id": {
+        "tool": "gemini",
+        "id": "a6f158a9-b71c-4e95-86b6-9b7b6cfd2ccd",
+        "model": "gemini-3-flash-preview"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 488,
+      "total_deletions": 123,
+      "accepted_lines": 365,
+      "overriden_lines": 0
+    },
+    "ee037cb80f5d1b45": {
+      "agent_id": {
+        "tool": "gemini",
+        "id": "44b553a9-5aae-4b35-98d6-470cb5ad40f8",
+        "model": "gemini-3-flash-preview"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 76,
+      "total_deletions": 63,
+      "accepted_lines": 57,
+      "overriden_lines": 0
+    }
+  }
+}
