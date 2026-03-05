@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { workoutKeys } from "../query-keys";
 
-type WorkoutDetailsResponse = {
+export type WorkoutDetailsResponse = {
     workout: {
         id: string;
         name: string;

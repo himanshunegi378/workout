@@ -65,7 +65,7 @@ export function SessionCard({
                         <span className="text-xs font-bold text-foreground">{totalVolume.toLocaleString()}kg Volume</span>
                     </div>
                     <div className="flex -space-x-1.5 items-center ml-auto">
-                        {uniqueMuscleGroups.slice(0, 3).map((mg, i) => (
+                        {uniqueMuscleGroups.slice(0, 3).map((mg) => (
                             <div 
                                 key={mg} 
                                 className="w-6 h-6 rounded-full border-2 border-card bg-muted flex items-center justify-center elevation-1"

@@ -6,7 +6,9 @@ import { useState, useEffect } from "react";
 import { PageHeader, EmptyState } from "@/app/components/ui";
 import { ExerciseCard } from "./ui/ExerciseCard";
 import { AddExerciseTrigger } from "../../exercises/components/AddExerciseTrigger";
-import { useWorkoutDetails } from "../api/query-hooks/use-workout-details";
+import { useWorkoutDetails, WorkoutDetailsResponse } from "../api/query-hooks/use-workout-details";
+
+type ExerciseLog = NonNullable<NonNullable<WorkoutDetailsResponse['session']>['sessionExerciseLogs'][number]['exerciseLog']>;
 
 export function ExerciseListContent({
     programmeId,
@@ -59,7 +61,7 @@ export function ExerciseListContent({
     const { workout, session, previousLogsByExercise } = data;
 
     // Advanced Calculations
-    const logsByEwm: Record<string, any[]> = {};
+    const logsByEwm: Record<string, ExerciseLog[]> = {};
     let currentVolume = 0;
     let totalSetsDone = 0;
 

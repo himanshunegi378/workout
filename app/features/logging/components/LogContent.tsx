@@ -57,8 +57,6 @@ export function LogContent() {
 
         let streak = 0;
         if (uniqueSessionDays.length > 0) {
-            let checkDate = new Date(); // Start from today
-            
             // If the most recent session wasn't today or yesterday, the streak is broken
             const latestSessionDate = parseISO(uniqueSessionDays[0]!);
             const gapToToday = differenceInDays(now, latestSessionDate);

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { useTimer } from "react-timer-hook";
 
 interface RestTimerContextValue {
@@ -39,13 +39,53 @@ interface PersistedState {
 const RestTimerContext = createContext<RestTimerContextValue | null>(null);
 
 export function RestTimerProvider({ children }: { children: React.ReactNode }) {
-    const [state, setState] = useState<TimerState>({
-        isActive: false,
-        totalDuration: 0,
-        closeOnFinish: false,
-        isPaused: false,
-        initialized: false,
-        expiryTimestamp: new Date(),
+    const [state, setState] = useState<TimerState>(() => {
+        const initialState = {
+            isActive: false,
+            totalDuration: 0,
+            closeOnFinish: false,
+            isPaused: false,
+            initialized: false,
+            expiryTimestamp: new Date(),
+        };
+
+        if (typeof window === 'undefined') return initialState;
+
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return { ...initialState, initialized: true };
+
+        try {
+            const persisted: PersistedState = JSON.parse(saved);
+            let expiry = new Date();
+            let finalIsActive = persisted.isActive;
+
+            if (persisted.isActive) {
+                if (persisted.isRunning && persisted.expiryTimestamp) {
+                    expiry = new Date(persisted.expiryTimestamp);
+                    if (expiry <= new Date()) {
+                        expiry = new Date();
+                        if (persisted.closeOnFinish) {
+                            finalIsActive = false;
+                        }
+                    }
+                } else if (persisted.isPaused && persisted.timeLeftAtPause !== null) {
+                    expiry = new Date();
+                    expiry.setSeconds(expiry.getSeconds() + persisted.timeLeftAtPause);
+                }
+            }
+
+            return {
+                isActive: finalIsActive,
+                totalDuration: persisted.totalDuration,
+                closeOnFinish: persisted.closeOnFinish,
+                isPaused: persisted.isPaused,
+                initialized: true,
+                expiryTimestamp: expiry,
+            };
+        } catch (err) {
+            console.error("Failed to restore timer state", err);
+            return { ...initialState, initialized: true };
+        }
     });
 
     const [notified, setNotified] = useState(false);
@@ -87,51 +127,23 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
 
     const timeLeft = state.isActive ? (minutes * 60 + seconds) : 0;
 
-    // Load state from localStorage on mount
+    const syncedRef = useRef(false);
+    // Sync useTimer with loaded state on mount
     useEffect(() => {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try {
-                const persisted: PersistedState = JSON.parse(saved);
-                let expiry = new Date();
-                let finalIsActive = persisted.isActive;
+        if (syncedRef.current) return;
+        syncedRef.current = true;
 
-                if (persisted.isActive) {
-                    if (persisted.isRunning && persisted.expiryTimestamp) {
-                        expiry = new Date(persisted.expiryTimestamp);
-                        if (expiry > new Date()) {
-                            restart(expiry, true);
-                        } else {
-                            // Already finished in the past
-                            expiry = new Date();
-                            restart(expiry, false);
-                            if (persisted.closeOnFinish) {
-                                finalIsActive = false;
-                            }
-                        }
-                    } else if (persisted.isPaused && persisted.timeLeftAtPause !== null) {
-                        expiry = new Date();
-                        expiry.setSeconds(expiry.getSeconds() + persisted.timeLeftAtPause);
-                        restart(expiry, false);
-                    }
+        if (state.isActive) {
+            if (!state.isPaused && state.expiryTimestamp > new Date()) {
+                restart(state.expiryTimestamp, true);
+            } else {
+                restart(state.expiryTimestamp, false);
+                if (!state.isPaused && state.expiryTimestamp <= new Date()) {
+                    setTimeout(() => onExpire(), 0);
                 }
-
-                setState({
-                    isActive: finalIsActive,
-                    totalDuration: persisted.totalDuration,
-                    closeOnFinish: persisted.closeOnFinish,
-                    isPaused: persisted.isPaused,
-                    initialized: true,
-                    expiryTimestamp: expiry,
-                });
-            } catch (err) {
-                console.error("Failed to restore timer state", err);
-                setState(prev => ({ ...prev, initialized: true }));
             }
-        } else {
-            setState(prev => ({ ...prev, initialized: true }));
         }
-    }, [restart]);
+    }, [restart, state.isActive, state.isPaused, state.expiryTimestamp, onExpire]);
 
     // Save state to localStorage whenever it changes
     useEffect(() => {

@@ -12,7 +12,6 @@ import { useDeleteLogSet } from "@/app/features/logging/api/mutation-hooks/use-d
 import { getLastLog } from "@/app/features/logging/api/query-hooks/use-last-log";
 import { useRestTimer } from "@/app/features/workouts/contexts/RestTimerContext";
 import { usePRCelebration } from "@/app/features/personal-records/PRCelebrationContext";
-import type { PRType } from "@/lib/pr-utils";
 
 import { EditExerciseMetadataDrawer } from "./EditExerciseMetadataDrawer";
 
@@ -127,7 +126,7 @@ export function ExerciseCard({
                 setWeight(data.weight?.toString() || "");
                 setReps(data.reps.toString());
             }
-        } catch (error) {
+        } catch {
             setPreviousLog(null);
         }
     };

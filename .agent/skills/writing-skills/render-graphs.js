@@ -13,6 +13,7 @@
  * Requires: graphviz (dot) installed on system
  */
 
+/* eslint-disable @typescript-eslint/no-require-imports */
 const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
