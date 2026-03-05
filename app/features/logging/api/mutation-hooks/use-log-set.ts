@@ -50,7 +50,7 @@ export function useLogSet() {
                     };
 
                     const updatedSession = {
-                        ...(old.session || { id: sessionId, sessionExerciseLogs: [] }),
+                        ...(old.session || { id: sessionId, sessionExerciseLogs: [], start_time: null, end_time: null }),
                         sessionExerciseLogs: [...(old.session?.sessionExerciseLogs || []), newSessionLog],
                     };
 

@@ -25,6 +25,8 @@ export type WorkoutDetailsResponse = {
     };
     session: {
         id: string;
+        start_time: string | Date | null;
+        end_time: string | Date | null;
         sessionExerciseLogs: {
             id: string;
             exercise_with_metadata_id: string | null;
