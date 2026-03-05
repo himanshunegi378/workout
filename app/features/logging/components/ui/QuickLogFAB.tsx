@@ -8,7 +8,7 @@ interface QuickLogFABProps {
 
 export function QuickLogFAB({ onClick }: QuickLogFABProps) {
     return (
-        <div className="fixed bottom-24 right-4 z-40">
+        <div className="fixed bottom-24 md:bottom-8 right-4 md:right-8 z-40">
             <div className="absolute inset-0 bg-accent/20 blur-xl rounded-full animate-pulse pointer-events-none" />
             <button
                 onClick={onClick}

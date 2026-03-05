@@ -21,7 +21,7 @@ Load plan, review critically, execute tasks in batches, report for review betwee
 1. Read plan file
 2. Review critically - identify any questions or concerns about the plan
 3. If concerns: Raise them with your human partner before starting
-4. If no concerns: follow the single-flow execution model from `.agent/skills/single-flow-task-execution/SKILL.md`
+4. If no concerns: follow the single-flow execution
 5. Update `<project-root>/docs/plans/task.md` (table-only tracker) and proceed
 
 ### Step 2: Execute Batch

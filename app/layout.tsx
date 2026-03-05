@@ -5,7 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { QueryProvider } from "@/app/components/providers/QueryProvider";
 import { RestTimerProvider } from "@/app/features/workouts/contexts/RestTimerContext";
 import { RestTimerOverlay } from "@/app/features/workouts/components/ui/RestTimer";
-import { BottomDrawerProvider } from "@/app/components/ui";
+import { BottomDrawerProvider, Sidebar, BottomNav } from "@/app/components/ui";
 
 import { PRCelebrationProvider } from "@/app/features/personal-records/PRCelebrationContext";
 import { PRCelebrationOverlay } from "@/app/features/personal-records/PRCelebrationOverlay";
@@ -58,7 +58,13 @@ export default function RootLayout({
               <RestTimerProvider>
                 <PRCelebrationProvider>
                   <BottomDrawerProvider>
-                    {children}
+                    <div className="flex min-h-screen">
+                      <Sidebar />
+                      <div className="flex-1 flex flex-col min-w-0">
+                        {children}
+                      </div>
+                    </div>
+                    <BottomNav />
                   </BottomDrawerProvider>
                   <PRCelebrationOverlay />
                   <RestTimerOverlay />

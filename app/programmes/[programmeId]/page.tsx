@@ -1,7 +1,6 @@
 "use client";
 
 import { Suspense, use } from "react";
-import { BottomNav } from "@/app/components/ui";
 import { WorkoutListContent } from "@/app/features/programs/components/WorkoutListContent";
 import { LoadingHeader } from "@/app/features/programs/components/ui/LoadingHeader";
 
@@ -17,7 +16,6 @@ export default function WorkoutListPage({ params }: PageProps) {
             <Suspense fallback={<LoadingHeader />}>
                 <WorkoutListContent programmeId={programmeId} />
             </Suspense>
-            <BottomNav />
         </div>
     );
 }

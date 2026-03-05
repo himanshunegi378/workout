@@ -45,6 +45,7 @@ export function WorkoutListContent({ programmeId }: { programmeId: string }) {
             <PageHeader
                 title={programme.name}
                 backHref="/"
+                showBackDefault
                 action={
                     <Link
                         href={`/programmes/${programmeId}/workouts/new`}
@@ -55,7 +56,7 @@ export function WorkoutListContent({ programmeId }: { programmeId: string }) {
                 }
             />
 
-            <main className="max-w-lg mx-auto px-4 py-4">
+            <main className="max-w-lg md:max-w-5xl mx-auto px-4 md:px-8 py-4 md:py-8">
                 {programme.workouts.length === 0 ? (
                     <EmptyState
                         icon={Dumbbell}
@@ -75,7 +76,7 @@ export function WorkoutListContent({ programmeId }: { programmeId: string }) {
                         }
                     />
                 ) : (
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                         {programme.workouts.map((workout, i) => {
                             const exercisePreview = workout.exercisesWithMetadata
                                 .map((ewm) => ewm.exercise.name)
@@ -84,7 +85,7 @@ export function WorkoutListContent({ programmeId }: { programmeId: string }) {
                             return (
                                 <div
                                     key={workout.id}
-                                    className="animate-slide-up"
+                                    className="animate-slide-up h-full"
                                     style={{ animationDelay: `${i * 60}ms` }}
                                 >
                                     <WorkoutCard

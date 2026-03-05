@@ -19,8 +19,8 @@ export function RestTimerOverlay() {
 
     return (
         <Portal>
-            <div className="fixed inset-x-0 bottom-16 sm:bottom-0 p-4 z-40 animate-slide-up pointer-events-none">
-                <div className="max-w-md mx-auto pointer-events-auto bg-card border border-border rounded-2xl p-4 shadow-2xl flex flex-col gap-4">
+            <div className="fixed inset-x-0 md:inset-x-auto md:right-32 bottom-16 md:bottom-8 p-4 z-40 animate-slide-up pointer-events-none">
+                <div className="w-full max-w-md mx-auto md:w-80 pointer-events-auto bg-card border border-border rounded-2xl p-4 shadow-2xl flex flex-col gap-4">
                     <div className="flex items-center justify-between">
                         <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                             Rest Timer

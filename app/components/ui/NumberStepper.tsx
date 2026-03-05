@@ -59,17 +59,17 @@ export function NumberStepper({
     return (
         <div className="flex flex-col gap-2 w-full">
             <div className="flex items-center justify-between min-h-[26px]">
-                {label && <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{label}</label>}
+                {label && <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</label>}
                 {stepOptions.length > 0 ? (
-                    <div className="flex bg-muted/50 p-0.5 rounded-lg border border-border/50">
+                    <div className="flex bg-card/40 p-0.5 rounded-lg border border-border/40">
                         {stepOptions.map((opt) => (
                             <button
                                 key={opt}
                                 type="button"
                                 onClick={() => setCurrentStep(opt)}
                                 className={`px-2 py-0.5 text-[10px] font-bold rounded-md transition-all ${currentStep === opt
-                                    ? "bg-accent text-accent-foreground shadow-sm"
-                                    : "text-muted-foreground hover:text-foreground"
+                                    ? "bg-accent text-accent-foreground shadow-sm shadow-accent/20"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-muted/20"
                                     }`}
                             >
                                 ±{opt}
@@ -81,12 +81,12 @@ export function NumberStepper({
                 )}
             </div>
 
-            <div className="flex items-center justify-between bg-muted border border-border rounded-xl p-1 elevation-2">
+            <div className="flex items-center justify-between bg-card/40 border border-border/60 rounded-xl p-1.5 group transition-colors focus-within:border-accent/40">
                 <button
                     type="button"
                     onClick={handleDecrement}
                     disabled={value <= min}
-                    className="w-12 h-10 flex items-center justify-center rounded-lg text-foreground hover:bg-background transition-colors active:scale-95 disabled:opacity-50 disabled:active:scale-100"
+                    className="w-10 h-10 flex items-center justify-center rounded-lg text-foreground hover:bg-muted/30 transition-all active:scale-95 disabled:opacity-30 disabled:active:scale-100"
                 >
                     <Minus className="w-5 h-5" />
                 </button>
@@ -98,17 +98,17 @@ export function NumberStepper({
                         value={inputValue}
                         onChange={handleInputChange}
                         onBlur={handleInputBlur}
-                        className="w-16 bg-transparent text-center font-display font-semibold text-lg text-foreground focus:outline-none focus:ring-1 focus:ring-accent rounded-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="w-16 bg-transparent text-center font-display font-bold text-lg text-foreground focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                     <div className="flex items-center w-8 pl-1">
-                        {suffix && <span className="text-sm text-muted-foreground font-semibold uppercase">{suffix}</span>}
+                        {suffix && <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">{suffix}</span>}
                     </div>
                 </div>
                 <button
                     type="button"
                     onClick={handleIncrement}
                     disabled={value >= max}
-                    className="w-12 h-10 flex items-center justify-center rounded-lg text-foreground hover:bg-background transition-colors active:scale-95 disabled:opacity-50 disabled:active:scale-100"
+                    className="w-10 h-10 flex items-center justify-center rounded-lg text-foreground hover:bg-muted/30 transition-all active:scale-95 disabled:opacity-30 disabled:active:scale-100"
                 >
                     <Plus className="w-5 h-5" />
                 </button>

@@ -1,6 +1,7 @@
 // Global UI primitives — import from "@/app/components/ui"
 export { PageHeader } from "./PageHeader";
 export { BottomNav } from "./BottomNav";
+export { Sidebar } from "./Sidebar";
 export { Button } from "./Button";
 export { FAB } from "./FAB";
 export { CardSkeleton, CardSkeletonList } from "./CardSkeleton";

@@ -82,12 +82,12 @@ export function ExerciseListClient({ exercises }: ExerciseListClientProps) {
                     }
                 />
             ) : (
-                <div className="space-y-2.5">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                     {filtered.map((ex, i) => (
                         <div
                             key={ex.id}
-                            className="animate-slide-up"
-                            style={{ animationDelay: `${(i < 10 ? i : 10) * 40}ms` }}
+                            className="animate-slide-up h-full"
+                            style={{ animationDelay: `${(i < 12 ? i : 12) * 40}ms` }}
                         >
                             <ExerciseListCard
                                 name={ex.name}

@@ -22,11 +22,11 @@ export function ProgrammeList() {
     }
 
     return (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {programmes.map((programme, i) => (
                 <div
                     key={programme.id}
-                    className="animate-slide-up"
+                    className="animate-slide-up h-full"
                     style={{ animationDelay: `${i * 60}ms` }}
                 >
                     <ProgrammeCard

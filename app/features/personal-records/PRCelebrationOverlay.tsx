@@ -63,12 +63,12 @@ export function PRCelebrationOverlay() {
                 aria-hidden="true"
             />
 
-            {/* Celebration card — above bottom nav */}
+            {/* Celebration card — above bottom nav on mobile, bottom right on desktop or centered */}
             <div
                 role="status"
                 aria-live="polite"
                 aria-label={`Personal record: ${config.label} for ${celebration.exerciseName}`}
-                className="fixed inset-x-0 bottom-24 z-9999 flex justify-center px-5 pointer-events-none"
+                className="fixed inset-x-0 bottom-24 md:bottom-8 z-9999 flex justify-center px-5 pointer-events-none"
             >
                 <div
                     className="pointer-events-auto relative w-full max-w-sm bg-card border border-border rounded-3xl p-7 elevation-5 text-center overflow-hidden"

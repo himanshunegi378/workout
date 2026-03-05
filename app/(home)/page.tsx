@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { PageHeader, BottomNav, CardSkeletonList } from "@/app/components/ui";
+import { PageHeader, CardSkeletonList } from "@/app/components/ui";
 import { ProgrammeList } from "@/app/features/programs/components/ProgrammeList";
 
 export default function HomePage() {
@@ -9,6 +9,7 @@ export default function HomePage() {
         <div className="min-h-screen pb-20">
             <PageHeader
                 title="My Programs"
+                subtitle="Manage your training splits and plans"
                 action={
                     <Link
                         href="/programmes/new"
@@ -19,13 +20,11 @@ export default function HomePage() {
                 }
             />
 
-            <main className="max-w-lg mx-auto px-4 py-4">
+            <main className="max-w-lg md:max-w-5xl mx-auto px-4 md:px-8 py-4 md:py-8">
                 <Suspense fallback={<CardSkeletonList count={4} />}>
                     <ProgrammeList />
                 </Suspense>
             </main>
-
-            <BottomNav />
         </div>
     );
 }

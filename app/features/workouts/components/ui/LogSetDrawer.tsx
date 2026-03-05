@@ -53,13 +53,13 @@ export function LogSetDrawer({
     return (
         <BottomDrawer isOpen={isOpen} onClose={onClose} title={isEdit ? "Edit Set" : `Log Set ${setIndex + 1}`}>
             <div className="flex flex-col -mt-4">
-                <div className="flex items-center gap-3 mb-6 bg-accent/5 p-3 rounded-2xl border border-accent/10">
-                    <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
-                        <Target className="w-5 h-5 text-accent" />
+                <div className="flex items-center gap-4 mb-6 bg-card/40 p-4 rounded-2xl border border-border/60">
+                    <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center border border-accent/20">
+                        <Target className="w-6 h-6 text-accent" />
                     </div>
-                    <div>
-                        <p className="text-xs font-bold text-accent uppercase tracking-wider">Exercise</p>
-                        <h3 className="font-display font-bold text-foreground truncate">{exerciseName}</h3>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-bold text-accent uppercase tracking-widest mb-0.5">Logging for</p>
+                        <h3 className="font-display font-bold text-foreground text-lg truncate">{exerciseName}</h3>
                     </div>
                 </div>
 
@@ -67,13 +67,15 @@ export function LogSetDrawer({
                     <button
                         type="button"
                         onClick={fillPrevious}
-                        className="w-full mb-6 flex items-center justify-between p-4 rounded-xl bg-muted/50 border border-border/50 text-sm transition-all active:scale-[0.98] hover:bg-muted"
+                        className="w-full mb-8 flex items-center justify-between p-4 rounded-2xl bg-card/30 border border-border/50 text-sm transition-all active:scale-[0.98] hover:bg-muted/20 hover:border-accent/30 group"
                     >
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                            <History className="w-4 h-4" />
-                            <span className="font-medium">Previous performance</span>
+                        <div className="flex items-center gap-3 text-muted-foreground group-hover:text-foreground transition-colors">
+                            <div className="p-2 rounded-lg bg-muted/40 group-hover:bg-accent/10 group-hover:text-accent transition-colors">
+                                <History className="w-4 h-4" />
+                            </div>
+                            <span className="font-bold tracking-tight">Best Previous</span>
                         </div>
-                        <span className="font-bold text-foreground">
+                        <span className="font-display font-bold text-foreground bg-muted/30 px-3 py-1.5 rounded-lg border border-border/40 group-hover:border-accent/20 transition-all">
                             {previousLog.weight ? `${previousLog.weight}kg × ` : ""}
                             {previousLog.reps} reps
                         </span>
