@@ -205,12 +205,17 @@ export function useMusclePerformanceData() {
                     else if (eRT === 'up') { ep = "increase"; etd = "↑ reps"; }
                     else if (eRT === 'down') { ep = "decrease"; etd = "↓ reps"; }
 
+                    const eVolumeChangePercentage = eStats.lastVolume > 0 
+                        ? ((eStats.currentVolume - eStats.lastVolume) / eStats.lastVolume) * 100 
+                        : 0;
+
                     exercises.push({
                         name: en,
                         currentWeekSets: eStats.currentSets,
                         lastWeekSets: eStats.lastSets,
                         currentWeekVolume: eStats.currentVolume,
                         lastWeekVolume: eStats.lastVolume,
+                        volumeChangePercentage: eVolumeChangePercentage,
                         repsTrend: eRT,
                         weightTrend: eWT,
                         volumeTrend: eVT,
@@ -219,12 +224,17 @@ export function useMusclePerformanceData() {
                     });
                 }
 
+                const volumeChangePercentage = stats.lastVolume > 0 
+                    ? ((stats.currentVolume - stats.lastVolume) / stats.lastVolume) * 100 
+                    : 0;
+
                 result.push({
                     muscleGroup: mg as MuscleGroup,
                     currentWeekSets: stats.currentSets,
                     lastWeekSets: stats.lastSets,
                     currentWeekVolume: stats.currentVolume,
                     lastWeekVolume: stats.lastVolume,
+                    volumeChangePercentage,
                     repsTrend,
                     weightTrend,
                     volumeTrend,

@@ -23,7 +23,7 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
                 defaultOptions: {
                     queries: {
                         gcTime: 1000 * 60 * 60 * 24 * 7, // 1 week
-                        staleTime: 1000 * 60 * 5, // 5 minutes
+                        // staleTime: 1000 * 60 * 5, // 5 minutes
                         retry: (failureCount, error: Error & { status?: number }) => {
                             // Only retry if it's a network error or a 5xx server error
                             if ((error?.status ?? 0) >= 500 || !navigator.onLine) return true;

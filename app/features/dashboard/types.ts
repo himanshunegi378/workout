@@ -9,11 +9,18 @@ export type ExercisePerformanceData = {
     lastWeekSets: number;
     currentWeekVolume: number;
     lastWeekVolume: number;
+    volumeChangePercentage: number;
     repsTrend: TrendStatus;
     weightTrend: TrendStatus;
     volumeTrend: TrendStatus;
     performance: PerformanceStatus;
     trendDetail: string;
+};
+
+export type HistoricalVolumeData = {
+    weekStart: string;
+    label: string;
+    volume: number;
 };
 
 export type MusclePerformanceData = {
@@ -22,10 +29,12 @@ export type MusclePerformanceData = {
     lastWeekSets: number;
     currentWeekVolume: number;
     lastWeekVolume: number;
+    volumeChangePercentage: number;
     repsTrend: TrendStatus;
     weightTrend: TrendStatus;
     volumeTrend: TrendStatus;
     performance: PerformanceStatus;
     trendDetail: string;
     exercises: ExercisePerformanceData[];
+    historicalVolume?: HistoricalVolumeData[];
 };

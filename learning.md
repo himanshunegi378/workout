@@ -214,3 +214,19 @@ Added `useIsRestoring()` from `@tanstack/react-query` to `WorkoutListContent.tsx
 
 ### Result
 The programme detail page no longer shows a false 404. The loading spinner displays correctly while cache is being restored from IndexedDB.
+## [2026-03-14 21:23]
+
+### Context
+Implementing weekly muscle volume trend charts with 8-week historical data and percentage change metrics.
+
+### Learning
+1. **`toISOString()` Timezone Pitfall**: When bucketing data by days/weeks, `date.toISOString().split('T')[0]` can shift the date to the previous day if the local timezone offset is positive (e.g., UTC+5:30) and the time is near midnight. Using `format(date, 'yyyy-MM-dd')` from `date-fns` is safer as it preserves the local date representation.
+2. **Robust Date Parsing**: When receiving date strings from a database/API that might have varying precision (YYYY-MM-DD vs ISO), it is safer to split by `' '` or `'T'` and manually parse components `new Date(year, month - 1, day)` to avoid inconsistent browser interpretations of timezones in string constructors.
+3. **Current Week Labeling**: In a fixed-period trend chart (e.g., 8 weeks), explicitly labeling the latest point as "Current" instead of its start date provides better UX, clearly signaling that the data point is ongoing and includes today's metrics.
+4. **Formula Alignment**: Following a specific "Budgeting" formula (2-5% growth vs >10% spike) allows for semantic color-coding (success/warning/danger) which significantly reduces cognitive load for users analyzing performance.
+
+### Action Taken
+Implemented `useMuscleHistoricalVolume` and `MuscleVolumeChart`, fixed timezone-sensitive bucketing, and added color-coded volume change percentages.
+
+### Result
+User has a reliable, visually rich 8-week pulse of their performance with clear guidance on progressive overload safety.

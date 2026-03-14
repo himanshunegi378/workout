@@ -4,6 +4,7 @@ import React from 'react';
 import { TrendingUp, TrendingDown, Minus, Activity, Loader2 } from 'lucide-react';
 import { BottomDrawer, muscleColorMap } from "@/app/components/ui";
 import { useMusclePerformanceData } from "../../api/query-hooks/use-muscle-performance-data";
+import { MuscleVolumeChart } from "./MuscleVolumeChart";
 import { MusclePerformanceData, ExercisePerformanceData, TrendStatus } from "../../types";
 
 /**
@@ -70,12 +71,25 @@ const PulseCard = ({
                 </div>
 
                 {/* Column 2: Load */}
-                <div className="flex items-baseline gap-1 border-l border-border/10 pl-2 md:pl-6 font-variant-numeric: tabular-nums">
-                    <span className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest">Load</span>
-                    <span className="text-sm font-display font-black leading-none">
-                        {data.currentWeekVolume > 9999 ? `${(data.currentWeekVolume / 1000).toFixed(1)}k` : data.currentWeekVolume.toLocaleString()}
-                        <span className="text-[8px] ml-0.5 opacity-40">kg</span>
-                    </span>
+                <div className="flex flex-col border-l border-border/10 pl-2 md:pl-6 font-variant-numeric: tabular-nums">
+                    <div className="flex items-baseline gap-1">
+                        <span className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest">Load</span>
+                        <span className="text-sm font-display font-black leading-none">
+                            {data.currentWeekVolume > 9999 ? `${(data.currentWeekVolume / 1000).toFixed(1)}k` : data.currentWeekVolume.toLocaleString()}
+                            <span className="text-[8px] ml-0.5 opacity-40">kg</span>
+                        </span>
+                    </div>
+                    {/* Volume Change % */}
+                    <div className={`text-[9px] font-black uppercase tracking-tight mt-0.5 flex items-center gap-0.5 ${
+                        data.volumeChangePercentage > 10 ? 'text-danger' : 
+                        data.volumeChangePercentage > 5 ? 'text-warning' : 
+                        data.volumeChangePercentage >= 2 ? 'text-success' : 
+                        data.volumeChangePercentage > 0 ? 'text-success/70' :
+                        data.volumeChangePercentage < 0 ? 'text-danger/80' : 'text-muted-foreground/40'
+                    }`}>
+                        {data.volumeChangePercentage > 0 ? '+' : ''}{data.volumeChangePercentage.toFixed(1)}%
+                        <span className="text-[7px] opacity-40 lowercase font-bold">vol</span>
+                    </div>
                 </div>
 
                 {/* Column 3: Trends */}
@@ -196,6 +210,11 @@ export function MuscleOutputTable() {
                             </div>
                         </div>
 
+                        {/* Historical Volume Chart Integration */}
+                        <div className="mb-8">
+                            <MuscleVolumeChart muscleGroup={selectedMuscle.muscleGroup} />
+                        </div>
+
                         <div className="space-y-2 px-0.5">
                             {selectedMuscle.exercises.map((ex: ExercisePerformanceData, idx: number) => (
                                 <div
@@ -218,12 +237,23 @@ export function MuscleOutputTable() {
                                             <span className="text-sm font-display font-black leading-none">{ex.currentWeekSets}</span>
                                         </div>
 
-                                        <div className="flex items-baseline gap-1 border-l border-border/10 pl-2 md:pl-6 font-variant-numeric: tabular-nums">
-                                            <span className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest">Load</span>
-                                            <span className="text-sm font-display font-black leading-none">
-                                                {ex.currentWeekVolume > 9999 ? `${(ex.currentWeekVolume / 1000).toFixed(1)}k` : ex.currentWeekVolume.toLocaleString()}
-                                                <span className="text-[8px] ml-0.5 opacity-40">kg</span>
-                                            </span>
+                                        <div className="flex flex-col border-l border-border/10 pl-2 md:pl-6 font-variant-numeric: tabular-nums">
+                                            <div className="flex items-baseline gap-1">
+                                                <span className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest">Load</span>
+                                                <span className="text-sm font-display font-black leading-none">
+                                                    {ex.currentWeekVolume > 9999 ? `${(ex.currentWeekVolume / 1000).toFixed(1)}k` : ex.currentWeekVolume.toLocaleString()}
+                                                    <span className="text-[8px] ml-0.5 opacity-40">kg</span>
+                                                </span>
+                                            </div>
+                                            <div className={`text-[9px] font-black uppercase tracking-tight mt-0.5 ${
+                                                ex.volumeChangePercentage > 10 ? 'text-danger' : 
+                                                ex.volumeChangePercentage > 5 ? 'text-warning' : 
+                                                ex.volumeChangePercentage >= 2 ? 'text-success' : 
+                                                ex.volumeChangePercentage > 0 ? 'text-success/70' :
+                                                ex.volumeChangePercentage < 0 ? 'text-danger/80' : 'text-muted-foreground/40'
+                                            }`}>
+                                                {ex.volumeChangePercentage > 0 ? '+' : ''}{ex.volumeChangePercentage.toFixed(1)}%
+                                            </div>
                                         </div>
 
                                         <div className="flex items-center justify-end gap-1 border-l border-border/10">
