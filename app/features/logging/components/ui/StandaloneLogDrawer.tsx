@@ -9,10 +9,17 @@ import { usePRCelebration } from "@/app/features/personal-records/PRCelebrationC
 import { useLastLog } from "../../api/query-hooks/use-last-log";
 import type { PRType } from "@/lib/pr-utils";
 
+/**
+ * Props for the StandaloneLogDrawer component.
+ */
 interface StandaloneLogDrawerProps {
+    /** Whether the drawer is currently open. */
     isOpen: boolean;
+    /** Callback function to close the drawer. */
     onClose: () => void;
+    /** Unique identifier for the exercise to log. */
     exerciseId: string;
+    /** The display name of the exercise. */
     exerciseName: string;
 }
 
@@ -23,11 +30,25 @@ interface LastLog {
     rpe: number | null;
 }
 
+/**
+ * A drawer component that allows users to log a set for a specific exercise independently of a planned workout.
+ * It fetches the last known log for the exercise and handles the logging mutation.
+ * 
+ * @param {StandaloneLogDrawerProps} props - Component properties.
+ * @returns {JSX.Element} The rendered drawer and form.
+ */
 export function StandaloneLogDrawer({ isOpen, onClose, exerciseId, exerciseName }: StandaloneLogDrawerProps) {
     const { celebrate } = usePRCelebration();
     const { mutate: logSet, isPending } = useLogSet();
     const { data: lastLog } = useLastLog(exerciseId, isOpen);
 
+    /**
+     * Handles the submission of the log form.
+     * 
+     * @param {string} weight - The weight value as a string.
+     * @param {string} reps - The repetitions value as a string.
+     * @param {string|null} rpe - The RPE value as a string or null.
+     */
     const handleSubmit = (weight: string, reps: string, rpe: string | null) => {
         if (!reps || reps === "0") return;
 
@@ -73,17 +94,32 @@ export function StandaloneLogDrawer({ isOpen, onClose, exerciseId, exerciseName 
     );
 }
 
+/**
+ * Props for the internal LogForm component.
+ */
 interface LogFormProps {
+    /** Data from the last time this exercise was logged. */
     lastLog?: LastLog;
+    /** Callback for form submission. */
     onSubmit: (weight: string, reps: string, rpe: string | null) => void;
+    /** Whether a logging mutation is currently in progress. */
     isPending: boolean;
 }
 
+/**
+ * The internal form used within the StandaloneLogDrawer for inputting set details.
+ * 
+ * @param {LogFormProps} props - Component properties.
+ * @returns {JSX.Element} The rendered logging form.
+ */
 function LogForm({ lastLog, onSubmit, isPending }: LogFormProps) {
     const [weight, setWeight] = useState(lastLog?.weight?.toString() || "0");
     const [reps, setReps] = useState(lastLog?.reps?.toString() || "0");
     const [rpe, setRpe] = useState<number | null>(lastLog?.rpe || null);
 
+    /**
+     * Automatically fills the form fields with data from the previous performance.
+     */
     const handleFillPrevious = () => {
         if (lastLog) {
             setWeight(lastLog.weight?.toString() || "0");

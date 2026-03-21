@@ -5,6 +5,15 @@ import { logKeys } from "../query-keys";
 
 import type { GroupedSession, PaginatedResponse } from "../../types";
 
+/**
+ * A hook for fetching workout sessions in an infinite-scroll fashion.
+ * Supports grouping sessions (e.g., by month) and pagination.
+ * 
+ * @param {Object} [options] - The configuration options for fetching sessions.
+ * @param {boolean} [options.grouped=true] - Whether the sessions should be grouped by date label.
+ * @param {number} [options.limit=10] - The number of sessions to fetch per page.
+ * @returns {import("@tanstack/react-query").UseInfiniteQueryResult} A React Query infinite query result object.
+ */
 export function useInfiniteSessions({ grouped = true, limit = 10 }: { grouped?: boolean; limit?: number } = {}) {
     return useInfiniteQuery<PaginatedResponse<GroupedSession[]>>({
         queryKey: [...logKeys.sessions(), { grouped, limit }],

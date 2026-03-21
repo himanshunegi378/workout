@@ -5,15 +5,31 @@ import { muscleColorMap } from "@/app/components/ui";
 import { useDeleteLogSet } from "../../api/mutation-hooks/use-delete-log-set";
 import { useState } from "react";
 
+/**
+ * Props for the SetRow component.
+ */
 interface SetRowProps {
+    /** Unique identifier for the set. */
     id: string;
+    /** The chronological order of the set within the exercise. */
     index: number;
+    /** The weight lifted, or null if bodyweight. */
     weight: number | null;
+    /** The number of repetitions completed. */
     reps: number;
+    /** Rate of Perceived Exertion (intensity), optional. */
     rpe: number | null;
+    /** Indicates if this set is a personal record (PR). */
     prType?: string | null;
 }
 
+/**
+ * A sub-component that represents a single row (set) within an exercise group.
+ * Handles set deletion with confirmation and displays PR indicators.
+ * 
+ * @param {SetRowProps} props - The set data.
+ * @returns {JSX.Element} The rendered set row.
+ */
 export function SetRow({ id, index, weight, reps, rpe, prType }: SetRowProps) {
     const { mutate: deleteSet, isPending } = useDeleteLogSet();
     const [isDeleting, setIsDeleting] = useState(false);
@@ -74,13 +90,27 @@ export function SetRow({ id, index, weight, reps, rpe, prType }: SetRowProps) {
 
 import { ExerciseHistoryDrawer } from "@/app/features/exercises/components/ExerciseHistoryDrawer";
 
+/**
+ * Props for the ExerciseLogGroup component.
+ */
 interface ExerciseLogGroupProps {
+    /** Unique identifier for the exercise. */
     exerciseId: string;
+    /** The display name of the exercise. */
     exerciseName: string;
+    /** The primary muscle group targeted by the exercise. */
     muscleGroup: string;
+    /** An array of sets logged for this exercise in the current session. */
     sets: { id: string; weight: number | null; reps: number; rpe: number | null; pr_type?: string | null }[];
 }
 
+/**
+ * A component that groups multiple sets under a single exercise heading.
+ * Clicking the exercise name opens the full history drawer for that exercise.
+ * 
+ * @param {ExerciseLogGroupProps} props - The exercise group data.
+ * @returns {JSX.Element} The rendered exercise log group.
+ */
 export function ExerciseLogGroup({ exerciseId, exerciseName, muscleGroup, sets }: ExerciseLogGroupProps) {
     const colorClass = muscleColorMap[muscleGroup] ?? "bg-accent";
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);

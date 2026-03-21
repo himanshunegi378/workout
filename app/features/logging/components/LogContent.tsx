@@ -16,6 +16,13 @@ import { useInfiniteSessions } from "../api/query-hooks/use-sessions";
 import { QuickLogActions } from "./ui/QuickLogActions";
 import type { SessionWithLogs } from "../types";
 
+/**
+ * The main container component for the logging feature's timeline view.
+ * It fetches paginated session data, calculates consistency/streak stats, 
+ * and renders a timeline of workout sessions including quick log actions.
+ * 
+ * @returns {JSX.Element} The rendered logging dashboard and timeline.
+ */
 export function LogContent() {
     const {
         data,
@@ -30,6 +37,10 @@ export function LogContent() {
 
     // ── Calculations ───────────────────────────────────────────────────────
 
+    /**
+     * Internal analytics for the user's training journey.
+     * Calculates monthly session count, active streaks, and last 7-day consistency.
+     */
     const stats = (() => {
         const now = new Date();
         const startOfThisMonth = startOfMonth(now);
@@ -78,6 +89,9 @@ export function LogContent() {
         return { consistency, monthlySessions, streak };
     })();
 
+    /**
+     * Merges paginated session data into a flat grouped array for rendering.
+     */
     const grouped = (() => {
         if (!data?.pages) return [];
         const merged = new Map<string, { label: string; sessions: SessionWithLogs[] }>();

@@ -1,3 +1,7 @@
+/**
+ * Represents a simplified session exercise log with its relations.
+ * This is used for displaying logs in a session context.
+ */
 export interface SessionExerciseLogWithRelations {
     id: string;
     exercise_with_metadata_id: string | null;
@@ -15,6 +19,9 @@ export interface SessionExerciseLogWithRelations {
     } | null;
 }
 
+/**
+ * Represents a workout session including its associated workout metadata and exercise logs.
+ */
 export interface SessionWithLogs {
     id: string;
     date: Date;
@@ -27,11 +34,18 @@ export interface SessionWithLogs {
     sessionExerciseLogs: SessionExerciseLogWithRelations[];
 }
 
+/**
+ * Represents sessions grouped by a label (e.g., month or week).
+ */
 export interface GroupedSession {
     label: string;
     sessions: SessionWithLogs[];
 }
 
+/**
+ * Standard paginated response wrapper for API responses.
+ * @template T - The type of data being paginated.
+ */
 export interface PaginatedResponse<T> {
     data: T;
     pagination: {

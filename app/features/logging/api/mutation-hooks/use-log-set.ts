@@ -4,11 +4,23 @@ import { logKeys } from "../query-keys";
 import { logSet } from "../mutations";
 import { WorkoutDetailsResponse } from "@/app/features/workouts/api/query-hooks/use-workout-details";
 
+/**
+ * A mutation hook for logging a workout set.
+ * It includes optimistic updates to the local cache and handles rollback on error.
+ * 
+ * @returns {import("@tanstack/react-query").UseMutationResult} A React Query mutation result object.
+ */
 export function useLogSet() {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: logSet,
+        /**
+         * Optimistically updates the local workout details cache before the server mutation completes.
+         * 
+         * @param {Object} newLogData - The new set data.
+         * @returns {Promise<Object>} The previous workout details snapshot for possible rollback.
+         */
         onMutate: async (newLogData: {
             workoutId?: string;
             exerciseId?: string;
@@ -63,12 +75,18 @@ export function useLogSet() {
 
             return { previousWorkoutDetails };
         },
+        /**
+         * Rollback to the previous cache state if the mutation fails.
+         */
         onError: (_err, newLogData, context) => {
             // Roll back to the previous value if the mutation fails
             if (newLogData.workoutId && context?.previousWorkoutDetails) {
                 queryClient.setQueryData(workoutKeys.detail(newLogData.workoutId), context.previousWorkoutDetails);
             }
         },
+        /**
+         * Invalidates relevant queries on success to keep data in sync.
+         */
         onSuccess: (_, variables) => {
             // Invalidate the workout details cache so the list of completed sets updates instantly in SetTracker
             if (variables.workoutId) {
@@ -77,6 +95,9 @@ export function useLogSet() {
             // Invalidate the global logs lists
             queryClient.invalidateQueries({ queryKey: logKeys.lists() });
         },
+        /**
+         * Always refetch after error or success to ensure synchronization.
+         */
         onSettled: (_data, _error, variables) => {
             // Always refetch after error or success to ensure we're in sync with the server
             if (variables.workoutId) {

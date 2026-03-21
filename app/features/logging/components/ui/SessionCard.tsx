@@ -1,17 +1,32 @@
 import { Dumbbell, Clock, Activity, Target } from "lucide-react";
 import { ExerciseLogGroup } from "./ExerciseLogGroup";
 
+/**
+ * Props for the SessionCard component.
+ */
 interface SessionCardProps {
+    /** The display name of the workout. */
     workoutName: string;
+    /** The name of the workout programme or group. */
     groupName: string;
+    /** The start time of the session. */
     startTime: Date | null;
+    /** The end time of the session. */
     endTime: Date | null;
+    /** A collection of exercise logs grouped by exercise. */
     exerciseGroups: {
         exercise: { id: string; name: string; muscle_group: string };
         sets: { id: string; weight: number | null; rpe: number | null; reps: number }[];
     }[];
 }
 
+/**
+ * A card component that displays a summary of a single workout session.
+ * Shows session metadata (duration, volume, sets) and expands into individual exercise logs.
+ * 
+ * @param {SessionCardProps} props - The session data to display.
+ * @returns {JSX.Element} The rendered session card.
+ */
 export function SessionCard({
     workoutName,
     groupName,
@@ -101,6 +116,14 @@ export function SessionCard({
     );
 }
 
+/**
+ * Formats the duration between two dates into a user-friendly string.
+ * E.g., "1h 20m" or "45m".
+ * 
+ * @param {Date} start - The starting time.
+ * @param {Date} end - The ending time.
+ * @returns {string} The formatted duration string.
+ */
 function formatDuration(start: Date, end: Date) {
     const diff = new Date(end).getTime() - new Date(start).getTime();
     const mins = Math.round(diff / 60_000);
