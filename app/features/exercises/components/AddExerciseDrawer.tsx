@@ -14,6 +14,21 @@ interface AddExerciseDrawerProps {
     workoutId: string;
 }
 
+/**
+ * A comprehensive drawer component for adding a new exercise to a specific workout within a programme.
+ * 
+ * Context:
+ * This component acts as the primary interface for users to customize their workouts. 
+ * It manages the state for exercise selection (via ExerciseSelectDrawer) and exercise-specific 
+ * parameters like sets, reps, rest periods, and tempo.
+ * 
+ * Why:
+ * - Centralized Configuration: By consolidating all exercise parameters into one drawer, 
+ *   it simplifies the user flow for building or modifying a workout session.
+ * - Input Validation: Ensures that only valid exercise configurations (e.g., non-empty sets/reps) 
+ *   can be submitted to the backend.
+ * - Integration: Directly connects with the `useAddExerciseToWorkout` mutation to persist changes.
+ */
 export function AddExerciseDrawer({ isOpen, onClose, programmeId, workoutId }: AddExerciseDrawerProps) {
     const { data: exercises = [] } = useExercises();
 

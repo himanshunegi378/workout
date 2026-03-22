@@ -14,6 +14,21 @@ interface ExerciseHistoryDrawerProps {
     onClose: () => void;
 }
 
+/**
+ * A bottom drawer component that displays the completed set history for a specific exercise.
+ * 
+ * Context:
+ * This drawer is typically triggered from an exercise list or during a workout to help users 
+ * track their progress and see previous performance (weight and reps) for a specific movement.
+ * It groups historical logs by date and provides visual indicators for Personal Records (PRs) 
+ * using a trophy icon.
+ * 
+ * Why:
+ * - Real-time progress tracking: Users need to know their previous "heaviest" or "most reps" 
+ *   to apply progressive overload.
+ * - Quick logging: Includes a standalone log trigger to allow adding set data without 
+ *   necessarily being in a full workout session.
+ */
 export function ExerciseHistoryDrawer({
     exerciseId,
     exerciseName,

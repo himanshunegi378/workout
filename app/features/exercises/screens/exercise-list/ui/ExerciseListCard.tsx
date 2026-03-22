@@ -6,6 +6,19 @@ interface ExerciseListCardProps {
     muscleGroup: string;
 }
 
+/**
+ * A specialized card component for displaying individual exercises in a list.
+ * 
+ * Context:
+ * This card is used to visually represent an exercise within the library or workout builders. 
+ * It prioritizes clear identification of the muscle group through color-coded status stripes and badges.
+ * 
+ * Why:
+ * - Visual Scannability: Users often browse by muscle group; the color-coding (e.g., chest, back, legs) 
+ *   makes it easy to scan a long list of exercises for a specific category.
+ * - UX Visuals: The combination of labels and descriptors provides just enough context 
+ *   to identify the movement without overwhelming the user with detail.
+ */
 export function ExerciseListCard({ name, description, muscleGroup }: ExerciseListCardProps) {
     const colorClass = muscleColorMap[muscleGroup] ?? "bg-accent";
 

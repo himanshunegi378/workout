@@ -23,6 +23,19 @@ interface ExerciseLogWithHistory {
 
 import { logKeys } from "@/app/features/logging/api/query-keys";
 
+/**
+ * A custom query hook for fetching the historical performance data of a specific exercise.
+ * 
+ * Context:
+ * This hook retrieves all past completed logs (weight, reps, sets) for an exercise. 
+ * It is primarily used by the `ExerciseHistoryDrawer` to show user progress.
+ * 
+ * Why:
+ * - Reactive Loading: Leverages TanStack Query to manage the loading state and 
+ *   cache the results, so history doesn't need to be refetched every time the drawer opens.
+ * - Integration: Incorporates PR (Personal Record) information from the backend directly into 
+ *   the history view, making it easy to see when a user hit a milestone for that exercise.
+ */
 export function useExerciseHistory(exerciseId: string | undefined) {
     return useQuery({
         queryKey: logKeys.history(exerciseId),

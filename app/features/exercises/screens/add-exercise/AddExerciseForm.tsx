@@ -6,6 +6,21 @@ import type { MuscleGroup } from "@/app/generated/prisma/client";
 import { Button, MuscleGroupSelector } from "@/app/components/ui";
 import { useCreateExercise } from "../../api/mutation-hooks/use-create-exercise";
 
+/**
+ * A form component for creating a new exercise in the global exercise library.
+ * 
+ * Context:
+ * This form allows users to expand the system's exercise database by providing a name, 
+ * optional description, and a target muscle group. It is typically used in a dedicated 
+ * "Add Exercise" screen.
+ * 
+ * Why:
+ * - Extensibility: User-generated exercises ensure the application can adapt to niche 
+ *   movements or specific training styles not covered by the default library.
+ * - Categorization: Requiring a muscle group ensures that all exercises remain searchable 
+ *   and filterable throughout the rest of the application.
+ * - UX Feedback: Provides clear loading states and error handling during the creation process.
+ */
 export function AddExerciseForm() {
     const router = useRouter();
     const [name, setName] = useState("");

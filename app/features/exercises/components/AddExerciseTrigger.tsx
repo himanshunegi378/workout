@@ -10,6 +10,21 @@ interface AddExerciseTriggerProps {
     variant: "icon" | "button";
 }
 
+/**
+ * A UI trigger component that opens the AddExerciseDrawer to add an exercise to a workout.
+ * 
+ * Context:
+ * This component is designed to be used in multiple parts of the application (e.g., workout 
+ * builders or session views) and supports two variants: a simple icon for minimal UI spaces 
+ * or a more prominent button.
+ * 
+ * Why:
+ * - Consistency: By encapsulating both the trigger button/icon and the drawer itself, 
+ *   it ensures that any part of the UI needing to add an exercise will have the same 
+ *   behavior and configuration.
+ * - UX Flexibility: The `variant` prop allows it to adapt to different layouts without 
+ *   requiring multiple components or complex conditional logic at the call site.
+ */
 export function AddExerciseTrigger({ programmeId, workoutId, variant }: AddExerciseTriggerProps) {
     const [isOpen, setIsOpen] = useState(false);
 

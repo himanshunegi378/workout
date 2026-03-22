@@ -21,6 +21,21 @@ interface ExerciseListClientProps {
     exercises: Exercise[];
 }
 
+/**
+ * The client-side logic and UI for the exercise library list.
+ * 
+ * Context:
+ * This component manages the presentation layer of the exercise library, including 
+ * real-time search filtering and category-based filtering (muscle groups).
+ * 
+ * Why:
+ * - Interactivity: By handling filtering on the client side, it provides an instantaneous 
+ *   user experience when searching for exercises.
+ * - Dynamic Layout: Automatically adjusts the list rendering based on filter results, 
+ *   showing an empty state with an "Add Exercise" prompt when no matches are found.
+ * - Animation: Orchestrates staggered entrance animations for list items to enhance the 
+ *   premium feel of the application.
+ */
 export function ExerciseListClient({ exercises }: ExerciseListClientProps) {
     const [filter, setFilter] = useState<Filter>("All");
     const [query, setQuery] = useState("");

@@ -18,6 +18,21 @@ interface ExerciseSelectDrawerProps {
     selectedId?: string;
 }
 
+/**
+ * A modal-style bottom drawer for searching and selecting an exercise from a central library.
+ * 
+ * Context:
+ * This acts as a reusable selector within the application (e.g., when adding exercises to a workout). 
+ * It includes real-time filtering to handle large lists of exercises across different muscle groups.
+ * 
+ * Why:
+ * - Searchability: Provides an intuitive way to find exercises by name or muscle group without 
+ *   scrolling through a long, unstructured list.
+ * - UX Visuals: Uses muscle-group-specific color coding to help users quickly identify 
+ *   the category of an exercise, improving the speed of the selection process.
+ * - Decoupling: Separates the selection mechanism from the configuration screen (`AddExerciseDrawer`),
+ *   promoting cleaner component boundaries.
+ */
 export function ExerciseSelectDrawer({
     isOpen,
     onClose,

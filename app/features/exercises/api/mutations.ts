@@ -5,6 +5,13 @@ interface CreateExerciseData {
     muscle_group: string;
 }
 
+/**
+ * Persistence layer for creating a new exercise in the global library.
+ * 
+ * Context:
+ * Performs the low-level fetch request to the POST /api/exercises endpoint. 
+ * Includes basic error parsing to extract backend validation errors.
+ */
 export async function createExercise(data: CreateExerciseData) {
     const payload = {
         ...data,
@@ -37,6 +44,13 @@ interface AddExerciseToWorkoutData {
     tempo: string;
 }
 
+/**
+ * Persistence layer for associating an exercise with a specific workout.
+ * 
+ * Context:
+ * This function is used when a user "adds" an exercise to a workout, 
+ * which involves creating a metadata record that links the two.
+ */
 export async function addExerciseToWorkout(programmeId: string, workoutId: string, data: AddExerciseToWorkoutData) {
     const payload = {
         ...data,
@@ -68,6 +82,13 @@ export interface EditExerciseMetadataData {
     tempo?: string;
 }
 
+/**
+ * Persistence layer for updating an existing exercise's metadata (sets, reps, etc.) in a workout.
+ * 
+ * Context:
+ * Performs a PATCH request to precisely update chosen parameters without 
+ * affecting the global exercise definition itself.
+ */
 export async function editExerciseMetadata(
     programmeId: string,
     workoutId: string,
