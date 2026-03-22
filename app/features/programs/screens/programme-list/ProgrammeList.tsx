@@ -5,6 +5,14 @@ import { ProgrammeCard } from "./ProgrammeCard";
 import { ProgrammesEmptyState } from "./ui/ProgrammesEmptyState";
 import { useProgrammes } from "../../api/query-hooks/use-programmes";
 
+/**
+ * A container component for displaying a list of all training programmes.
+ * 
+ * Context:
+ * This component acts as the primary layout for the programmes screen, 
+ * handling fetching and rendering of `ProgrammeCard` components or an 
+ * empty state if no programmes exist.
+ */
 export function ProgrammeList() {
     const { data: programmes, isLoading, isError } = useProgrammes();
 

@@ -9,6 +9,13 @@ interface WorkoutCardProps {
     exerciseCount: number;
 }
 
+/**
+ * A navigational card displaying basic information about a workout session.
+ * 
+ * Context:
+ * This card is used in a specific programme's workout list to allow users 
+ * to quickly see the contents of a session and navigate into details.
+ */
 export function WorkoutCard({
     id,
     programmeId,

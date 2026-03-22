@@ -8,6 +8,14 @@ import { useIsRestoring } from "@tanstack/react-query";
 import { useProgramme } from "../../api/query-hooks/use-programme";
 import { WorkoutCard } from "./WorkoutCard";
 
+/**
+ * The primary container for displaying all workouts within a specific programme.
+ * 
+ * Context:
+ * This component acts as the main view for a programme, listing all its 
+ * scheduled workouts and providing navigation to create new ones or 
+ * edit existing ones.
+ */
 export function WorkoutListContent({ programmeId }: { programmeId: string }) {
     const isRestoring = useIsRestoring();
     const { data: programme, isLoading, isError } = useProgramme(programmeId);

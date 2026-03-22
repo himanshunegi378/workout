@@ -5,6 +5,14 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/app/components/ui";
 import { useCreateProgramme } from "../../api/mutation-hooks/use-create-programme";
 
+/**
+ * A form component for creating a new training programme.
+ * 
+ * Context:
+ * "Programmes" represent the top-level structure of a user's training 
+ * (e.g., "Powerlifting Block 1"). This form allows users to define the 
+ * name and broad theme of their training phase.
+ */
 export function AddProgrammeForm() {
     const router = useRouter();
     const [name, setName] = useState("");

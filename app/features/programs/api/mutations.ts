@@ -4,6 +4,13 @@ interface CreateProgramData {
     description: string | null;
 }
 
+/**
+ * Persistence layer for creating a new training programme.
+ * 
+ * Context:
+ * Performs the low-level fetch request to the POST /api/programmes endpoint. 
+ * Includes basic error parsing to extract backend validation errors.
+ */
 export async function createProgram(data: CreateProgramData) {
     const payload = {
         ...data,

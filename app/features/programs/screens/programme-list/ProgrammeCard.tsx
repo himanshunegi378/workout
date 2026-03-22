@@ -8,6 +8,14 @@ interface ProgrammeCardProps {
     workoutCount: number;
 }
 
+/**
+ * A navigational card displaying basic information about a training programme.
+ * 
+ * Context:
+ * This card is used in the main dashboard or programme list to give users a 
+ * visual overview of their training cycles. It shows the programme name, 
+ * description, and total workout count.
+ */
 export function ProgrammeCard({ id, name, description, workoutCount }: ProgrammeCardProps) {
     return (
         <Link

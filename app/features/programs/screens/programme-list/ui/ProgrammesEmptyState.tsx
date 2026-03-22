@@ -1,6 +1,9 @@
 import { Layers, Plus } from "lucide-react";
 import { Button, EmptyState } from "@/app/components/ui";
 
+/**
+ * A specialized empty state component for when no training programmes exist.
+ */
 export function ProgrammesEmptyState() {
     return (
         <EmptyState
