@@ -6,6 +6,22 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { Dumbbell, Eye, EyeOff, Loader2 } from "lucide-react";
 
+/**
+ * The standard authentication portal for existing users.
+ * 
+ * Context:
+ * This page provides a secure entry point into the application. It handles 
+ * credential validation via `next-auth` and redirecting users to their 
+ * training dashboard upon success.
+ * 
+ * Why:
+ * - Security First: Implements client-side validation and clear error feedback 
+ *   to ensure a smooth and secure login experience.
+ * - UX Visuals: Includes brand-consistent styling (Dumbbell icon, accent glows) 
+ *   and helpful features like the password visibility toggle.
+ * - Seamless Transition: Automatically refreshes the router state upon successful 
+ *   sign-in to ensure all protected data displays correctly.
+ */
 export default function LoginPage() {
     const router = useRouter();
     const [username, setUsername] = useState("");

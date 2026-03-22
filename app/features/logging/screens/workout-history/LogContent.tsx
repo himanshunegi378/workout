@@ -17,11 +17,21 @@ import { QuickLogActions } from "./ui/QuickLogActions";
 import type { SessionWithLogs } from "../../types";
 
 /**
- * The main container component for the logging feature's timeline view.
- * It fetches paginated session data, calculates consistency/streak stats, 
- * and renders a timeline of workout sessions including quick log actions.
+ * The primary container for the training journey timeline and analytics dashboard.
  * 
- * @returns {JSX.Element} The rendered logging dashboard and timeline.
+ * Context:
+ * This component acts as the user's historical record ("The Log"). It provides 
+ * a high-level view of their training consistency (streaks, monthly volume) 
+ * while maintaining a chronological timeline of every training session performed.
+ * 
+ * Why:
+ * - Motivation through Data: By visualizing streaks and monthly session counts 
+ *   as soon as the page loads, it provides immediate positive reinforcement.
+ * - Performance Trends: Aggregates complex relational data (sessions -> logs -> sets) 
+ *   into a simplified timeline view, allowing users to quickly review past 
+ *   performance on specific exercises.
+ * - Infinite Exploration: Uses paginated results to ensure the dashboard remains 
+ *   performant even as the user's training history grows over many years.
  */
 export function LogContent() {
     const {

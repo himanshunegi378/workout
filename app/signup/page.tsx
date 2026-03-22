@@ -6,6 +6,22 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { Dumbbell, Eye, EyeOff, Loader2 } from "lucide-react";
 
+/**
+ * The entry point for new users to register and join the platform.
+ * 
+ * Context:
+ * This page manages the user registration lifecycle, including initial data 
+ * capture, account creation via the `/api/auth/signup` endpoint, and 
+ * subsequent automatic session establishment.
+ * 
+ * Why:
+ * - Reduced Friction: Combines account creation and login into a single 
+ *   workflow ("Auto Sign-in") to get users into the app as quickly as possible.
+ * - Real-time Validation: Provides immediate feedback on username length, 
+ *   password strength, and password matching to prevent form submission errors.
+ * - Secure Onboarding: Ensures that all user IDs are standardized (lowercase) 
+ *   to prevent duplication and confusion in the backend database.
+ */
 export default function SignupPage() {
     const router = useRouter();
     const [username, setUsername] = useState("");
