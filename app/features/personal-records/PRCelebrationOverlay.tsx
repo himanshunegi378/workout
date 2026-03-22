@@ -37,6 +37,20 @@ const CONFETTI_COLORS = ["#ec4899", "#a78bfa", "#38bdf8", "#34d399", "#fbbf24"];
 
 // ── Component ───────────────────────────────────────────────────────────────
 
+/**
+ * A highly visual, animated overlay for celebrating Personal Records (PRs).
+ * 
+ * Context:
+ * This component is globally rendered via a Portal when the `PRCelebrationContext` 
+ * state is active. It provides immediate visual feedback for achievement using 
+ * emojis, color cues, and CSS animations.
+ * 
+ * Why:
+ * - Unobtrusive Delight: Positioned to be visible but not block the user's workflow, 
+ *   disappearing automatically or via explicit dismissal.
+ * - Dynamic Messaging: Adapts its visual style (emoji, label, accent color) based 
+ *   on whether the PR was for weight, reps, or estimated 1-Rep Max.
+ */
 export function PRCelebrationOverlay() {
     const { celebration, dismiss } = usePRCelebration();
 
