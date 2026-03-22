@@ -3,6 +3,20 @@ import { Avatar } from "./ui/Avatar";
 import { ThemeToggle } from "./ui/ThemeToggle";
 import { SignOutButton } from "@/app/components/SignOutButton";
 
+/**
+ * The primary container for the user settings and profile screen.
+ * 
+ * Context:
+ * This server component aggregates user identification (via `auth()`), 
+ * appearance preferences (theme toggling), and account management 
+ * (sign-out functionality).
+ * 
+ * Why:
+ * - Centralized Configuration: Provides a single location for users to 
+ *   manage their global experience within the application.
+ * - Dynamic Personalization: Reacts to session data to display the correct 
+ *   user identity and profile initials.
+ */
 export async function SettingsContent() {
     const session = await auth();
     const username = session?.user?.name || "User";

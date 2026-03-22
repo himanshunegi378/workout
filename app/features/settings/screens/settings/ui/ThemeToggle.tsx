@@ -4,6 +4,17 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Moon, Sun, Monitor } from "lucide-react";
 
+/**
+ * A multi-mode toggle for switching between Light, Dark, and System themes.
+ * 
+ * Context:
+ * Leverages `next-themes` to manage the user's preferred visual style. 
+ * Includes a mount-guard to prevent server/client hydration mismatches.
+ * 
+ * Why:
+ * - Accessibility & Preference: One-tap switching between themes to ensure 
+ *   comfort in different lighting conditions (e.g., late-night gym sessions).
+ */
 export function ThemeToggle() {
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
