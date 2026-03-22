@@ -1,9 +1,11 @@
+import type { FeedbackStatus } from "@/app/generated/prisma";
+
 export type SubmitFeedbackData = {
     description: string;
 };
 
 export type SubmitFeedbackResponse = {
-    status?: string;
+    status?: FeedbackStatus;
 };
 
 /**
@@ -19,7 +21,7 @@ export async function submitFeedback(data: SubmitFeedbackData): Promise<SubmitFe
     });
 
     const payload = (await response.json().catch(() => null)) as
-        | { error?: string; status?: string }
+        | { error?: string; status?: FeedbackStatus }
         | null;
 
     if (!response.ok) {

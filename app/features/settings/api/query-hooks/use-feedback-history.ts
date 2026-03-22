@@ -1,12 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import type { FeedbackStatus } from "@/app/generated/prisma";
 import { feedbackKeys } from "../query-keys";
 
 export type FeedbackListItem = {
     id: string;
     description: string;
-    status: string;
+    status: FeedbackStatus;
     created_at: string;
     updated_at: string;
 };

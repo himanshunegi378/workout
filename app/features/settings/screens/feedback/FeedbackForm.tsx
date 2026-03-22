@@ -2,19 +2,19 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { FeedbackStatus } from "@/app/generated/prisma";
 import { Button } from "@/app/components/ui";
 import { useFeedbackHistory } from "../../api/query-hooks/use-feedback-history";
 import { useSubmitFeedback } from "../../api/mutation-hooks/use-submit-feedback";
 
 const MIN_DESCRIPTION_LENGTH = 5;
 const MAX_DESCRIPTION_LENGTH = 1000;
-const DEFAULT_STATUS_LABEL = "Submitted";
-const STATUS_STYLES: Record<string, string> = {
-    Submitted: "bg-accent/10 text-accent border-accent/20",
-    UnderReview: "bg-warning/10 text-warning border-warning/20",
-    Planned: "bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/20",
-    Completed: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20",
-    Rejected: "bg-danger/10 text-danger border-danger/20",
+const STATUS_STYLES: Record<FeedbackStatus, string> = {
+    [FeedbackStatus.Submitted]: "bg-accent/10 text-accent border-accent/20",
+    [FeedbackStatus.UnderReview]: "bg-warning/10 text-warning border-warning/20",
+    [FeedbackStatus.Planned]: "bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/20",
+    [FeedbackStatus.Completed]: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20",
+    [FeedbackStatus.Rejected]: "bg-danger/10 text-danger border-danger/20",
 };
 
 /**
@@ -24,8 +24,6 @@ const STATUS_STYLES: Record<string, string> = {
 export function FeedbackForm() {
     const router = useRouter();
     const [description, setDescription] = useState("");
-    const [isSubmitted, setIsSubmitted] = useState(false);
-    const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
     const {
         data: feedbackEntries = [],
         isLoading: isLoadingHistory,
@@ -35,10 +33,13 @@ export function FeedbackForm() {
     const {
         mutate: submitFeedback,
         isPending: isSubmitting,
+        isSuccess: isSubmitSuccess,
         error: submitError,
+        reset: resetSubmitFeedback,
     } = useSubmitFeedback();
 
     const trimmedDescription = description.trim();
+    const showSubmissionSuccess = description === "" && isSubmitSuccess;
     const canSubmit =
         trimmedDescription.length >= MIN_DESCRIPTION_LENGTH &&
         trimmedDescription.length <= MAX_DESCRIPTION_LENGTH &&
@@ -68,10 +69,8 @@ export function FeedbackForm() {
                 description: trimmedDescription,
             },
             {
-                onSuccess: (payload) => {
+                onSuccess: () => {
                     setDescription("");
-                    setIsSubmitted(true);
-                    setSubmissionStatus(payload.status || DEFAULT_STATUS_LABEL);
                     router.refresh();
                 },
             }
@@ -88,8 +87,8 @@ export function FeedbackForm() {
             </section>
 
             <form onSubmit={handleSubmit} className="bg-card rounded-2xl p-5 border border-border space-y-5">
-                <div className="space-y-2">
-                    <label htmlFor="feedback-description" className="text-sm font-medium text-foreground">
+                <div className="space-y-3">
+                    <label htmlFor="feedback-description" className="block text-sm font-medium text-foreground">
                         Description
                     </label>
                     <textarea
@@ -100,9 +99,8 @@ export function FeedbackForm() {
                         value={description}
                         onChange={(event) => {
                             setDescription(event.target.value);
-                            if (isSubmitted) {
-                                setIsSubmitted(false);
-                                setSubmissionStatus(null);
+                            if (isSubmitSuccess) {
+                                resetSubmitFeedback();
                             }
                         }}
                         className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring focus:border-accent transition-all duration-200 font-body text-base resize-y min-h-36"
@@ -119,28 +117,15 @@ export function FeedbackForm() {
                     </div>
                 )}
 
-                {isSubmitted && (
+                {showSubmissionSuccess && (
                     <div className="bg-accent/10 border border-accent/20 rounded-xl px-4 py-3 text-sm text-foreground">
                         Thanks. Your feedback has been submitted.
-                        {submissionStatus && (
-                            <span className="block mt-1 text-muted-foreground">
-                                Current status: {submissionStatus}
-                            </span>
-                        )}
                     </div>
                 )}
 
-                <div className="flex gap-3">
-                    <Button type="submit" className="flex-1" disabled={!canSubmit}>
+                <div>
+                    <Button type="submit" className="w-full" disabled={!canSubmit}>
                         {isSubmitting ? "Sending..." : "Submit Feedback"}
-                    </Button>
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={() => router.push("/settings")}
-                        disabled={isSubmitting}
-                    >
-                        Cancel
                     </Button>
                 </div>
             </form>
@@ -194,7 +179,7 @@ export function FeedbackForm() {
                                         </p>
                                     </div>
                                     <span
-                                        className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${STATUS_STYLES[entry.status] || "bg-muted text-foreground border-border"}`}
+                                        className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${STATUS_STYLES[entry.status]}`}
                                     >
                                         {entry.status}
                                     </span>

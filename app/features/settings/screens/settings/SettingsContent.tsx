@@ -37,10 +37,10 @@ export async function SettingsContent() {
                 <ThemeToggle />
             </section>
 
-            <section className="bg-card rounded-2xl p-4 border border-border">
+            <section className="bg-card rounded-2xl border border-border p-4 transition-colors hover:bg-muted/40 focus-within:bg-muted/40">
                 <Link
                     href="/settings/feedback"
-                    className="flex items-center justify-between gap-4 rounded-xl transition-colors hover:bg-muted/40 p-1 -m-1"
+                    className="-m-4 flex items-center justify-between gap-4 p-4"
                 >
                     <div className="flex items-center gap-3">
                         <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-accent/10 text-accent">
@@ -51,7 +51,6 @@ export async function SettingsContent() {
                             <span className="text-sm text-muted-foreground">Share a suggestion or report an issue</span>
                         </div>
                     </div>
-                    <span className="text-sm font-medium text-accent">Open</span>
                 </Link>
             </section>
 
