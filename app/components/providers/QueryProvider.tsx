@@ -6,6 +6,8 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 import { useState, useMemo } from "react";
 import { get, set, del } from "idb-keyval";
 
+export const WORKOUT_QUERY_CACHE_KEY = "WORKOUT_QUERY_CACHE_V2";
+
 /**
  * Custom storage object that implements the interface required by createAsyncStoragePersister,
  * mapping onto the promise-based idb-keyval library.
@@ -44,7 +46,7 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
             try {
                 return createAsyncStoragePersister({
                     storage: idbStorage,
-                    key: "WORKOUT_QUERY_CACHE_V2", // Bumped version for IndexedDB shift
+                    key: WORKOUT_QUERY_CACHE_KEY, // Bumped version for IndexedDB shift
                 });
             } catch (err) {
                 console.error("Query Persister (IndexedDB) error:", err);

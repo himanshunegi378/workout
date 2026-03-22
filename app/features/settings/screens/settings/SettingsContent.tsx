@@ -3,6 +3,7 @@ import Link from "next/link";
 import { MessageSquareMore } from "lucide-react";
 import { Avatar } from "./ui/Avatar";
 import { ThemeToggle } from "./ui/ThemeToggle";
+import { ClearQueryCacheRow } from "./ui/ClearQueryCacheRow";
 import { SignOutButton } from "@/app/components/SignOutButton";
 
 /**
@@ -53,6 +54,8 @@ export async function SettingsContent() {
                     <span className="text-sm font-medium text-accent">Open</span>
                 </Link>
             </section>
+
+            <ClearQueryCacheRow />
 
             <section className="bg-card rounded-2xl p-4 border border-border flex items-center justify-between">
                 <div className="flex flex-col">
