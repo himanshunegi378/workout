@@ -1,7 +1,7 @@
 "use client";
 
 import { BottomDrawer } from "@/app/components/ui";
-import { useExerciseHistory } from "../api/query-hooks/use-exercise-history";
+import { useExerciseHistory } from "@/app/features/logging/api/query-hooks/use-exercise-history";
 import { Loader2, Plus, Trophy } from "lucide-react";
 import { Portal } from "@/app/components/ui/Portal";
 import { useState } from "react";

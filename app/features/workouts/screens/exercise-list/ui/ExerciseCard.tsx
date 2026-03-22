@@ -12,8 +12,8 @@ import { useDeleteLogSet } from "@/app/features/logging/api/mutation-hooks/use-d
 import { getLastLog } from "@/app/features/logging/api/query-hooks/use-last-log";
 import { useRestTimer } from "@/app/features/workouts/contexts/RestTimerContext";
 import { usePRCelebration } from "@/app/features/personal-records/PRCelebrationContext";
-
 import { EditExerciseMetadataDrawer } from "./EditExerciseMetadataDrawer";
+import { ExerciseHistoryDrawer } from "@/app/features/exercises/components/ExerciseHistoryDrawer";
 
 interface ExerciseLog {
     id: string;
@@ -83,6 +83,7 @@ export function ExerciseCard({
 
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
+    const [isHistoryDrawerOpen, setIsHistoryDrawerOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const [activeSetIndex, setActiveSetIndex] = useState(0);
@@ -198,7 +199,11 @@ export function ExerciseCard({
 
                 {/* Header Section */}
                 <div className="flex items-start justify-between mb-8 gap-4">
-                    <div className="flex items-center gap-5 min-w-0">
+                    <button
+                        type="button"
+                        onClick={() => setIsHistoryDrawerOpen(true)}
+                        className="flex items-center gap-5 min-w-0 flex-1 text-left rounded-3xl -m-2 p-2 transition-all hover:bg-muted/20 active:scale-[0.99]"
+                    >
                         <div className={`shrink-0 w-2 h-12 rounded-full ${colorClass} shadow-[0_0_15px_rgba(0,0,0,0.2)]`} />
                         <div className="min-w-0">
                             <h3 className="font-display text-2xl font-bold truncate tracking-tight leading-none mb-2">
@@ -215,7 +220,7 @@ export function ExerciseCard({
                                 )}
                             </div>
                         </div>
-                    </div>
+                    </button>
 
                     <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-3 -mr-3 rounded-2xl hover:bg-muted transition-all shrink-0 active:scale-90">
                         <MoreHorizontal className="w-6 h-6 text-muted-foreground" />
@@ -319,6 +324,13 @@ export function ExerciseCard({
                 exerciseName={name}
                 initialData={{ exerciseId, setsMin, setsMax, repsMin, repsMax, restMin, restMax, tempo }}
                 onUpdate={(newEwm) => { setEwmId(newEwm.id); router.refresh(); }}
+            />
+
+            <ExerciseHistoryDrawer
+                isOpen={isHistoryDrawerOpen}
+                onClose={() => setIsHistoryDrawerOpen(false)}
+                exerciseId={exerciseId}
+                exerciseName={name}
             />
         </>
     );
