@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "714894e03393c6f09ade22530d4c5a1e2817ec97",
+  "prompts": {
+    "2237704cb3a1ddc3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d15fd-c444-7193-86dc-091fde288d00",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 51,
+      "total_deletions": 97,
+      "accepted_lines": 26,
+      "overriden_lines": 0
+    }
+  }
+}
