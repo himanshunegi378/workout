@@ -1,0 +1,138 @@
+"use client";
+
+import { History, Target } from "lucide-react";
+import { Button, BottomDrawer, NumberStepper, RPESelector } from "@/app/components/ui";
+
+interface LogSetDrawerProps {
+    isOpen: boolean;
+    onClose: () => void;
+    exerciseName: string;
+    setIndex: number;
+    weight: string;
+    setWeight: (w: string) => void;
+    reps: string;
+    setReps: (r: string) => void;
+    rpe: number | null;
+    setRpe: (r: number | null) => void;
+    onSave: () => void;
+    onDelete?: () => void;
+    isSaving: boolean;
+    isDeleting?: boolean;
+    isEdit?: boolean;
+    previousLog?: { weight: number | null; reps: number } | null;
+}
+
+export function LogSetDrawer({
+    isOpen,
+    onClose,
+    exerciseName,
+    setIndex,
+    weight,
+    setWeight,
+    reps,
+    setReps,
+    rpe,
+    setRpe,
+    onSave,
+    onDelete,
+    isSaving,
+    isDeleting,
+    isEdit,
+    previousLog,
+}: LogSetDrawerProps) {
+    const fillPrevious = () => {
+        if (previousLog) {
+            if (previousLog.weight !== null) setWeight(previousLog.weight.toString());
+            setReps(previousLog.reps.toString());
+        }
+    };
+
+    const weightNum = parseFloat(weight) || 0;
+    const repsNum = parseInt(reps) || 0;
+
+    return (
+        <BottomDrawer isOpen={isOpen} onClose={onClose} title={isEdit ? "Edit Set" : `Log Set ${setIndex + 1}`}>
+            <div className="flex flex-col -mt-4">
+                <div className="flex items-center gap-4 mb-6 bg-card/40 p-4 rounded-2xl border border-border/60">
+                    <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center border border-accent/20">
+                        <Target className="w-6 h-6 text-accent" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-bold text-accent uppercase tracking-widest mb-0.5">Logging for</p>
+                        <h3 className="font-display font-bold text-foreground text-lg truncate">{exerciseName}</h3>
+                    </div>
+                </div>
+
+                {previousLog && (
+                    <button
+                        type="button"
+                        onClick={fillPrevious}
+                        className="w-full mb-8 flex items-center justify-between p-4 rounded-2xl bg-card/30 border border-border/50 text-sm transition-all active:scale-[0.98] hover:bg-muted/20 hover:border-accent/30 group"
+                    >
+                        <div className="flex items-center gap-3 text-muted-foreground group-hover:text-foreground transition-colors">
+                            <div className="p-2 rounded-lg bg-muted/40 group-hover:bg-accent/10 group-hover:text-accent transition-colors">
+                                <History className="w-4 h-4" />
+                            </div>
+                            <span className="font-bold tracking-tight">Best Previous</span>
+                        </div>
+                        <span className="font-display font-bold text-foreground bg-muted/30 px-3 py-1.5 rounded-lg border border-border/40 group-hover:border-accent/20 transition-all">
+                            {previousLog.weight ? `${previousLog.weight}kg × ` : ""}
+                            {previousLog.reps} reps
+                        </span>
+                    </button>
+                )}
+
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                    <NumberStepper
+                        label="Weight"
+                        value={weightNum}
+                        onChange={(val) => setWeight(val.toString())}
+                        min={0}
+                        max={500}
+                        step={2.5}
+                        suffix="kg"
+                        stepOptions={[2.5, 5]}
+                    />
+
+                    <NumberStepper
+                        label="Reps"
+                        value={repsNum}
+                        onChange={(val) => setReps(val.toString())}
+                        min={0}
+                        max={100}
+                        step={1}
+                    />
+                </div>
+
+                <div className="mb-6">
+                    <RPESelector value={rpe} onChange={setRpe} />
+                </div>
+
+                <div className="flex flex-col gap-3">
+                    <Button
+                        variant="primary"
+                        className="w-full py-4 text-lg font-bold shadow-lg shadow-accent/20"
+                        onClick={onSave}
+                        disabled={isSaving || isDeleting || !reps}
+                    >
+                        {isSaving ? (
+                            <div className="flex items-center gap-2 justify-center">
+                                <span className="animate-pulse">Saving...</span>
+                            </div>
+                        ) : isEdit ? "Update Set" : "Save Set"}
+                    </Button>
+
+                    {isEdit && onDelete && (
+                        <button
+                            onClick={onDelete}
+                            disabled={isSaving || isDeleting}
+                            className="w-full py-3 text-sm font-semibold text-destructive hover:bg-destructive/10 rounded-xl transition-all disabled:opacity-50"
+                        >
+                            {isDeleting ? "Deleting..." : "Delete Set"}
+                        </button>
+                    )}
+                </div>
+            </div>
+        </BottomDrawer>
+    );
+}

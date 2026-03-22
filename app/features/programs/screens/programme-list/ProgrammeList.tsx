@@ -1,9 +1,9 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { ProgrammeCard } from "./ui/ProgrammeCard";
-import { ProgrammesEmptyState } from "./ui/ProgrammesEmptyState";
-import { useProgrammes } from "../api/query-hooks/use-programmes";
+import { ProgrammeCard } from "./ProgrammeCard";
+import { ProgrammesEmptyState } from "../../components/ui/ProgrammesEmptyState";
+import { useProgrammes } from "../../api/query-hooks/use-programmes";
 
 export function ProgrammeList() {
     const { data: programmes, isLoading, isError } = useProgrammes();

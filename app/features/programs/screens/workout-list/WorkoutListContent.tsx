@@ -4,9 +4,9 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Dumbbell, Plus, Loader2 } from "lucide-react";
 import { PageHeader, EmptyState } from "@/app/components/ui";
-import { WorkoutCard } from "./ui/WorkoutCard";
-import { useProgramme } from "../api/query-hooks/use-programme";
 import { useIsRestoring } from "@tanstack/react-query";
+import { useProgramme } from "../../api/query-hooks/use-programme";
+import { WorkoutCard } from "./WorkoutCard";
 
 export function WorkoutListContent({ programmeId }: { programmeId: string }) {
     const isRestoring = useIsRestoring();
