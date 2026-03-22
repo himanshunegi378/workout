@@ -1,0 +1,27 @@
+app/features/settings/screens/settings/ui/ClearQueryCacheRow.tsx
+  31aaae2d981da816 1-58
+app/components/providers/QueryProvider.tsx
+  31aaae2d981da816 9-10,49
+app/features/settings/screens/settings/SettingsContent.tsx
+  31aaae2d981da816 6,58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "1981a869532f2dbec9d90bb4cd77d29ffc379f1f",
+  "prompts": {
+    "31aaae2d981da816": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d169c-5006-7902-9ea6-cad54dfbb0a1",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 64,
+      "total_deletions": 25,
+      "accepted_lines": 64,
+      "overriden_lines": 0
+    }
+  }
+}
