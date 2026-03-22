@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, use } from "react";
-import { WorkoutListContent } from "@/app/features/programs/screens/workout-list/WorkoutListContent";
+import { WorkoutListContent } from "@/app/features/programs/screens";
 import { LoadingHeader } from "@/app/features/programs/components/ui/LoadingHeader";
 
 interface PageProps {

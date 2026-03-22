@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/app/components/ui";
-import { useCreateProgramme } from "../api/mutation-hooks/use-create-programme";
+import { useCreateProgramme } from "../../api/mutation-hooks/use-create-programme";
 
 export function AddProgrammeForm() {
     const router = useRouter();
