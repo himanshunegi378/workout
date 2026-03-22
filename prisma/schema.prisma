@@ -27,6 +27,24 @@ enum MuscleGroup {
   Triceps
 }
 
+/// Lifecycle stages for user-submitted feedback.
+enum FeedbackStatus {
+  /// Newly submitted and waiting for triage.
+  Submitted
+
+  /// Reviewed and currently being evaluated.
+  UnderReview
+
+  /// Accepted and planned for a future update.
+  Planned
+
+  /// Implemented and shipped.
+  Completed
+
+  /// Reviewed but not planned for implementation.
+  Rejected
+}
+
 // ---------------------------------------------------------------------------
 // Models
 // ---------------------------------------------------------------------------
@@ -44,8 +62,24 @@ model User {
   workoutSessions     WorkoutSession[]
   sessionExerciseLogs SessionExerciseLog[]
   exerciseLogs        ExerciseLog[]
+  feedbackEntries     Feedback[]
 
   @@map("users")
+}
+
+/// User-submitted product feedback or suggestions.
+model Feedback {
+  id          String         @id @default(cuid())
+  description String
+  status      FeedbackStatus @default(Submitted)
+  created_at  DateTime       @default(now())
+  updated_at  DateTime       @updatedAt
+
+  // Owner
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("feedback")
 }
 
 /// A single, reusable exercise definition.
