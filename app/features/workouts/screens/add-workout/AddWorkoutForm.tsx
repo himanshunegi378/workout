@@ -9,6 +9,19 @@ interface AddWorkoutFormProps {
     programmeId: string;
 }
 
+/**
+ * A form component for creating a new workout within a specific programme.
+ * 
+ * Context:
+ * This form allows users to define a new training day (e.g., "Leg Day") and attach 
+ * it to a parent programme. 
+ * 
+ * Why:
+ * - Structured Training: Forces users to name their workouts, which improves 
+ *   organization when scrolling through a large training cycle.
+ * - UX Feedback: Provides clear loading and error feedback during the asynchronous 
+ *   creation process using the `useCreateWorkout` mutation.
+ */
 export function AddWorkoutForm({ programmeId }: AddWorkoutFormProps) {
     const router = useRouter();
     const [name, setName] = useState("");

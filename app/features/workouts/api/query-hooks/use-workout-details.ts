@@ -43,6 +43,21 @@ export type WorkoutDetailsResponse = {
     previousLogsByExercise: Record<string, { id: string; weight: number | null; reps: number; rpe: number | null; set_order_index: number }[]>;
 };
 
+/**
+ * A custom query hook for fetching comprehensive details for a specific workout session.
+ * 
+ * Context:
+ * This hook is the primary data source for the workout execution screen. It retrieves 
+ * not only the workout structure (exercises, sets, reps) but also the current active 
+ * session data and historical logs for comparison.
+ * 
+ * Why:
+ * - Unified State: Consolidating workout structure, current progress, and historical 
+ *   benchmarks into a single request prevents multiple loading states and ensuring 
+ *   the UI has all necessary context for progressive overload calculations.
+ * - Reactive Tracking: By keying the query to the workoutId, it allows for targeted 
+ *   cache invalidation whenever a set is logged or metadata is edited.
+ */
 export function useWorkoutDetails(programmeId: string, workoutId: string) {
     return useQuery({
         queryKey: workoutKeys.detail(workoutId),

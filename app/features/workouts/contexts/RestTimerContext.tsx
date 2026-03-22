@@ -38,6 +38,22 @@ interface PersistedState {
 
 const RestTimerContext = createContext<RestTimerContextValue | null>(null);
 
+/**
+ * A context provider that manages a persistent, global rest timer for workout sessions.
+ * 
+ * Context:
+ * This provider tracks the time remaining between sets, even across page refreshes or 
+ * app backgrounding, by persisting state to `localStorage`. It also integrates with 
+ * the Browser Notification API to alert users when their rest period is over.
+ * 
+ * Why:
+ * - Persistence: Standard React state is lost on refresh; during a workout, users often 
+ *   check other apps or refresh. LocalStorage sync ensures the timer remains accurate.
+ * - UX Reliability: Uses `visibilitychange` events to catch timers that should have 
+ *   expired while the browser was inactive.
+ * - Convenience: Provides a single source of truth for the rest timer that can be 
+ *   controlled from any component (e.g., the SetTracker or a global RestOverlay).
+ */
 export function RestTimerProvider({ children }: { children: React.ReactNode }) {
     const [state, setState] = useState<TimerState>(() => {
         const initialState = {
@@ -256,6 +272,17 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
     );
 }
 
+/**
+ * A custom hook to access the rest timer state and controls.
+ * 
+ * Context:
+ * Used by components to display the countdown, start new rest periods, or adjust 
+ * time (add/subtract) on the fly.
+ * 
+ * Why:
+ * - Simple API: Abstracting the complexity of `react-timer-hook` and persistence 
+ *   logic into a clean, intuitive interface for the rest of the app.
+ */
 export function useRestTimer(): RestTimerContextValue {
     const ctx = useContext(RestTimerContext);
     if (!ctx) {

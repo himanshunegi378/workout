@@ -22,6 +22,22 @@ interface LogSetDrawerProps {
     previousLog?: { weight: number | null; reps: number } | null;
 }
 
+/**
+ * A modal-style drawer for inputting performance data (weight, reps, RPE) for a specific set.
+ * 
+ * Context:
+ * This drawer is the primary interaction point during a live workout. It allows 
+ * users to log their active set or edit a previously completed one. 
+ * 
+ * Why:
+ * - Progressive Overload: Includes a "Best Previous" section that allows users 
+ *   to quickly fill in their previous performance with one tap, encouraging 
+ *   them to match or beat it.
+ * - Precise Input: Uses `NumberStepper` and `RPESelector` to ensure that data 
+ *   entry is quick and valid, prioritizing common gym movements (e.g., 2.5kg increments).
+ * - Multi-mode: Intelligently switches between "Save Set" and "Update Set" 
+ *   modes depending on whether the user is logging a new set or editing an old one.
+ */
 export function LogSetDrawer({
     isOpen,
     onClose,

@@ -41,6 +41,25 @@ interface ExerciseCardProps {
     previousLogs?: { id: string; weight: number | null; reps: number; set_order_index: number }[];
 }
 
+/**
+ * The primary interactive card for a single exercise within a live training session.
+ * 
+ * Context:
+ * This is the most complex UI component in the workout execution flow. It displays 
+ * the exercise protocol (sets, reps, rest, tempo), tracks completed sets via 
+ * `SetTracker`, and manages the logic for logging new sets, updating existing ones, 
+ * or triggering PR celebrations.
+ * 
+ * Why:
+ * - Dynamic Workflow: Automatically calculates rest periods based on the prescribed 
+ *   rest time and starts the global `RestTimer`.
+ * - Comparative Performance: Displays "Beat Previous" data (historical performance) 
+ *   directly on the card to encourage progressive overload.
+ * - Progressive Status: Visually changes its appearance (glow, opacity, grayscale) 
+ *   based on whether the exercise objective has been met or "mastered" (hitting max sets).
+ * - State Management: Handles optimistic UI updates for logging sets, ensuring a 
+ *   snappy feel even on slower network connections.
+ */
 export function ExerciseCard({
     workoutId,
     programmeId,
@@ -174,7 +193,7 @@ export function ExerciseCard({
             <div className={`relative bg-card text-card-foreground rounded-[2.5rem] p-8 border transition-all duration-500 overflow-hidden ${isCompleted ? 'border-success/20 bg-success/5 shadow-none' : 'border-border/60 hover:border-accent/40 elevation-4'}`}>
                 {/* Visual Glow for Active/Focused State */}
                 {!isCompleted && (
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent/40 to-transparent animate-pulse" />
+                    <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-accent/40 to-transparent animate-pulse" />
                 )}
 
                 {/* Header Section */}

@@ -10,6 +10,22 @@ interface SetTrackerProps {
     previousLogs?: { id: string; weight: number | null; reps: number; set_order_index: number }[];
 }
 
+/**
+ * A specialized visual indicator and trigger for logging sets in an exercise.
+ * 
+ * Context:
+ * This component provides a row of interactive "bubbles" representing each set 
+ * in an exercise's prescribed protocol. It visually distinguishes between 
+ * required sets and optional (bonus) sets.
+ * 
+ * Why:
+ * - Immediate Visual Reward: Filling a bubble provides instant gratification 
+ *   as users progress through their exercise.
+ * - Performance Context: Displays historical set data (e.g., previous weight/reps) 
+ *   directly below the logging circles to help users match or exceed their numbers. 
+ * - Multi-state Feedback: Changes colors and labels based on set completion status, 
+ *   missed targets (e.g., rep goal not met), and RPE ratings.
+ */
 export function SetTracker({ setsMin, setsMax, logs, targetReps, onSetClick, previousLogs = [] }: SetTrackerProps) {
     const totalCircles = setsMax;
 
@@ -54,7 +70,7 @@ export function SetTracker({ setsMin, setsMax, logs, targetReps, onSetClick, pre
                                 <span className="font-display font-semibold text-sm">{i + 1}</span>
                             )}
                         </button>
-                        <div className="absolute top-[44px] left-1/2 -translate-x-1/2 flex justify-center w-max">
+                        <div className="absolute top-11 left-1/2 -translate-x-1/2 flex justify-center w-max">
                             {prevLog ? (
                                 <span className="text-[10px] leading-none text-muted-foreground/80 font-medium tracking-tight">
                                     {prevLog.weight ? `${prevLog.weight}×${prevLog.reps}` : `${prevLog.reps}r`}

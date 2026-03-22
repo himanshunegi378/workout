@@ -28,6 +28,24 @@ interface EditExerciseMetadataDrawerProps {
     onUpdate?: (newEwm: any) => void;
 }
 
+/**
+ * A specialized drawer for modifying the parameters (sets, reps, rest, tempo) 
+ * of an exercise already present in a workout.
+ * 
+ * Context:
+ * Users often need to adjust their training plan mid-session or between sessions 
+ * (e.g., increasing the rep target). This drawer provides an isolated space to 
+ * make those adjustments without navigating away from the workout screen.
+ * 
+ * Why:
+ * - Granular Control: Allows precise tuning of training intensity (reps/sets) 
+ *   and density (rest periods).
+ * - Real-time Application: Using the `useEditExerciseMetadata` mutation, 
+ *   it ensures that any changes to the prescriptive data are instantly persisted 
+ *   and reflected in the current training session view.
+ * - UX Speed: Reuses components like `NumberStepper` and `ExerciseSelectDrawer` 
+ *   to ensure a familiar and efficient editing experience.
+ */
 export function EditExerciseMetadataDrawer({
     isOpen,
     onClose,

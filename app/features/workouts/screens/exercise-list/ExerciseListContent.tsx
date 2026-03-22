@@ -10,6 +10,23 @@ import { useWorkoutDetails, WorkoutDetailsResponse } from "../../api/query-hooks
 
 type ExerciseLog = NonNullable<NonNullable<WorkoutDetailsResponse['session']>['sessionExerciseLogs'][number]['exerciseLog']>;
 
+/**
+ * The primary container for the live workout execution screen.
+ * 
+ * Context:
+ * This component acts as the "mission control" for a training session. It manages 
+ * the live workout timer, calculates real-time training volume, and tracks overall 
+ * progress through the prescribed protocol. 
+ * 
+ * Why:
+ * - Real-time Feedback: Provides a "Tactical HUD" with live duration, total sets, 
+ *   and volume to keep users motivated and informed during their session.
+ * - Progress Visualization: Includes a global progress bar that fills as exercises 
+ *   are completed (reaching their minimum set count).
+ * - Component Orchestration: Coordinates data flow from the `useWorkoutDetails` 
+ *   hook down to individual `ExerciseCard` components, ensuring state consistency 
+ *   across the entire session.
+ */
 export function ExerciseListContent({
     programmeId,
     workoutId,

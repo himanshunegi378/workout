@@ -4,6 +4,22 @@ import { Play, Pause, X, Minus, Plus } from "lucide-react";
 import { Button, Portal } from "@/app/components/ui";
 import { useRestTimer } from "@/app/features/workouts/contexts/RestTimerContext";
 
+/**
+ * A persistent UI overlay for the active rest timer.
+ * 
+ * Context:
+ * This component remains visible regardless of which part of the workout session 
+ * the user is currently viewing, so they always know how long they have until 
+ * their next set. It uses React Portals to ensure it sits on top of all other elements.
+ * 
+ * Why:
+ * - Uninterrupted Flow: Allows users to scroll their exercise list or use other 
+ *   app functions while the rest timer is active. 
+ * - Effortless Control: Provides quick access to common rest timer adjustments 
+ *   (e.g., adding or subtracting 30 seconds) and pausing/resuming. 
+ * - Visual Alert: Pulses with color when the timer hits zero, providing an immediate 
+ *   visual cue to the user.
+ */
 export function RestTimerOverlay() {
     const { isActive, timeLeft, isRunning, pauseTimer, resumeTimer, addTime, stopTimer } = useRestTimer();
 
