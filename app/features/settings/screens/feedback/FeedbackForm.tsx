@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/app/components/ui";
+import { useFeedbackHistory } from "../../api/query-hooks/use-feedback-history";
+import { useSubmitFeedback } from "../../api/mutation-hooks/use-submit-feedback";
 
 const MIN_DESCRIPTION_LENGTH = 5;
 const MAX_DESCRIPTION_LENGTH = 1000;
@@ -15,14 +17,6 @@ const STATUS_STYLES: Record<string, string> = {
     Rejected: "bg-danger/10 text-danger border-danger/20",
 };
 
-type FeedbackListItem = {
-    id: string;
-    description: string;
-    status: string;
-    created_at: string;
-    updated_at: string;
-};
-
 /**
  * Renders the feedback submission form and posts a new feedback entry for the
  * authenticated user.
@@ -30,13 +24,19 @@ type FeedbackListItem = {
 export function FeedbackForm() {
     const router = useRouter();
     const [description, setDescription] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
-    const [feedbackEntries, setFeedbackEntries] = useState<FeedbackListItem[]>([]);
-    const [isLoadingHistory, setIsLoadingHistory] = useState(true);
-    const [historyError, setHistoryError] = useState<string | null>(null);
+    const {
+        data: feedbackEntries = [],
+        isLoading: isLoadingHistory,
+        error: historyError,
+        refetch: refetchFeedbackHistory,
+    } = useFeedbackHistory();
+    const {
+        mutate: submitFeedback,
+        isPending: isSubmitting,
+        error: submitError,
+    } = useSubmitFeedback();
 
     const trimmedDescription = description.trim();
     const canSubmit =
@@ -56,42 +56,6 @@ export function FeedbackForm() {
     }
 
     /**
-     * Fetches previously submitted feedback for the current user.
-     */
-    async function loadFeedbackHistory() {
-        setHistoryError(null);
-        setIsLoadingHistory(true);
-
-        try {
-            const response = await fetch("/api/feedback", {
-                method: "GET",
-                cache: "no-store",
-            });
-
-            const payload = (await response.json().catch(() => null)) as
-                | { error?: string }
-                | FeedbackListItem[]
-                | null;
-
-            if (!response.ok) {
-                throw new Error(
-                    payload && !Array.isArray(payload) ? payload.error || "Failed to load feedback history" : "Failed to load feedback history"
-                );
-            }
-
-            setFeedbackEntries(Array.isArray(payload) ? payload : []);
-        } catch (loadError) {
-            setHistoryError(loadError instanceof Error ? loadError.message : "Failed to load feedback history");
-        } finally {
-            setIsLoadingHistory(false);
-        }
-    }
-
-    useEffect(() => {
-        void loadFeedbackHistory();
-    }, []);
-
-    /**
      * Validates and submits the feedback form to the API, then surfaces the
      * initial server-assigned status back into the UI.
      */
@@ -99,36 +63,19 @@ export function FeedbackForm() {
         event.preventDefault();
         if (!canSubmit) return;
 
-        setIsSubmitting(true);
-        setError(null);
-
-        try {
-            const response = await fetch("/api/feedback", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
+        submitFeedback(
+            {
+                description: trimmedDescription,
+            },
+            {
+                onSuccess: (payload) => {
+                    setDescription("");
+                    setIsSubmitted(true);
+                    setSubmissionStatus(payload.status || DEFAULT_STATUS_LABEL);
+                    router.refresh();
                 },
-                body: JSON.stringify({
-                    description: trimmedDescription,
-                }),
-            });
-
-            const payload = (await response.json().catch(() => null)) as { error?: string; status?: string } | null;
-
-            if (!response.ok) {
-                throw new Error(payload?.error || "Failed to submit feedback");
             }
-
-            setDescription("");
-            setIsSubmitted(true);
-            setSubmissionStatus(payload?.status || DEFAULT_STATUS_LABEL);
-            await loadFeedbackHistory();
-            router.refresh();
-        } catch (submitError) {
-            setError(submitError instanceof Error ? submitError.message : "Failed to submit feedback");
-        } finally {
-            setIsSubmitting(false);
-        }
+        );
     }
 
     return (
@@ -166,9 +113,9 @@ export function FeedbackForm() {
                     </div>
                 </div>
 
-                {error && (
+                {submitError && (
                     <div className="bg-danger/10 border border-danger/20 rounded-xl px-4 py-3 text-danger text-sm">
-                        {error}
+                        {submitError instanceof Error ? submitError.message : "Failed to submit feedback"}
                     </div>
                 )}
 
@@ -206,7 +153,7 @@ export function FeedbackForm() {
                             Review your earlier submissions and their current status.
                         </p>
                     </div>
-                    <Button type="button" variant="ghost" onClick={() => void loadFeedbackHistory()} disabled={isLoadingHistory}>
+                    <Button type="button" variant="ghost" onClick={() => void refetchFeedbackHistory()} disabled={isLoadingHistory}>
                         Refresh
                     </Button>
                 </div>
@@ -219,7 +166,7 @@ export function FeedbackForm() {
 
                 {historyError && (
                     <div className="bg-danger/10 border border-danger/20 rounded-xl px-4 py-3 text-danger text-sm">
-                        {historyError}
+                        {historyError instanceof Error ? historyError.message : "Failed to load feedback history"}
                     </div>
                 )}
 
