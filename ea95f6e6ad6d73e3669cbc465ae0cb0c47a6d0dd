@@ -1,0 +1,36 @@
+app/features/settings/screens/settings/SettingsContent.tsx
+  53318b48fff00154 40,43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "ea95f6e6ad6d73e3669cbc465ae0cb0c47a6d0dd",
+  "prompts": {
+    "53318b48fff00154": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d16a2-eace-72c3-93fa-436dbb2effe3",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "ee57d7d6010c7efd": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d16a8-3cbc-7b73-8e82-ac5ea597b01c",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    }
+  }
+}
