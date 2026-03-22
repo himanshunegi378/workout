@@ -4,7 +4,7 @@ import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 import { QueryProvider } from "@/app/components/providers/QueryProvider";
 import { RestTimerProvider } from "@/app/features/workouts/contexts/RestTimerContext";
-import { RestTimerOverlay } from "@/app/features/workouts/components/ui/RestTimer";
+import { RestTimerOverlay } from "@/app/features/workouts/screens/exercise-list/ui/RestTimer";
 import { BottomDrawerProvider, Sidebar, BottomNav } from "@/app/components/ui";
 
 import { PRCelebrationProvider } from "@/app/features/personal-records/PRCelebrationContext";

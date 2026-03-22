@@ -1,8 +1,7 @@
 "use client";
 
 import { Suspense, use } from "react";
-import { ExerciseListContent } from "@/app/features/workouts/components/ExerciseListContent";
-import { LoadingState } from "@/app/features/workouts/components/ui/LoadingState";
+import { ExerciseListContent, LoadingState } from "@/app/features/workouts/screens";
 
 interface PageProps {
     params: Promise<{ programmeId: string; workoutId: string }>;

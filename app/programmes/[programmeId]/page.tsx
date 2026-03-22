@@ -2,7 +2,7 @@
 
 import { Suspense, use } from "react";
 import { WorkoutListContent } from "@/app/features/programs/screens";
-import { LoadingHeader } from "@/app/features/programs/components/ui/LoadingHeader";
+import { LoadingHeader } from "@/app/features/programs/screens/workout-list/ui/LoadingHeader";
 
 interface PageProps {
     params: Promise<{ programmeId: string }>;

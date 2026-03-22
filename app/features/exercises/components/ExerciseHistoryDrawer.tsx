@@ -5,7 +5,7 @@ import { useExerciseHistory } from "../api/query-hooks/use-exercise-history";
 import { Loader2, Plus, Trophy } from "lucide-react";
 import { Portal } from "@/app/components/ui/Portal";
 import { useState } from "react";
-import { StandaloneLogDrawer } from "@/app/features/logging/components/ui/StandaloneLogDrawer";
+import { StandaloneLogDrawer } from "@/app/features/logging/screens/workout-history/ui/StandaloneLogDrawer";
 
 interface ExerciseHistoryDrawerProps {
     exerciseId: string;

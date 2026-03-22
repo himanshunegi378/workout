@@ -2,7 +2,7 @@
 
 import { use } from "react";
 import { PageHeader } from "@/app/components/ui";
-import { AddWorkoutForm } from "@/app/features/workouts/components/AddWorkoutForm";
+import { AddWorkoutForm } from "@/app/features/workouts/screens";
 
 interface PageProps {
     params: Promise<{ programmeId: string }>;

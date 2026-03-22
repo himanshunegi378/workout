@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { PageHeader, CardSkeletonList } from "@/app/components/ui";
-import { ExercisesContent } from "@/app/features/exercises/components/ExercisesContent";
+import { ExercisesContent } from "@/app/features/exercises/screens";
 
 export default function ExercisesPage() {
     return (

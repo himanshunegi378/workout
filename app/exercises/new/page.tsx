@@ -1,5 +1,5 @@
 import { PageHeader } from "@/app/components/ui";
-import { AddExerciseForm } from "@/app/features/exercises/components/AddExerciseForm";
+import { AddExerciseForm } from "@/app/features/exercises/screens";
 
 export default function AddExercisePage() {
     return (

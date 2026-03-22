@@ -2,7 +2,7 @@
 
 import { Loader2 } from "lucide-react";
 import { ProgrammeCard } from "./ProgrammeCard";
-import { ProgrammesEmptyState } from "../../components/ui/ProgrammesEmptyState";
+import { ProgrammesEmptyState } from "./ui/ProgrammesEmptyState";
 import { useProgrammes } from "../../api/query-hooks/use-programmes";
 
 export function ProgrammeList() {

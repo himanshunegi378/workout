@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { PageHeader } from "@/app/components/ui/PageHeader";
-import { SettingsContent } from "./components/SettingsContent";
+import { SettingsContent } from "@/app/features/settings/screens";
 
 export default function SettingsPage() {
     return (
