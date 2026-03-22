@@ -1,0 +1,36 @@
+feature-list.md
+  2237704cb3a1ddc3 1-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "314b9edbb35f3f92222010da24de3e1f1c14976a",
+  "prompts": {
+    "2237704cb3a1ddc3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d15fd-c444-7193-86dc-091fde288d00",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 26,
+      "overriden_lines": 0
+    },
+    "ca315cb8572deb31": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d1603-4c7a-75e3-b7b2-28fd435eee70",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    }
+  }
+}
