@@ -1,0 +1,27 @@
+app/features/workouts/screens/exercise-list/ui/ExerciseCard.tsx
+  257afbaacd071d31 6,111,195-202,206,208,210,213-214,218,226-230,236-237,245-247,249-250,252,255-283,287-290,292,299-300,302-303,305,307-314
+app/features/workouts/screens/exercise-list/ui/SetTracker.tsx
+  257afbaacd071d31 33,43,47-48,51-52,54-55,62,64,70,73,75
+app/components/ui/MetadataChip.tsx
+  257afbaacd071d31 9-10,12,14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "8227ee9d86d89fb625e883ab9c12c4765b97cfc2",
+  "prompts": {
+    "257afbaacd071d31": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d1b53-0ac4-7900-9b00-e6608b2b9a7c",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 121,
+      "total_deletions": 101,
+      "accepted_lines": 93,
+      "overriden_lines": 0
+    }
+  }
+}
