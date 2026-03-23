@@ -1,0 +1,23 @@
+app/features/settings/screens/feedback/FeedbackForm.tsx
+  ee57d7d6010c7efd 8,107-112
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "9db1abd0fa35b2db234163997374d645c57252c1",
+  "prompts": {
+    "ee57d7d6010c7efd": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d16a8-3cbc-7b73-8e82-ac5ea597b01c",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 7,
+      "total_deletions": 90,
+      "accepted_lines": 7,
+      "overriden_lines": 0
+    }
+  }
+}
