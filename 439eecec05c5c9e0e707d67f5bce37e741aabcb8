@@ -1,0 +1,291 @@
+app/features/exercises/screens/exercise-list/ui/ExerciseListClient.tsx
+  46130fdc6e7dc789 52-53,66-75,78-89,91-92
+  d5eb2356623a58f7 54-63,76,90,94,108,115-130
+  41ba1b4288ace3c9 64,93
+app/features/programs/screens/programme-list/ProgrammeCard.tsx
+  d92ca030f045d48f 29,41
+  41ba1b4288ace3c9 25-28,30-33,35-38,42-45
+  a353473097113778 34,39
+  42f15cdd5303e1a4 23
+app/features/logging/screens/workout-history/ui/ExerciseLogGroup.tsx
+  a353473097113778 51-52,70,79-83
+  41ba1b4288ace3c9 1,5,48,61-62,66,121,123-124,128
+  42f15cdd5303e1a4 49,65,84,118
+app/components/ui/EmptyState.tsx
+  41ba1b4288ace3c9 14,16
+  42f15cdd5303e1a4 13,19
+app/components/ui/Sidebar.tsx
+  41ba1b4288ace3c9 27-33,35-36,39,53-54,56-58
+  42f15cdd5303e1a4 25,34,46,48-49,69
+app/features/workouts/screens/exercise-list/ExerciseListContent.tsx
+  bc60a749fce11771 63,112,157
+  92528a6f2295232e 113,116,118,125,127,134,136,143-144
+  8ba81c7cc27ce5fb 114,142
+  41ba1b4288ace3c9 65,111,115,117,119-122,124,126,128-131,133,135,137-140,148-150,166
+  42f15cdd5303e1a4 174
+app/features/settings/screens/settings/ui/ThemeToggle.tsx
+  a353473097113778 38,43,45-46
+  41ba1b4288ace3c9 28,44,47
+app/features/exercises/screens/exercise-list/ExercisesContent.tsx
+  d5eb2356623a58f7 27-39
+app/features/logging/screens/workout-history/ui/SessionCard.tsx
+  a353473097113778 57,63
+  41ba1b4288ace3c9 45-53,56,58-60,64-87,89
+app/log/page.tsx
+  bc60a749fce11771 2,7-19
+app/features/programs/screens/workout-list/WorkoutListContent.tsx
+  41ba1b4288ace3c9 28-29,68-74,76-79,83-84,96,105
+  42f15cdd5303e1a4 89
+  bc60a749fce11771 27,67
+  a353473097113778 75
+app/components/ui/BottomNav.tsx
+  41ba1b4288ace3c9 34,38,40-42
+  42f15cdd5303e1a4 24,32,35,39,43
+app/components/ui/Button.tsx
+  42f15cdd5303e1a4 13,15,17,28
+  41ba1b4288ace3c9 11,26
+app/features/logging/screens/workout-history/ui/QuickLogFAB.tsx
+  41ba1b4288ace3c9 29
+  d5eb2356623a58f7 23
+  42f15cdd5303e1a4 26
+app/features/programs/screens/workout-list/WorkoutCard.tsx
+  d92ca030f045d48f 35,47
+  a353473097113778 40,45
+  b37a281199074059 2
+  41ba1b4288ace3c9 31-34,36-39,41-44,48-51
+  42f15cdd5303e1a4 29
+app/features/programs/screens/programme-list/ui/ProgrammesEmptyState.tsx
+  41ba1b4288ace3c9 13
+  42f15cdd5303e1a4 17
+  b37a281199074059 1,3,15-16,18,20
+app/features/exercises/components/ExerciseHistoryDrawer.tsx
+  41ba1b4288ace3c9 58-59,84,114
+  d5eb2356623a58f7 109
+  42f15cdd5303e1a4 110,116-126,129,134,138-139
+app/features/workouts/screens/exercise-list/ui/RestTimer.tsx
+  41ba1b4288ace3c9 38-39,52,56,75,83,87,99
+app/settings/feedback/page.tsx
+  bc60a749fce11771 3,14-27
+app/features/exercises/components/AddExerciseTrigger.tsx
+  41ba1b4288ace3c9 36,38,43
+app/globals.css
+  41ba1b4288ace3c9 7,9,11,153-155,172-173,178-179,184-185,190-191,196-197,202-203,208-209,214-215,222,228,234,240,246,252,258,264-265
+  92528a6f2295232e 14,16-17,29-37,133-134,137,139-140
+app/components/ui/FAB.tsx
+  42f15cdd5303e1a4 8
+app/components/ui/PageHeader.tsx
+  42f15cdd5303e1a4 23-24,30-34,41-45,52,63
+  bc60a749fce11771 53
+  41ba1b4288ace3c9 59
+app/features/exercises/components/ExerciseSelectDrawer.tsx
+  41ba1b4288ace3c9 57,59,65,70,76,84-86,90,97
+app/features/settings/screens/feedback/components/ui/PreviousFeedbackList.tsx
+  41ba1b4288ace3c9 40,44,61,73,77
+  d92ca030f045d48f 85
+  a353473097113778 8-12,41,43,45,55,67
+app/features/workouts/screens/exercise-list/ui/ExerciseCard.tsx
+  8ba81c7cc27ce5fb 244
+  92528a6f2295232e 246,248,253,255,260,262,267,269,274,276,283-284,297-298,300
+  41ba1b4288ace3c9 196,198-199,202,206,208-213,220,226,234-235,245,247,250,252,254,257,259,261,264-266,268,271-273,275,278,282,285-286,288-292
+app/features/programs/screens/add-program/AddProgrammeForm.tsx
+  41ba1b4288ace3c9 43-54,56,71,73,92,97-101,103-106
+  a353473097113778 67,87
+  42f15cdd5303e1a4 102
+app/features/exercises/screens/exercise-list/ui/MuscleGroupFilter.tsx
+  d5eb2356623a58f7 40
+  42f15cdd5303e1a4 43
+  41ba1b4288ace3c9 30,41-42,44
+app/features/exercises/screens/exercise-list/ui/ExerciseListCard.tsx
+  41ba1b4288ace3c9 29,35,37-40
+  d5eb2356623a58f7 30-34,42
+  46130fdc6e7dc789 26
+  42f15cdd5303e1a4 36
+app/features/logging/screens/workout-history/LogContent.tsx
+  d5eb2356623a58f7 152-153,168-169,171,177-178,184-185,193
+  42f15cdd5303e1a4 173-174,198
+  a353473097113778 166-167,170,172,176,179,181,183,186,188,270
+  41ba1b4288ace3c9 154-165,180,187,191,194-197,199-201,218,275,278
+app/features/settings/screens/settings/SettingsContent.tsx
+  41ba1b4288ace3c9 29-30,36-37,48,54,65
+  d92ca030f045d48f 59,68
+  d5eb2356623a58f7 51
+  a353473097113778 33,35,43
+app/features/exercises/screens/add-exercise/AddExerciseForm.tsx
+  41ba1b4288ace3c9 53,67,87,102,111
+app/features/exercises/components/AddExerciseDrawer.tsx
+  d5eb2356623a58f7 113
+  41ba1b4288ace3c9 83,89,118,128,134,136,144
+app/features/logging/screens/workout-history/ui/StandaloneLogDrawer.tsx
+  42f15cdd5303e1a4 153,181
+  d92ca030f045d48f 140,142
+  a353473097113778 75
+  41ba1b4288ace3c9 74,76,79-81,175
+app/features/workouts/screens/add-workout/AddWorkoutForm.tsx
+  41ba1b4288ace3c9 55,69,89,94,103
+app/features/programs/screens/workout-list/ui/LoadingHeader.tsx
+  bc60a749fce11771 8
+  42f15cdd5303e1a4 13
+  a353473097113778 9,14-15
+  41ba1b4288ace3c9 1-2,10-12,16-17
+app/features/programs/screens/programme-list/ProgrammeList.tsx
+  41ba1b4288ace3c9 22-25,30,40,44
+  42f15cdd5303e1a4 27
+  a353473097113778 21,26,28-29
+app/features/settings/screens/settings/ui/Avatar.tsx
+  41ba1b4288ace3c9 10
+app/features/workouts/screens/exercise-list/ui/EditExerciseMetadataDrawer.tsx
+  41ba1b4288ace3c9 109,115,144,154,163
+  d5eb2356623a58f7 139
+app/features/settings/screens/feedback/FeedbackForm.tsx
+  a353473097113778 67,86,88,107
+  41ba1b4288ace3c9 63-64,66,68-73,95,101,106
+app/features/workouts/screens/exercise-list/ui/SetTracker.tsx
+  92528a6f2295232e 50-51,53-54,74
+  41ba1b4288ace3c9 33,43,47,72
+app/features/settings/screens/settings/ui/ClearQueryCacheRow.tsx
+  a353473097113778 38,42
+  41ba1b4288ace3c9 33,36
+  42f15cdd5303e1a4 31,37,52
+app/settings/page.tsx
+  bc60a749fce11771 3,8-12
+app/features/workouts/screens/exercise-list/ui/LogSetDrawer.tsx
+  41ba1b4288ace3c9 71-73,89,101,127,130,145
+  42f15cdd5303e1a4 86,88,94
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "439eecec05c5c9e0e707d67f5bce37e741aabcb8",
+  "prompts": {
+    "41ba1b4288ace3c9": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d1b6d-39dc-7800-96ac-93eb3c23820c",
+        "model": "unknown"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 561,
+      "total_deletions": 566,
+      "accepted_lines": 398,
+      "overriden_lines": 0
+    },
+    "42f15cdd5303e1a4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d1b78-c265-71f2-b127-61dc77e35063",
+        "model": "gpt-5.4-mini"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 120,
+      "total_deletions": 112,
+      "accepted_lines": 76,
+      "overriden_lines": 0
+    },
+    "46130fdc6e7dc789": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d1b85-b5e8-7c51-9eaa-d9b5aecd041c",
+        "model": "gpt-5.4-mini"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 28,
+      "total_deletions": 69,
+      "accepted_lines": 28,
+      "overriden_lines": 0
+    },
+    "8ba81c7cc27ce5fb": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d1b78-c2b9-7de1-b18f-1d6a02fd40e0",
+        "model": "gpt-5.4-mini"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 12,
+      "total_deletions": 12,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    },
+    "92528a6f2295232e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d1b75-c387-76e1-ac9a-378d869a311b",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 58,
+      "total_deletions": 58,
+      "accepted_lines": 46,
+      "overriden_lines": 0
+    },
+    "a353473097113778": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d1b7e-f9dc-7e13-a546-67ed7b3bd709",
+        "model": "unknown"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 61,
+      "total_deletions": 61,
+      "accepted_lines": 59,
+      "overriden_lines": 0
+    },
+    "b37a281199074059": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d1b6a-5e4b-7a52-9eae-b541355a14ed",
+        "model": "gpt-5.4-mini"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 8,
+      "total_deletions": 4,
+      "accepted_lines": 7,
+      "overriden_lines": 0
+    },
+    "bc60a749fce11771": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d1b7e-f89d-7851-87d9-92bfff842bfb",
+        "model": "gpt-5.4-mini"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 42,
+      "total_deletions": 40,
+      "accepted_lines": 42,
+      "overriden_lines": 0
+    },
+    "d5eb2356623a58f7": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d1b68-5a34-74b3-b246-cc6447ffb96d",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 160,
+      "total_deletions": 75,
+      "accepted_lines": 68,
+      "overriden_lines": 0
+    },
+    "d92ca030f045d48f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d1b78-c31f-7221-8bce-9ae3628526bd",
+        "model": "gpt-5.4-mini"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 9,
+      "total_deletions": 9,
+      "accepted_lines": 9,
+      "overriden_lines": 0
+    }
+  }
+}
