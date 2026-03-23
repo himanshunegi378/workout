@@ -7,7 +7,7 @@
  */
 export function Avatar({ initial }: { initial: string }) {
     return (
-        <div className="w-20 h-20 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-4xl font-bold uppercase shadow-lg">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full border border-border/70 bg-card/80 text-3xl font-semibold uppercase text-foreground">
             {initial}
         </div>
     );

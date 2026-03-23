@@ -60,12 +60,17 @@ export function FeedbackForm() {
     }
 
     return (
-        <div className="space-y-6 animate-slide-up">
-            <form onSubmit={handleSubmit} className="bg-card rounded-2xl p-5 border border-border space-y-5">
+        <div className="space-y-8 animate-slide-up">
+            <form onSubmit={handleSubmit} className="space-y-6 border-b border-border/60 pb-8">
                 <div className="space-y-3">
-                    <label htmlFor="feedback-description" className="block text-sm font-medium text-foreground">
-                        Description
-                    </label>
+                    <div className="space-y-2">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground/85">
+                            New feedback
+                        </p>
+                        <label htmlFor="feedback-description" className="block text-sm font-medium text-foreground">
+                            Description
+                        </label>
+                    </div>
                     <textarea
                         id="feedback-description"
                         rows={6}
@@ -78,28 +83,28 @@ export function FeedbackForm() {
                                 resetSubmitFeedback();
                             }
                         }}
-                        className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring focus:border-accent transition-all duration-200 font-body text-base resize-y min-h-36"
+                        className="min-h-36 w-full resize-y rounded-2xl border border-border/70 bg-background/70 px-4 py-3 text-base text-foreground placeholder:text-muted-foreground/90 transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring"
                     />
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <div className="flex items-center justify-between text-xs text-foreground/80">
                         <span>Minimum {MIN_DESCRIPTION_LENGTH} characters</span>
                         <span>{trimmedDescription.length}/{MAX_DESCRIPTION_LENGTH}</span>
                     </div>
                 </div>
 
                 {submitError && (
-                    <div className="bg-danger/10 border border-danger/20 rounded-xl px-4 py-3 text-danger text-sm">
+                    <div className="rounded-2xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
                         {submitError instanceof Error ? submitError.message : "Failed to submit feedback"}
                     </div>
                 )}
 
                 {showSubmissionSuccess && (
-                    <div className="bg-accent/10 border border-accent/20 rounded-xl px-4 py-3 text-sm text-foreground">
+                    <div className="rounded-2xl border border-accent/20 bg-accent/10 px-4 py-3 text-sm text-foreground">
                         Thanks. Your feedback has been submitted.
                     </div>
                 )}
 
-                <div>
-                    <Button type="submit" className="w-full" disabled={!canSubmit}>
+                <div className="flex justify-end">
+                    <Button type="submit" disabled={!canSubmit} className="w-full sm:w-auto !text-background">
                         {isSubmitting ? "Sending..." : "Submit Feedback"}
                     </Button>
                 </div>

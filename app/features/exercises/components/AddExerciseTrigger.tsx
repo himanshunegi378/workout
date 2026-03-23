@@ -33,17 +33,14 @@ export function AddExerciseTrigger({ programmeId, workoutId, variant }: AddExerc
             {variant === "icon" ? (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="p-2 rounded-xl hover:bg-muted transition-colors text-accent group"
+                    className="group rounded-full border border-border/60 p-2 text-accent transition-colors hover:border-accent/30 hover:bg-muted/40"
                 >
-                    <Plus className="w-5 h-5 group-active:scale-95 transition-transform" />
+                    <Plus className="w-5 h-5 transition-transform group-active:scale-95" />
                 </button>
             ) : (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="inline-flex items-center justify-center gap-2 px-5 py-3
-                             rounded-xl font-display text-sm font-semibold
-                             transition-all duration-200 active:animate-press
-                             bg-accent hover:bg-accent-hover text-accent-foreground shadow-lg shadow-accent/20"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-border/60 bg-background/80 px-5 py-3 font-display text-sm font-semibold text-foreground transition-colors duration-200 hover:border-accent/30 hover:bg-muted/30 active:scale-[0.98]"
                 >
                     <Plus className="w-4 h-4" /> Add Exercise
                 </button>

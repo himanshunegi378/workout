@@ -8,13 +8,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<ButtonVariant, string> = {
     primary:
-        "bg-accent hover:bg-accent-hover text-accent-foreground elevation-3 hover:elevation-5 hover:-translate-y-0.5 ring-1 ring-black/10",
+        "bg-accent text-accent-foreground hover:bg-accent-hover hover:-translate-y-px",
     secondary:
-        "bg-muted hover:bg-muted/80 text-foreground border border-border elevation-2 hover:elevation-3 hover:-translate-y-0.5",
+        "border border-border/70 bg-card/90 text-foreground hover:border-border hover:bg-muted/30",
     ghost:
-        "hover:bg-muted text-muted-foreground hover:text-foreground",
+        "text-muted-foreground hover:bg-muted/30 hover:text-foreground",
     danger:
-        "bg-danger/10 hover:bg-danger/20 text-danger border border-danger/20 elevation-2 hover:elevation-3 hover:-translate-y-0.5",
+        "border border-danger/25 bg-danger/12 text-danger hover:bg-danger/18",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -23,8 +23,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             <button
                 ref={ref}
                 className={`inline-flex items-center justify-center gap-2 px-5 py-3
-                    rounded-xl font-display text-sm font-semibold
+                    rounded-full font-display text-sm font-semibold
                     transition-all duration-200 active:animate-press
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background
                     disabled:opacity-50 disabled:pointer-events-none
                     ${variantClasses[variant]} ${className}`}
                 {...props}

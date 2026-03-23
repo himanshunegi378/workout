@@ -1,5 +1,6 @@
 // Global UI primitives — import from "@/app/components/ui"
 export { PageHeader } from "./PageHeader";
+export { PageShell } from "./PageShell";
 export { BottomNav } from "./BottomNav";
 export { Sidebar } from "./Sidebar";
 export { Button } from "./Button";

@@ -24,9 +24,19 @@ export function ExercisesContent() {
 
     if (isLoading) {
         return (
-            <div className="flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground">
-                <Loader2 className="h-7 w-7 animate-spin text-accent" />
-                <span className="text-sm font-medium">Loading exercises...</span>
+            <div className="space-y-6">
+                <div className="border-b border-border/50 pb-4">
+                    <div className="h-11 w-full animate-pulse rounded-full bg-muted/30" />
+                    <div className="mt-4 flex flex-wrap gap-2">
+                        {[1, 2, 3, 4].map((i) => (
+                            <div key={i} className="h-8 w-20 animate-pulse rounded-full bg-muted/25" />
+                        ))}
+                    </div>
+                </div>
+                <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
+                    <Loader2 className="h-7 w-7 animate-spin text-accent" />
+                    <span className="text-sm font-medium tracking-wide">Loading exercises...</span>
+                </div>
             </div>
         );
     }

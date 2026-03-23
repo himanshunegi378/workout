@@ -24,9 +24,9 @@ export function WorkoutListContent({ programmeId }: { programmeId: string }) {
         return (
             <>
                 <PageHeader title="Loading..." backHref="/" />
-                <div className="min-h-screen flex flex-col pt-24 items-center gap-4">
-                    <Loader2 className="w-8 h-8 animate-spin text-accent" />
-                    <span className="text-sm text-muted-foreground animate-pulse font-medium">Loading workouts...</span>
+                <div className="mx-auto flex min-h-[50vh] w-full max-w-6xl flex-col items-center justify-center px-4 py-16 text-center text-muted-foreground sm:px-6 lg:px-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-accent" />
+                    <span className="mt-4 text-sm">Loading workouts...</span>
                 </div>
             </>
         );
@@ -64,27 +64,36 @@ export function WorkoutListContent({ programmeId }: { programmeId: string }) {
                 }
             />
 
-            <main className="max-w-lg md:max-w-5xl mx-auto px-4 md:px-8 py-4 md:py-8">
+            <main className="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+                <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                    <div>
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Workouts</p>
+                        <h2 className="mt-2 font-display text-2xl font-semibold tracking-tight text-foreground">
+                            Training days
+                        </h2>
+                    </div>
+                    <p className="max-w-xl text-sm leading-6 text-muted-foreground/90">
+                        A quiet view of the program structure, with each workout kept as a single open row.
+                    </p>
+                </div>
+
                 {programme.workouts.length === 0 ? (
                     <EmptyState
                         icon={Dumbbell}
-                        title="No Workouts Yet"
-                        description="Add your first workout to this program"
+                        title="No workouts yet"
+                        description="Add your first workout to start building this program."
                         action={
                             <Link
                                 href={`/programmes/${programmeId}/workouts/new`}
                                 prefetch={true}
-                                className="inline-flex items-center justify-center gap-2 px-5 py-3
-                                         rounded-xl font-display text-sm font-semibold
-                                         transition-all duration-200 active:animate-press
-                                         bg-accent hover:bg-accent-hover text-accent-foreground shadow-lg shadow-accent/20"
+                                className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 font-display text-sm font-semibold !text-background transition-all duration-200 active:animate-press hover:bg-accent-hover"
                             >
                                 <Plus className="w-4 h-4" /> Add Workout
                             </Link>
                         }
                     />
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                    <div className="space-y-3 md:space-y-4">
                         {programme.workouts.map((workout, i) => {
                             const exercisePreview = workout.exercisesWithMetadata
                                 .map((ewm) => ewm.exercise.name)
@@ -93,7 +102,7 @@ export function WorkoutListContent({ programmeId }: { programmeId: string }) {
                             return (
                                 <div
                                     key={workout.id}
-                                    className="animate-slide-up h-full"
+                                    className="animate-slide-up"
                                     style={{ animationDelay: `${i * 60}ms` }}
                                 >
                                     <WorkoutCard

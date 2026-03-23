@@ -5,11 +5,11 @@ import { Button } from "@/app/components/ui";
 import type { FeedbackListItem } from "../../../../api/query-hooks/use-feedback-history";
 
 const STATUS_STYLES: Record<FeedbackStatus, string> = {
-    [FeedbackStatus.Submitted]: "bg-accent/10 text-accent border-accent/20",
-    [FeedbackStatus.UnderReview]: "bg-warning/10 text-warning border-warning/20",
-    [FeedbackStatus.Planned]: "bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/20",
-    [FeedbackStatus.Completed]: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20",
-    [FeedbackStatus.Rejected]: "bg-danger/10 text-danger border-danger/20",
+    [FeedbackStatus.Submitted]: "bg-background/75 text-foreground border-border/70",
+    [FeedbackStatus.UnderReview]: "bg-warning/20 text-foreground border-warning/30",
+    [FeedbackStatus.Planned]: "bg-sky-500/20 text-sky-950 dark:text-sky-50 border-sky-500/35",
+    [FeedbackStatus.Completed]: "bg-emerald-500/20 text-emerald-950 dark:text-emerald-50 border-emerald-500/35",
+    [FeedbackStatus.Rejected]: "bg-danger/20 text-danger border-danger/30",
 };
 
 type PreviousFeedbackListProps = {
@@ -37,11 +37,12 @@ export function PreviousFeedbackList({
     }
 
     return (
-        <section className="bg-card rounded-2xl p-5 border border-border space-y-4">
-            <div className="flex items-center justify-between gap-3">
+        <section className="space-y-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                    <h3 className="text-lg font-display font-semibold">Previous Feedback</h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground/85">Previous feedback</p>
+                    <h3 className="mt-2 text-lg font-display font-semibold text-foreground">Your earlier submissions</h3>
+                    <p className="text-sm text-foreground/85">
                         Review your earlier submissions and their current status.
                     </p>
                 </div>
@@ -51,29 +52,29 @@ export function PreviousFeedbackList({
             </div>
 
             {isLoading && (
-                <div className="rounded-xl border border-border bg-muted/40 px-4 py-5 text-sm text-muted-foreground">
+                <div className="py-3 text-sm text-foreground/85">
                     Loading feedback history...
                 </div>
             )}
 
             {error && (
-                <div className="bg-danger/10 border border-danger/20 rounded-xl px-4 py-3 text-danger text-sm">
+                <div className="rounded-2xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
                     {error.message}
                 </div>
             )}
 
             {!isLoading && !error && feedbackEntries.length === 0 && (
-                <div className="rounded-xl border border-border bg-muted/30 px-4 py-5 text-sm text-muted-foreground">
+                <div className="py-3 text-sm text-foreground/85">
                     You have not submitted any feedback yet.
                 </div>
             )}
 
             {!isLoading && !error && feedbackEntries.length > 0 && (
-                <div className="space-y-3">
+                <div className="space-y-0">
                     {feedbackEntries.map((entry, index) => (
                         <article
                             key={entry.id}
-                            className="rounded-2xl border border-border bg-background/60 px-4 py-4 space-y-3 animate-slide-up"
+                            className="space-y-3 border-t border-border/60 py-4 first:border-t-0 first:pt-0 animate-slide-up"
                             style={{ animationDelay: `${index * 40}ms` }}
                         >
                             <div className="flex items-start justify-between gap-3">
@@ -81,7 +82,7 @@ export function PreviousFeedbackList({
                                     <p className="text-sm font-medium text-foreground">
                                         Submitted {formatSubmittedAt(entry.created_at)}
                                     </p>
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-xs text-foreground/80">
                                         Feedback ID: {entry.id}
                                     </p>
                                 </div>

@@ -30,7 +30,7 @@ export function SetTracker({ setsMin, setsMax, logs, targetReps, onSetClick, pre
     const totalCircles = setsMax;
 
     return (
-        <div className="mt-3 flex flex-wrap gap-x-3 gap-y-7 pb-4">
+        <div className="mt-3 flex flex-wrap gap-x-3 gap-y-6 pb-2">
             {Array.from({ length: totalCircles }).map((_, i) => {
                 const isOptional = i >= setsMin;
                 const log = logs.find((l) => l.set_order_index === i);
@@ -40,19 +40,18 @@ export function SetTracker({ setsMin, setsMax, logs, targetReps, onSetClick, pre
                 const prevLog = previousLogs.find((l) => l.set_order_index === i);
 
                 return (
-                    <div key={i} className="relative w-10 shrink-0 pb-5">
+                    <div key={i} className="relative w-11 shrink-0 pb-5">
                         <button
                             onClick={() => onSetClick(i)}
                             className={`
-                            relative h-10 w-10 rounded-full flex items-center justify-center
-                            border text-sm transition-colors duration-200
+                            relative flex h-10 w-10 items-center justify-center rounded-full border text-sm transition-colors duration-200
                             ${isCompleted
                                     ? missedTarget
-                                        ? "border-warning/20 bg-warning/12 text-warning"
-                                        : "border-accent/20 bg-accent/12 text-accent"
+                                        ? "border-warning/30 bg-warning/10 text-warning"
+                                        : "border-accent/25 bg-accent/10 text-accent"
                                     : isOptional
-                                        ? "border-dashed border-border bg-background text-muted-foreground hover:border-muted-foreground/40"
-                                        : "border-border bg-muted/40 text-foreground hover:border-muted-foreground/40"
+                                        ? "border-dashed border-border/70 bg-background text-foreground/70 hover:border-foreground/30"
+                                        : "border-border/70 bg-muted/35 text-foreground hover:border-foreground/30"
                                 }
                         `}
                             aria-label={`Log set ${i + 1}`}
@@ -70,9 +69,9 @@ export function SetTracker({ setsMin, setsMax, logs, targetReps, onSetClick, pre
                                 <span className="font-display text-sm font-medium">{i + 1}</span>
                             )}
                         </button>
-                        <div className="absolute top-[3.1rem] left-1/2 flex w-max -translate-x-1/2 justify-center">
+                        <div className="absolute left-1/2 top-[3.1rem] flex w-max -translate-x-1/2 justify-center">
                             {prevLog ? (
-                                <span className="text-[10px] leading-none text-muted-foreground/80 tracking-tight">
+                                <span className="text-[10px] leading-none tracking-tight text-foreground/70">
                                     {prevLog.weight ? `${prevLog.weight}×${prevLog.reps}` : `${prevLog.reps}r`}
                                 </span>
                             ) : null}

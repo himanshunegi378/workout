@@ -1,7 +1,8 @@
-'use client'
+"use client";
 
 import { Check, Trash2, Trophy } from "lucide-react";
 import { muscleColorMap } from "@/app/components/ui";
+import { ExerciseHistoryDrawer } from "@/app/features/exercises/components/ExerciseHistoryDrawer";
 import { useDeleteLogSet } from "../../../api/mutation-hooks/use-delete-log-set";
 import { useState } from "react";
 
@@ -44,11 +45,11 @@ export function SetRow({ id, index, weight, reps, rpe, prType }: SetRowProps) {
     };
 
     return (
-        <div className={`flex items-center gap-3 group transition-opacity ${isDeleting || isPending ? "opacity-50 pointer-events-none" : ""}`}>
-            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold
+        <div className={`flex items-center gap-3 group py-2 transition-opacity ${isDeleting || isPending ? "opacity-50 pointer-events-none" : ""}`}>
+            <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold
                 ${prType
-                    ? "bg-accent/20 text-accent ring-1 ring-accent/30"
-                    : "bg-muted text-muted-foreground"
+                    ? "border-accent/35 bg-accent/15 text-foreground"
+                    : "border-border/60 bg-accent/10 text-foreground/90"
                 }`}
             >
                 {prType ? (
@@ -57,16 +58,16 @@ export function SetRow({ id, index, weight, reps, rpe, prType }: SetRowProps) {
                     index
                 )}
             </span>
-            <div className="flex-1 flex items-center gap-2">
-                <span className="font-display text-sm font-semibold text-foreground">
+            <div className="flex min-w-0 flex-1 items-center gap-2 text-sm">
+                <span className="font-display font-semibold text-foreground">
                     {weight ? `${weight}kg` : "BW"}
                 </span>
-                <span className="text-muted-foreground">×</span>
-                <span className="font-display text-sm font-semibold text-foreground">
+                <span className="text-foreground/60">×</span>
+                <span className="font-display font-semibold text-foreground">
                     {reps}
                 </span>
                 {rpe && (
-                    <span className="text-[10px] bg-indigo-500/10 text-indigo-500 px-1.5 py-0.5 rounded-md font-bold border border-indigo-500/20">
+                    <span className="rounded-full border border-border/60 bg-background/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/90">
                         @{rpe}
                     </span>
                 )}
@@ -75,20 +76,18 @@ export function SetRow({ id, index, weight, reps, rpe, prType }: SetRowProps) {
             <div className="flex items-center gap-2">
                 <button
                     onClick={handleDelete}
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10  group-hover:opacity-100 transition-all"
-                    title="Remove set"
-                >
-                    <Trash2 className="w-4 h-4" />
-                </button>
-                <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center">
+                className="flex h-8 w-8 items-center justify-center rounded-full text-foreground/75 transition-colors hover:bg-danger/10 hover:text-danger group-hover:opacity-100"
+                title="Remove set"
+            >
+                <Trash2 className="w-4 h-4" />
+            </button>
+                <div className="flex h-6 w-6 items-center justify-center rounded-full bg-success/15">
                     <Check className="w-3.5 h-3.5 text-success" />
                 </div>
             </div>
         </div>
     );
 }
-
-import { ExerciseHistoryDrawer } from "@/app/features/exercises/components/ExerciseHistoryDrawer";
 
 /**
  * Props for the ExerciseLogGroup component.
@@ -116,17 +115,17 @@ export function ExerciseLogGroup({ exerciseId, exerciseName, muscleGroup, sets }
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
     return (
-        <div className="px-4 py-3">
+        <div className="rounded-[1.5rem] border border-border/40 bg-background/20 px-4 py-4">
             <button
                 onClick={() => setIsHistoryOpen(true)}
-                className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity text-left w-full group outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm"
+                className="flex w-full items-center gap-3 text-left group outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
             >
-                <div className={`w-1.5 h-5 rounded-full ${colorClass}`} />
-                <span className="font-display text-sm font-semibold group-hover:underline underline-offset-2 decoration-border">
+                <div className={`h-5 w-1.5 rounded-full ${colorClass}`} />
+                <span className="font-display text-sm font-semibold tracking-tight text-foreground group-hover:underline underline-offset-2 decoration-border">
                     {exerciseName}
                 </span>
             </button>
-            <div className="space-y-1 ml-3.5">
+            <div className="mt-3 space-y-0.5 pl-5">
                 {sets.map((log, si) => (
                     <SetRow
                         key={log.id}

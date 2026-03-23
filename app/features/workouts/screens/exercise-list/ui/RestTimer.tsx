@@ -35,8 +35,8 @@ export function RestTimerOverlay() {
 
     return (
         <Portal>
-            <div className="fixed inset-x-0 md:inset-x-auto md:right-32 bottom-16 md:bottom-8 p-4 z-40 animate-slide-up pointer-events-none">
-                <div className="w-full max-w-md mx-auto md:w-80 pointer-events-auto bg-card border border-border rounded-2xl p-4 shadow-2xl flex flex-col gap-4">
+            <div className="pointer-events-none fixed inset-x-0 bottom-16 z-40 animate-slide-up p-4 md:inset-x-auto md:right-32 md:bottom-8">
+                <div className="mx-auto flex w-full max-w-md flex-col gap-4 rounded-3xl border border-border/70 bg-background/95 p-4 backdrop-blur-md md:w-80 pointer-events-auto">
                     <div className="flex items-center justify-between">
                         <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                             Rest Timer
@@ -49,19 +49,17 @@ export function RestTimerOverlay() {
                         </button>
                     </div>
 
-                    <div className="flex items-center justify-between">
-                        {/* Controls Left */}
+                    <div className="flex items-center justify-between gap-3">
                         <div className="flex gap-2">
                             <button
                                 onClick={() => addTime(-30)}
-                                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-foreground hover:bg-muted/80 transition-colors active:animate-press"
+                                className="flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-muted/30 text-foreground transition-colors hover:bg-muted/60 active:scale-95"
                             >
                                 <Minus className="w-4 h-4" />
                                 <span className="sr-only">-30s</span>
                             </button>
                         </div>
 
-                        {/* Timer Display */}
                         <div className="text-center">
                             <div
                                 className={`font-display text-5xl font-bold tracking-tight transition-colors ${isComplete ? "text-accent animate-pulse" : "text-foreground"
@@ -71,11 +69,10 @@ export function RestTimerOverlay() {
                             </div>
                         </div>
 
-                        {/* Controls Right */}
                         <div className="flex gap-2">
                             <button
                                 onClick={() => addTime(30)}
-                                className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-foreground hover:bg-muted/80 transition-colors active:animate-press"
+                                className="flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-muted/30 text-foreground transition-colors hover:bg-muted/60 active:scale-95"
                             >
                                 <Plus className="w-4 h-4" />
                                 <span className="sr-only">+30s</span>
@@ -83,12 +80,11 @@ export function RestTimerOverlay() {
                         </div>
                     </div>
 
-                    {/* Primary Actions */}
-                    <div className="grid grid-cols-2 gap-3 mt-2">
+                    <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <Button
                             variant={isRunning ? "secondary" : "primary"}
                             onClick={isRunning ? pauseTimer : resumeTimer}
-                            className="w-full"
+                            className="w-full shadow-none"
                         >
                             {isRunning ? (
                                 <>
@@ -100,7 +96,7 @@ export function RestTimerOverlay() {
                                 </>
                             )}
                         </Button>
-                        <Button variant="danger" onClick={stopTimer} className="w-full">
+                        <Button variant="danger" onClick={stopTimer} className="w-full shadow-none">
                             Skip
                         </Button>
                     </div>

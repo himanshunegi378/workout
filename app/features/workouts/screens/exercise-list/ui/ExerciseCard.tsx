@@ -193,39 +193,37 @@ export function ExerciseCard({
     return (
         <>
             <div
-                className={`rounded-[1.75rem] border px-5 py-5 text-card-foreground transition-colors duration-200 md:px-6 md:py-6 ${
+                className={`rounded-[1.75rem] border border-border/60 bg-background/60 px-5 py-5 text-card-foreground transition-colors duration-200 md:px-6 md:py-6 ${
                     isCompleted
-                        ? "border-success/25 bg-card"
-                        : "border-border bg-card hover:border-border/80"
+                        ? "border-success/20"
+                        : "hover:border-border/80"
                 }`}
             >
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex flex-wrap items-start justify-between gap-4">
                     <button
                         type="button"
                         onClick={() => setIsHistoryDrawerOpen(true)}
-                        className="flex min-w-0 flex-1 items-start gap-4 rounded-2xl -m-2 p-2 text-left transition-colors hover:bg-muted/30"
+                        className="flex min-w-0 flex-1 items-start gap-4 rounded-2xl text-left transition-colors hover:bg-muted/20"
                     >
-                        <div className={`mt-1 h-10 w-1.5 shrink-0 rounded-full ${colorClass}`} />
-                        <div className="min-w-0">
-                            <h3 className="truncate font-display text-xl font-semibold tracking-tight text-foreground md:text-2xl">
-                                {name}
-                            </h3>
-                            <div className="mt-2 flex flex-wrap items-center gap-2">
-                                <span className="rounded-full border border-border/70 bg-background px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                                    {muscleGroup}
-                                </span>
+                        <div className={`mt-1 h-12 w-1.5 shrink-0 rounded-full ${colorClass}`} />
+                        <div className="min-w-0 space-y-2">
+                            <div className="flex flex-wrap items-center gap-2">
+                                <h3 className="truncate font-display text-xl font-semibold tracking-tight text-foreground md:text-2xl">
+                                    {name}
+                                </h3>
                                 {isPerfect && (
                                     <span className="flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-success">
                                         <Trophy className="w-3 h-3" /> Mastered
                                     </span>
                                 )}
                             </div>
+                            <p className="text-sm text-muted-foreground">{muscleGroup}</p>
                         </div>
                     </button>
 
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="shrink-0 rounded-full p-2.5 text-muted-foreground transition-colors hover:bg-muted/40"
+                        className="shrink-0 rounded-full border border-border/60 p-2.5 text-muted-foreground transition-colors hover:border-border/80 hover:bg-muted/20"
                     >
                         <MoreHorizontal className="w-5 h-5" />
                     </button>
@@ -233,8 +231,8 @@ export function ExerciseCard({
                     {isMenuOpen && (
                         <>
                             <div className="fixed inset-0 z-10" onClick={() => setIsMenuOpen(false)} />
-                            <div className="absolute right-5 top-16 z-20 w-40 overflow-hidden rounded-2xl border border-border bg-card py-2">
-                                <button onClick={() => { setIsMenuOpen(false); setIsEditDrawerOpen(true); }} className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium transition-colors hover:bg-muted">
+                            <div className="absolute right-5 top-16 z-20 w-44 overflow-hidden rounded-2xl border border-border/70 bg-background/95 py-2 backdrop-blur">
+                                <button onClick={() => { setIsMenuOpen(false); setIsEditDrawerOpen(true); }} className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium transition-colors hover:bg-muted/30">
                                     <Activity className="w-4 h-4 text-accent" /> Edit Protocol
                                 </button>
                             </div>
@@ -243,66 +241,63 @@ export function ExerciseCard({
                 </div>
 
                 <div className="mt-5 space-y-6">
-                    <div className="space-y-5">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <Target className="w-4 h-4 text-muted-foreground" />
-                                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Tempo</span>
+                    <div className="grid grid-cols-2 gap-x-5 gap-y-4 text-sm md:grid-cols-3 xl:grid-cols-5">
+                        <div className="space-y-1">
+                            <div className="flex items-center gap-1.5 text-foreground/70">
+                                <Target className="h-3.5 w-3.5" />
+                                <span className="text-[11px] font-semibold uppercase tracking-[0.18em]">Tempo</span>
                             </div>
-                            <span className="font-mono text-[11px] text-foreground">{tempo}</span>
+                            <p className="font-mono text-[11px] text-foreground">{tempo}</p>
                         </div>
-
-                        <div className="flex flex-wrap gap-x-5 gap-y-4 border-y border-border/40 py-4">
-                            <div className="min-w-[8.5rem] flex-1 space-y-1 text-left">
-                                <div className="flex items-center gap-1.5 text-muted-foreground">
-                                    <Hash className="h-3.5 w-3.5" />
-                                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">Goal</span>
-                                </div>
-                                <p className="text-sm font-medium text-foreground">{setsMin}–{setsMax} sets</p>
+                        <div className="space-y-1">
+                            <div className="flex items-center gap-1.5 text-foreground/70">
+                                <Hash className="h-3.5 w-3.5" />
+                                <span className="text-[11px] font-semibold uppercase tracking-[0.18em]">Goal</span>
                             </div>
-                            <div className="min-w-[8.5rem] flex-1 space-y-1 text-left">
-                                <div className="flex items-center gap-1.5 text-muted-foreground">
-                                    <Repeat className="h-3.5 w-3.5" />
-                                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">Range</span>
-                                </div>
-                                <p className="text-sm font-medium text-foreground">{repsMin}–{repsMax} reps</p>
-                            </div>
-                            <div className="min-w-[8.5rem] flex-1 space-y-1 text-left">
-                                <div className="flex items-center gap-1.5 text-muted-foreground">
-                                    <Timer className="h-3.5 w-3.5" />
-                                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">Rest</span>
-                                </div>
-                                <p className="text-sm font-medium text-foreground">{restMin}–{restMax}s</p>
-                            </div>
-                            <div className="min-w-[8.5rem] flex-1 space-y-1 text-left">
-                                <div className="flex items-center gap-1.5 text-muted-foreground">
-                                    <CheckCircle2 className="h-3.5 w-3.5" />
-                                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">Work</span>
-                                </div>
-                                <p className="text-sm font-medium text-foreground">{completedSetCount} done</p>
-                            </div>
+                            <p className="font-medium text-foreground">{setsMin}–{setsMax} sets</p>
                         </div>
-
-                        {previousLogs.length > 0 && (
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2 text-muted-foreground">
-                                    <Flame className="h-4 w-4 text-accent" />
-                                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">Beat Previous</span>
-                                </div>
-                                <span className="font-display text-sm font-semibold text-foreground">
-                                    {previousLogs[0].weight ? `${previousLogs[0].weight}kg × ` : ""}{previousLogs[0].reps}
-                                </span>
+                        <div className="space-y-1">
+                            <div className="flex items-center gap-1.5 text-foreground/70">
+                                <Repeat className="h-3.5 w-3.5" />
+                                <span className="text-[11px] font-semibold uppercase tracking-[0.18em]">Range</span>
                             </div>
-                        )}
+                            <p className="font-medium text-foreground">{repsMin}–{repsMax} reps</p>
+                        </div>
+                        <div className="space-y-1">
+                            <div className="flex items-center gap-1.5 text-foreground/70">
+                                <Timer className="h-3.5 w-3.5" />
+                                <span className="text-[11px] font-semibold uppercase tracking-[0.18em]">Rest</span>
+                            </div>
+                            <p className="font-medium text-foreground">{restMin}–{restMax}s</p>
+                        </div>
+                        <div className="space-y-1">
+                            <div className="flex items-center gap-1.5 text-foreground/70">
+                                <CheckCircle2 className="h-3.5 w-3.5" />
+                                <span className="text-[11px] font-semibold uppercase tracking-[0.18em]">Work</span>
+                            </div>
+                            <p className="font-medium text-foreground">{completedSetCount} done</p>
+                        </div>
                     </div>
+
+                    {previousLogs.length > 0 && (
+                        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/50 pb-3">
+                            <div className="flex items-center gap-2 text-foreground/70">
+                                <Flame className="h-4 w-4 text-accent" />
+                                <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">Beat Previous</span>
+                            </div>
+                            <span className="font-display text-sm font-semibold text-foreground">
+                                {previousLogs[0].weight ? `${previousLogs[0].weight}kg × ` : ""}{previousLogs[0].reps}
+                            </span>
+                        </div>
+                    )}
 
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <Zap className="w-4 h-4 text-muted-foreground" />
-                                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Set Logging</span>
+                                <Zap className="w-4 h-4 text-foreground/70" />
+                                <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground/70">Set Logging</span>
                             </div>
-                            <span className="text-[10px] text-muted-foreground">{completedSetCount}/{setsMax}</span>
+                            <span className="text-[11px] text-foreground/70">{completedSetCount}/{setsMax}</span>
                         </div>
                         <SetTracker
                             setsMin={setsMin}

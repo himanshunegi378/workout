@@ -1,7 +1,7 @@
 "use client";
 
-
-import { useFatigueData } from "../../../api/query-hooks/use-fatigue-data";
+import { useState } from "react";
+import { startOfDay, subDays } from "date-fns";
 import {
     Line,
     XAxis,
@@ -11,154 +11,144 @@ import {
     Area,
     ComposedChart,
     CartesianGrid,
-    Legend
+    Legend,
 } from "recharts";
 import { Loader2, Activity, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
-import { startOfDay, subDays } from "date-fns";
+import { useFatigueData } from "../../../api/query-hooks/use-fatigue-data";
 
 export function FatigueTrendLine() {
     const [startDateOffset, setStartDateOffset] = useState(0);
 
-    // Calculate the targeted end date based on our offset (offset 0 = today, offset 90 = 90 days ago)
     const targetEndDate = startDateOffset === 0 ? undefined : subDays(startOfDay(new Date()), startDateOffset);
-
-    // Fetch 90 days of data ending at our target date
     const { data: response, isLoading, error, isFetching } = useFatigueData(targetEndDate, 90);
     const rawData = response?.timeSeries;
     const hasMoreHistory = response?.hasMoreHistory ?? false;
 
     const handlePrev = () => {
         if (!hasMoreHistory) return;
-        setStartDateOffset(prev => prev + 90);
+        setStartDateOffset((prev) => prev + 90);
     };
 
     const handleNext = () => {
         if (startDateOffset <= 0) return;
-        setStartDateOffset(prev => Math.max(0, prev - 90));
+        setStartDateOffset((prev) => Math.max(0, prev - 90));
     };
 
-    if (isLoading && startDateOffset === 0) {
-        return (
-            <div className="bg-card text-card-foreground rounded-3xl p-6 border border-border elevation-1 animate-pulse min-h-[300px] flex items-center justify-center">
-                <Loader2 className="w-8 h-8 animate-spin text-accent" />
-            </div>
-        );
-    }
+    const shellClassName = "border-b border-border/40 pb-6";
 
-    if (error || !rawData) {
-        return (
-            <div className="bg-card text-card-foreground rounded-3xl p-6 border border-border elevation-1 min-h-[300px] flex items-center justify-center">
-                <p className="text-muted-foreground">Failed to load fatigue data</p>
-            </div>
-        );
-    }
-
-    // Format dates for the X-axis (e.g., "Feb 10")
-    const data = rawData.map(d => {
+    const data = rawData?.map((d) => {
         const dateObj = new Date(d.date);
         return {
             ...d,
-            // Recharts needs a string or number for purely categorical XAxis
-            displayDate: dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+            displayDate: dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
         };
-    });
+    }) ?? [];
 
     const isCalibrating = data.length > 0 && data[data.length - 1].isCalibrating;
     const currentRatio = data.length > 0 ? data[data.length - 1].ratio : 0;
 
-
-    // Determine status color based on ratio
     let statusColor = "text-success";
     let statusText = "Optimal";
 
     if (currentRatio > 1.5) {
-        statusColor = "text-destructive";
-        statusText = "Danger (High Fatigue)";
+        statusColor = "text-danger";
+        statusText = "Danger";
     } else if (currentRatio >= 1.3) {
-        statusColor = "text-warning"; // Tailwind amber/yellow
+        statusColor = "text-warning";
         statusText = "Overreaching";
     } else if (currentRatio < 0.8) {
-        statusColor = "text-muted-foreground";
+        statusColor = "text-foreground/75";
         statusText = "Undertraining";
     }
 
     return (
-        <div className="bg-card text-card-foreground rounded-3xl p-6 border border-border elevation-1 hover:border-accent/30 transition-all duration-300 relative overflow-hidden group">
-
-            {/* Header with Navigation */}
-            <div className="flex justify-between items-start mb-6">
+        <section className={shellClassName}>
+            <div className="flex flex-col gap-4 border-b border-border/40 pb-4 md:flex-row md:items-end md:justify-between">
                 <div>
-                    <h3 className="text-lg font-bold flex items-center gap-2">
-                        <Activity className="w-5 h-5 text-accent" />
-                        Fatigue & Workload
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Load balance</p>
+                    <h3 className="mt-2 flex items-center gap-2 font-display text-xl font-semibold tracking-tight text-foreground">
+                        <Activity className="h-5 w-5 text-accent" />
+                        Fatigue and workload
                     </h3>
-                    <div className="flex items-center gap-3 mt-2">
+                    <div className="mt-3 flex items-center gap-2 sm:gap-3">
                         <button
                             onClick={handlePrev}
                             disabled={!hasMoreHistory || isFetching}
-                            className={`p-1 rounded-md transition-colors ${!hasMoreHistory || isFetching ? 'text-muted-foreground/30 cursor-not-allowed' : 'text-foreground hover:bg-muted'}`}
+                            className={`flex h-9 w-9 items-center justify-center rounded-full border border-border/60 transition-colors ${
+                                !hasMoreHistory || isFetching
+                                    ? "cursor-not-allowed text-muted-foreground/30"
+                                    : "text-foreground hover:border-border/70 hover:bg-muted/30"
+                            }`}
                         >
-                            <ChevronLeft className="w-5 h-5" />
+                            <ChevronLeft className="h-4 w-4" />
                         </button>
-                        <span className="text-xs text-muted-foreground font-medium min-w-[60px] text-center">
-                            {isFetching ? "..." : (startDateOffset === 0 ? "Last 90 Days" : `${startDateOffset}d ago`)}
+                        <span className="flex-1 text-center text-xs font-medium text-foreground/75 sm:min-w-[92px] sm:flex-none">
+                            {isFetching ? "Loading..." : (startDateOffset === 0 ? "Last 90 days" : `${startDateOffset} days back`)}
                         </span>
                         <button
                             onClick={handleNext}
                             disabled={startDateOffset === 0 || isFetching}
-                            className={`p-1 rounded-md transition-colors ${startDateOffset === 0 || isFetching ? 'text-muted-foreground/30 cursor-not-allowed' : 'text-foreground hover:bg-muted'}`}
+                            className={`flex h-9 w-9 items-center justify-center rounded-full border border-border/60 transition-colors ${
+                                startDateOffset === 0 || isFetching
+                                    ? "cursor-not-allowed text-muted-foreground/30"
+                                    : "text-foreground hover:border-border/70 hover:bg-muted/30"
+                            }`}
                         >
-                            <ChevronRight className="w-5 h-5" />
+                            <ChevronRight className="h-4 w-4" />
                         </button>
                     </div>
                 </div>
 
                 {!isCalibrating && data.length > 0 && startDateOffset === 0 && (
-                    <div className="text-right">
-                        <p className={`text-2xl font-black ${statusColor}`}>
+                    <div className="flex flex-wrap items-baseline gap-2 md:justify-end">
+                        <p className={`font-display text-3xl font-semibold tracking-tight ${statusColor}`}>
                             {currentRatio.toFixed(2)}
                         </p>
-                        <p className={`text-xs font-semibold uppercase tracking-wider ${statusColor} opacity-80`}>
+                        <p className={`text-xs font-semibold uppercase tracking-[0.22em] ${statusColor}`}>
                             {statusText}
                         </p>
                     </div>
                 )}
             </div>
 
-            {/* Chart Container */}
-            <div className="h-[220px] w-full relative">
+            {isLoading && startDateOffset === 0 ? (
+                <div className="flex min-h-[260px] items-center justify-center">
+                    <Loader2 className="h-8 w-8 animate-spin text-accent" />
+                </div>
+            ) : error || !rawData ? (
+                <div className="flex min-h-[260px] items-center justify-center text-sm text-muted-foreground">
+                    Failed to load fatigue data
+                </div>
+            ) : (
+                <div className="relative mt-5 h-[240px] w-full">
+                    {isCalibrating && (
+                        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/70 px-6 text-center backdrop-blur-sm">
+                            <Activity className="mb-2 h-8 w-8 animate-pulse text-accent" />
+                            <p className="font-display text-lg font-semibold tracking-tight text-foreground">Calibrating</p>
+                            <p className="mt-2 max-w-[220px] text-sm leading-6 text-foreground/75">
+                                Building your 28-day baseline before calculating fatigue.
+                            </p>
+                        </div>
+                    )}
 
-                {/* Calibration Overlay */}
-                {isCalibrating && (
-                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-card/80 backdrop-blur-sm rounded-xl border border-border/50">
-                        <Activity className="w-8 h-8 text-accent mb-2 animate-pulse" />
-                        <p className="font-bold text-lg">Calibrating...</p>
-                        <p className="text-sm text-muted-foreground max-w-[200px] text-center mt-1">
-                            Building your 28-day baseline before calculating fatigue.
-                        </p>
-                    </div>
-                )}
-
-                <div className="w-full h-full relative">
                     <ResponsiveContainer width="100%" height="100%">
-                        <ComposedChart data={data} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
+                        <ComposedChart data={data} margin={{ top: 8, right: 0, left: -16, bottom: 0 }}>
                             <defs>
                                 <linearGradient id="colorChronic" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
                                     <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.4} />
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.35} />
                             <XAxis
                                 dataKey="displayDate"
-                                tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                                tick={{ fontSize: 10, fill: "hsl(var(--foreground))" }}
                                 tickLine={false}
                                 axisLine={false}
                                 minTickGap={20}
                             />
                             <YAxis
-                                tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                                tick={{ fontSize: 10, fill: "hsl(var(--foreground))" }}
                                 tickLine={false}
                                 axisLine={false}
                                 tickFormatter={(val) => Math.round(val).toString()}
@@ -169,19 +159,18 @@ export function FatigueTrendLine() {
                                     borderColor: "hsl(var(--border))",
                                     borderRadius: "12px",
                                     padding: "12px",
-                                    boxShadow: "0 10px 25px -5px rgb(0 0 0 / 0.5)"
+                                    boxShadow: "none",
                                 }}
                                 itemStyle={{ fontSize: "14px", fontWeight: 500 }}
-                                labelStyle={{ color: "hsl(var(--muted-foreground))", marginBottom: "4px", fontSize: "12px" }}
+                                labelStyle={{ color: "hsl(var(--foreground))", marginBottom: "4px", fontSize: "12px", fontWeight: 600 }}
                             />
                             <Legend
                                 verticalAlign="top"
                                 height={36}
                                 iconType="circle"
-                                wrapperStyle={{ fontSize: '12px', color: 'hsl(var(--muted-foreground))' }}
+                                wrapperStyle={{ fontSize: "12px", color: "hsl(var(--foreground))" }}
                             />
 
-                            {/* Chronic Load (28-day baseline) */}
                             <Area
                                 type="monotone"
                                 dataKey="chronicLoad"
@@ -193,7 +182,6 @@ export function FatigueTrendLine() {
                                 fill="url(#colorChronic)"
                             />
 
-                            {/* Acute Load (7-day spike) */}
                             <Line
                                 type="monotone"
                                 dataKey="acuteLoad"
@@ -206,7 +194,7 @@ export function FatigueTrendLine() {
                         </ComposedChart>
                     </ResponsiveContainer>
                 </div>
-            </div>
-        </div>
+            )}
+        </section>
     );
 }

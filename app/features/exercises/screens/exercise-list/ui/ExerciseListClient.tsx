@@ -49,33 +49,50 @@ export function ExerciseListClient({ exercises }: ExerciseListClientProps) {
     }, [exercises, filter, query]);
 
     return (
-        <div className="space-y-4">
-            {/* Search bar */}
-            <div className="relative">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input
-                    type="text"
-                    placeholder="Search exercises…"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    className="w-full bg-muted border border-border rounded-xl
-                        pl-10 pr-4 py-2.5 text-sm text-foreground
-                        placeholder:text-muted-foreground/50
-                        focus:outline-none focus:ring-2 focus:ring-ring focus:border-accent
-                        transition-all duration-200"
-                />
-            </div>
+        <div className="space-y-6">
+            <section className="space-y-5 border-b border-border/40 pb-5">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                    <div className="max-w-2xl">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Library overview</p>
+                        <h2 className="mt-2 font-display text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+                            Build a cleaner movement library.
+                        </h2>
+                        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                            Search quickly, filter by muscle group, and keep the most useful exercises easy to find.
+                        </p>
+                    </div>
+                </div>
 
-            {/* Muscle group filter pills */}
-            <MuscleGroupFilter selected={filter} onChange={setFilter} />
+                <div className="space-y-4">
+                    <div className="relative">
+                        <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <input
+                            type="text"
+                            placeholder="Search exercises…"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            className="w-full rounded-full border border-border/70 bg-background/70 py-3 pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/40"
+                        />
+                    </div>
 
-            {/* Count */}
-            <p className="text-xs text-muted-foreground px-0.5">
-                {filtered.length} exercise{filtered.length !== 1 ? "s" : ""}
-                {filter !== "All" && ` · ${filter}`}
-            </p>
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-foreground/80">
+                        <p>
+                            {filtered.length} exercise{filtered.length !== 1 ? "s" : ""}
+                            {filter !== "All" && ` · ${filter}`}
+                        </p>
+                        <Link
+                            href="/exercises/new"
+                            className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-accent/35 hover:bg-muted/25"
+                        >
+                            <Plus className="h-4 w-4" />
+                            New exercise
+                        </Link>
+                    </div>
 
-            {/* List */}
+                    <MuscleGroupFilter selected={filter} onChange={setFilter} />
+                </div>
+            </section>
+
             {filtered.length === 0 ? (
                 <EmptyState
                     icon={Dumbbell}
@@ -88,29 +105,29 @@ export function ExerciseListClient({ exercises }: ExerciseListClientProps) {
                     action={
                         <Link
                             href="/exercises/new"
-                            className="inline-flex items-center gap-2 bg-accent hover:bg-accent-hover
-                                text-accent-foreground font-display font-semibold
-                                px-5 py-3 rounded-xl transition-all duration-200 active:animate-press text-sm"
+                            className="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent-hover active:scale-[0.98]"
                         >
                             <Plus className="w-4 h-4" /> Add Exercise
                         </Link>
                     }
                 />
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                    {filtered.map((ex, i) => (
-                        <div
-                            key={ex.id}
-                            className="animate-slide-up h-full"
-                            style={{ animationDelay: `${(i < 12 ? i : 12) * 40}ms` }}
-                        >
-                            <ExerciseListCard
-                                name={ex.name}
-                                description={ex.description}
-                                muscleGroup={ex.muscle_group}
-                            />
-                        </div>
-                    ))}
+                <div className="space-y-3">
+                    <div className="grid grid-cols-1 gap-2 xl:grid-cols-2">
+                        {filtered.map((ex, i) => (
+                            <div
+                                key={ex.id}
+                                className="animate-slide-up h-full"
+                                style={{ animationDelay: `${(i < 12 ? i : 12) * 40}ms` }}
+                            >
+                                <ExerciseListCard
+                                    name={ex.name}
+                                    description={ex.description}
+                                    muscleGroup={ex.muscle_group}
+                                />
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
         </div>

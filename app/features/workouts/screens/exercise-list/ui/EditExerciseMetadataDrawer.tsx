@@ -106,14 +106,13 @@ export function EditExerciseMetadataDrawer({
     return (
         <>
             <BottomDrawer isOpen={isOpen} onClose={onClose} title={`Edit ${exerciseName}`}>
-                <div className="space-y-5 max-h-[70vh] overflow-y-auto no-scrollbar pb-2">
-                    {/* Exercise Selector */}
+                <div className="max-h-[70vh] space-y-6 overflow-y-auto pb-2 no-scrollbar">
                     <div className="space-y-1.5">
                         <label className="text-sm font-medium text-foreground">Exercise</label>
                         <button
                             type="button"
                             onClick={() => setIsSelectDrawerOpen(true)}
-                            className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-left flex items-center justify-between transition-all hover:bg-muted/80 active:scale-[0.98] elevation-2"
+                            className="flex w-full items-center justify-between rounded-2xl border border-border/70 bg-background/60 px-4 py-3 text-left transition-colors hover:border-accent/30 hover:bg-muted/20 active:scale-[0.98]"
                         >
                             {selectedExercise ? (
                                 <div className="flex items-center gap-3">
@@ -137,12 +136,12 @@ export function EditExerciseMetadataDrawer({
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <NumberStepper label="Sets" value={sets} onChange={setSets} min={1} max={20} />
                         <NumberStepper label="Reps" value={reps} onChange={setReps} min={1} max={100} />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <NumberStepper label="Rest" value={rest} onChange={setRest} min={0} max={600} step={10} suffix="s" />
                         <div className="space-y-1.5">
                             <label className="text-sm font-medium text-foreground" htmlFor="edit-tempo">Tempo</label>
@@ -152,7 +151,7 @@ export function EditExerciseMetadataDrawer({
                                 placeholder="e.g. 2-0-1-0"
                                 value={tempo}
                                 onChange={(e) => setTempo(e.target.value)}
-                                className="w-full bg-muted border border-border rounded-xl px-4 h-12 text-center font-display font-semibold text-lg text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-accent elevation-2"
+                                className="h-12 w-full rounded-2xl border border-border/70 bg-background/60 px-4 text-center font-display text-lg font-semibold text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/40"
                             />
                         </div>
                     </div>
@@ -161,7 +160,7 @@ export function EditExerciseMetadataDrawer({
                 <Button
                     onClick={handleSave}
                     variant="primary"
-                    className="w-full py-4 text-base mt-4 shadow-accent/20 shadow-lg"
+                    className="mt-4 w-full py-4 text-base shadow-none"
                     disabled={isPending}
                 >
                     {isPending ? "Saving..." : <span className="flex items-center gap-2"><Save className="w-4 h-4" /> Save Changes</span>}

@@ -28,18 +28,18 @@ export function ClearQueryCacheRow() {
     };
 
     return (
-        <section className="bg-card rounded-2xl p-4 border border-border flex items-center justify-between gap-4">
+        <section className="flex flex-col gap-4 border-t border-border/60 py-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-center gap-3 min-w-0">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-danger/10 text-danger">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border/70 bg-background/70 text-danger">
                     <DatabaseZap className="h-5 w-5" />
                 </div>
-                <div className="flex min-w-0 flex-col">
-                    <span className="font-medium">Clear Cache</span>
-                    <span className="text-sm text-muted-foreground">
+                <div className="flex min-w-0 flex-col gap-1">
+                    <span className="font-medium text-foreground">Clear Cache</span>
+                    <span className="text-sm text-foreground/85">
                         Remove persisted React Query data from this browser
                     </span>
                     {status ? (
-                        <span className="text-sm text-muted-foreground">{status}</span>
+                        <span className="text-sm text-foreground/80">{status}</span>
                     ) : null}
                 </div>
             </div>
@@ -49,7 +49,7 @@ export function ClearQueryCacheRow() {
                 variant="danger"
                 onClick={handleClearCache}
                 disabled={isPending}
-                className="px-4 py-2 shrink-0"
+                className="w-full shrink-0 px-4 py-2 sm:w-auto"
             >
                 {isPending ? "Clearing..." : "Clear"}
             </Button>

@@ -40,11 +40,20 @@ export function AddProgrammeForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6 animate-slide-up">
-            {/* Program Name */}
-            <div className="space-y-1.5">
+        <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-8 animate-slide-up">
+            <div className="space-y-3">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Program details</p>
+                <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground">
+                    Give the plan a clear name
+                </h2>
+                <p className="max-w-xl text-sm leading-6 text-muted-foreground">
+                    Keep it simple and easy to scan. The description can stay brief or stay empty.
+                </p>
+            </div>
+
+            <div className="space-y-2 border-b border-border/40 pb-4">
                 <label
-                    className="text-sm font-medium text-foreground"
+                    className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground"
                     htmlFor="programme-name"
                 >
                     Program Name
@@ -55,18 +64,13 @@ export function AddProgrammeForm() {
                     placeholder="e.g. Push Pull Legs"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-muted border border-border rounded-xl
-                 px-4 py-3 text-foreground placeholder:text-muted-foreground/50
-                 focus:outline-none focus:ring-2 focus:ring-ring
-                 focus:border-accent transition-all duration-200
-                 font-body text-base"
+                    className="w-full border-0 border-b border-border/60 bg-transparent px-0 py-3 text-foreground placeholder:text-muted-foreground/90 focus:border-accent focus:outline-none focus:ring-0 font-body text-base"
                 />
             </div>
 
-            {/* Description */}
-            <div className="space-y-1.5">
+            <div className="space-y-2 border-b border-border/40 pb-4">
                 <label
-                    className="text-sm font-medium text-foreground"
+                    className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground"
                     htmlFor="programme-desc"
                 >
                     Description{" "}
@@ -80,30 +84,26 @@ export function AddProgrammeForm() {
                     placeholder="A 3-day split focused on..."
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full bg-muted border border-border rounded-xl
-                 px-4 py-3 text-foreground placeholder:text-muted-foreground/50
-                 focus:outline-none focus:ring-2 focus:ring-ring
-                 focus:border-accent transition-all duration-200
-                 font-body text-base resize-none"
+                    className="w-full resize-none border-0 bg-transparent px-0 py-3 text-foreground placeholder:text-muted-foreground/90 focus:outline-none focus:ring-0 font-body text-base"
                 />
             </div>
 
-            {/* Error */}
             {mutationError && (
-                <div className="bg-danger/10 border border-danger/20 rounded-xl px-4 py-3 text-danger text-sm animate-slide-up">
+                <div className="rounded-2xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger animate-slide-up">
                     {mutationError instanceof Error ? mutationError.message : "Something went wrong"}
                 </div>
             )}
 
-            {/* Submit */}
-            <Button
-                type="submit"
-                variant="primary"
-                disabled={!canSubmit || isPending}
-                className="w-full"
-            >
-                {isPending ? "Saving…" : "Save Program"}
-            </Button>
+            <div className="pt-2">
+                <Button
+                    type="submit"
+                    variant="primary"
+                    disabled={!canSubmit || isPending}
+                    className="w-full sm:w-auto !text-background"
+                >
+                    {isPending ? "Saving…" : "Save Program"}
+                </Button>
+            </div>
         </form>
     );
 }

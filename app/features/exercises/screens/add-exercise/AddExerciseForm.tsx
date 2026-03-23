@@ -50,8 +50,7 @@ export function AddExerciseForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6 animate-slide-up">
-            {/* Exercise Name */}
+        <form onSubmit={handleSubmit} className="space-y-7 animate-slide-up">
             <div className="space-y-1.5">
                 <label
                     className="text-sm font-medium text-foreground"
@@ -65,15 +64,10 @@ export function AddExerciseForm() {
                     placeholder="e.g. Barbell Bench Press"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-muted border border-border rounded-xl
-                 px-4 py-3 text-foreground placeholder:text-muted-foreground/50
-                 focus:outline-none focus:ring-2 focus:ring-ring
-                 focus:border-accent transition-all duration-200
-                 font-body text-base"
+                    className="w-full rounded-2xl border border-border/80 bg-background/60 px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/40 font-body text-base"
                 />
             </div>
 
-            {/* Description */}
             <div className="space-y-1.5">
                 <label
                     className="text-sm font-medium text-foreground"
@@ -90,15 +84,10 @@ export function AddExerciseForm() {
                     placeholder="Compound chest exercise targeting pectorals…"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full bg-muted border border-border rounded-xl
-                 px-4 py-3 text-foreground placeholder:text-muted-foreground/50
-                 focus:outline-none focus:ring-2 focus:ring-ring
-                 focus:border-accent transition-all duration-200
-                 font-body text-base resize-none"
+                    className="w-full resize-none rounded-2xl border border-border/80 bg-background/60 px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/40 font-body text-base"
                 />
             </div>
 
-            {/* Muscle Group */}
             <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">
                     Muscle Group
@@ -109,19 +98,17 @@ export function AddExerciseForm() {
                 />
             </div>
 
-            {/* Error */}
             {mutationError && (
-                <div className="bg-danger/10 border border-danger/20 rounded-xl px-4 py-3 text-danger text-sm animate-slide-up">
+                <div className="rounded-2xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger animate-slide-up">
                     {mutationError instanceof Error ? mutationError.message : "Something went wrong"}
                 </div>
             )}
 
-            {/* Submit */}
             <Button
                 type="submit"
                 variant="primary"
                 disabled={!canSubmit || isPending}
-                className="w-full"
+                className="w-full shadow-none"
             >
                 {isPending ? "Saving…" : "Save Exercise"}
             </Button>

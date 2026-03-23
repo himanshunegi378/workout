@@ -14,10 +14,10 @@ export function RPESelector({ value, onChange, label = "RPE (Intensity)" }: RPES
     return (
         <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2 px-1">
-                <Gauge className="w-4 h-4 text-accent/80" />
-                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</span>
+                <Gauge className="w-4 h-4 text-accent" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground/90">{label}</span>
                 {value && (
-                    <span className="ml-auto text-[10px] font-bold text-accent bg-accent/10 border border-accent/20 px-2 py-0.5 rounded-lg">
+                    <span className="ml-auto rounded-lg border border-accent/20 bg-accent px-2 py-0.5 text-[11px] font-bold text-accent-foreground">
                         Intensity: {value === 10 ? 'Max Effort' : `${value}/10`}
                     </span>
                 )}
@@ -31,14 +31,14 @@ export function RPESelector({ value, onChange, label = "RPE (Intensity)" }: RPES
                             key={rpe}
                             type="button"
                             onClick={() => onChange(isSelected ? null : rpe)}
-                            className={`shrink-0 w-12 h-12 rounded-xl border flex flex-col items-center justify-center transition-all duration-300 active:scale-90
+                            className={`flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl border transition-all duration-300 active:scale-90
                                 ${isSelected
-                                    ? "bg-indigo-500 text-white border-transparent shadow-lg shadow-indigo-500/25 ring-2 ring-indigo-500/20"
-                                    : "bg-card/40 text-muted-foreground border-border/60 hover:border-accent/40 hover:bg-muted/20"
+                                    ? "border-accent/20 bg-accent text-accent-foreground shadow-sm shadow-accent/20"
+                                    : "border-border/70 bg-card/50 text-muted-foreground/90 hover:border-accent/40 hover:bg-muted/30 hover:text-foreground"
                                 }`}
                         >
                             <span className="text-lg font-display font-bold leading-none">{rpe}</span>
-                            <span className="text-[8px] uppercase font-bold opacity-60 mt-0.5">
+                            <span className="mt-0.5 text-[8px] font-bold uppercase opacity-70">
                                 {rpe === 10 ? 'Max' : rpe >= 9 ? 'Hard' : rpe >= 7 ? 'Mod' : 'Easy'}
                             </span>
                         </button>

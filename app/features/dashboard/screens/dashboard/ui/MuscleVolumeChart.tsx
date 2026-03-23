@@ -1,19 +1,18 @@
 "use client";
 
-import React from 'react';
-import { 
-    AreaChart, 
-    Area, 
-    XAxis, 
-    YAxis, 
-    Tooltip, 
+import React from "react";
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    Tooltip,
     ResponsiveContainer,
-    CartesianGrid
-} from 'recharts';
+    CartesianGrid,
+} from "recharts";
 import { MuscleGroup } from "@/app/generated/prisma/client";
-import { muscleColorMap } from "@/app/components/ui";
 import { useMuscleHistoricalVolume } from "../../../api/query-hooks/use-muscle-historical-data";
-import { Loader2, Activity } from 'lucide-react';
+import { Loader2, Activity } from "lucide-react";
 
 interface MuscleVolumeChartProps {
     muscleGroup: MuscleGroup;
@@ -22,41 +21,40 @@ interface MuscleVolumeChartProps {
 export const MuscleVolumeChart: React.FC<MuscleVolumeChartProps> = ({ muscleGroup }) => {
     const { data, isLoading, error } = useMuscleHistoricalVolume(muscleGroup);
 
-    // Simple mapping for demonstration - ideally this comes from a theme config
     const colors: Record<string, string> = {
-        'Chest': '#ff4757',
-        'Back': '#2ed573',
-        'Legs': '#ffa502',
-        'Shoulders': '#5352ed',
-        'Arms': '#eccc68',
-        'Abs': '#70a1ff'
+        Chest: "#ff4757",
+        Back: "#2ed573",
+        Legs: "#ffa502",
+        Shoulders: "#5352ed",
+        Arms: "#eccc68",
+        Abs: "#70a1ff",
     };
-    const strokeColor = colors[muscleGroup] || '#5352ed';
+    const strokeColor = colors[muscleGroup] || "#5352ed";
 
     if (isLoading) {
         return (
-            <div className="h-48 w-full flex items-center justify-center bg-card/20 rounded-xl border border-border/20">
-                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground/30" />
+            <div className="flex h-48 w-full items-center justify-center rounded-[1.5rem] border border-border/40 bg-background/20">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground/30" />
             </div>
         );
     }
 
     if (error || !data) {
         return (
-            <div className="h-48 w-full flex flex-col items-center justify-center bg-card/20 rounded-xl border border-border/20 gap-2">
+            <div className="flex h-48 w-full flex-col items-center justify-center rounded-[1.5rem] border border-border/40 bg-background/20 gap-2">
                 <Activity size={24} className="text-muted-foreground/40" />
-                <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60">History Unavailable</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground/70">History unavailable</p>
             </div>
         );
     }
 
     return (
-        <div className="h-56 w-full mt-4 bg-card/40 backdrop-blur-sm rounded-2xl border border-border/30 p-4 relative group overflow-hidden">
-            <div className="absolute top-4 left-4 z-10">
-                <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1 opacity-60">Volume Trend (kg)</p>
-                <p className="text-xl font-display font-black leading-none">8 Week Pulse</p>
+        <div className="relative h-56 w-full overflow-hidden rounded-[1.5rem] border border-border/40 bg-background/25 p-4">
+            <div className="absolute left-4 top-4 z-10">
+                <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/70">Volume trend (kg)</p>
+                <p className="font-display text-xl font-semibold leading-none text-foreground">8 week pulse</p>
             </div>
-            
+
             <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                     data={data}
@@ -64,42 +62,42 @@ export const MuscleVolumeChart: React.FC<MuscleVolumeChartProps> = ({ muscleGrou
                 >
                     <defs>
                         <linearGradient id="colorVolume" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor={strokeColor} stopOpacity={0.3}/>
-                            <stop offset="95%" stopColor={strokeColor} stopOpacity={0}/>
+                            <stop offset="5%" stopColor={strokeColor} stopOpacity={0.3} />
+                            <stop offset="95%" stopColor={strokeColor} stopOpacity={0} />
                         </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                    <XAxis 
-                        dataKey="label" 
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.28} />
+                    <XAxis
+                        dataKey="label"
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 9, fontWeight: 900 }}
+                        tick={{ fill: "hsl(var(--foreground))", fontSize: 9, fontWeight: 600 }}
                         dy={10}
                     />
-                    <YAxis 
+                    <YAxis
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 9, fontWeight: 900 }}
+                        tick={{ fill: "hsl(var(--foreground))", fontSize: 9, fontWeight: 600 }}
                     />
-                    <Tooltip 
-                        contentStyle={{ 
-                            backgroundColor: 'rgba(10, 10, 10, 0.8)', 
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                            borderRadius: '12px',
-                            backdropFilter: 'blur(8px)',
-                            padding: '8px 12px'
+                    <Tooltip
+                        contentStyle={{
+                            backgroundColor: "hsl(var(--card))",
+                            border: "1px solid hsl(var(--border))",
+                            borderRadius: "12px",
+                            backdropFilter: "blur(8px)",
+                            padding: "8px 12px",
                         }}
-                        itemStyle={{ color: '#fff', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase' }}
-                        labelStyle={{ color: 'rgba(255,255,255,0.4)', fontSize: '8px', marginBottom: '4px', fontWeight: 900, textTransform: 'uppercase' }}
-                        cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }}
+                        itemStyle={{ color: "hsl(var(--foreground))", fontSize: "10px", fontWeight: 700, textTransform: "uppercase" }}
+                        labelStyle={{ color: "hsl(var(--foreground))", fontSize: "8px", marginBottom: "4px", fontWeight: 700, textTransform: "uppercase" }}
+                        cursor={{ stroke: "hsl(var(--border))", strokeWidth: 1 }}
                     />
-                    <Area 
-                        type="monotone" 
-                        dataKey="volume" 
-                        stroke={strokeColor} 
+                    <Area
+                        type="monotone"
+                        dataKey="volume"
+                        stroke={strokeColor}
                         strokeWidth={4}
-                        fillOpacity={1} 
-                        fill="url(#colorVolume)" 
+                        fillOpacity={1}
+                        fill="url(#colorVolume)"
                         animationDuration={1500}
                     />
                 </AreaChart>

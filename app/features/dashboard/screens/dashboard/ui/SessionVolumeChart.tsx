@@ -9,7 +9,7 @@ import {
     Tooltip,
     ResponsiveContainer,
     Cell,
-    CartesianGrid
+    CartesianGrid,
 } from "recharts";
 import { Loader2, TrendingUp, AlertTriangle, ArrowRight, Activity } from "lucide-react";
 import { useWorkouts } from "../../../api/query-hooks/use-workouts";
@@ -19,31 +19,32 @@ export function SessionVolumeChart() {
     const { data: workouts, isLoading: loadingWorkouts } = useWorkouts();
     const [selectedWorkoutId, setSelectedWorkoutId] = useState<string>("");
 
-    // Use derived state for selection: manual selection takes precedence, otherwise first workout
     const effectiveWorkoutId = selectedWorkoutId || workouts?.[0]?.id || "";
 
     const { data: sessionData, isLoading: loadingVolume, isFetching } = useSessionVolume(
         effectiveWorkoutId || undefined,
-        15 // Fetch last 15 sessions
+        15
     );
 
-    // Dynamic color mapping based on status
     const getColorForStatus = (status: string) => {
         switch (status) {
-            case "optimal": return "#10b981"; // Emerald-500 (Green)
-            case "warning": return "#f59e0b"; // Amber-500 (Yellow/Orange)
-            case "deload": return "#64748b"; // Slate-500 (Gray)
-            default: return "#3b82f6"; // Blue-500 (Neutral/First Session)
+            case "optimal":
+                return "#10b981";
+            case "warning":
+                return "#f59e0b";
+            case "deload":
+                return "#64748b";
+            default:
+                return "#3b82f6";
         }
     };
 
-    // Format for Recharts
-    const chartData = sessionData?.map(session => {
+    const chartData = sessionData?.map((session) => {
         const dateObj = new Date(session.date);
         return {
             ...session,
             displayDate: dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-            fillColor: getColorForStatus(session.status)
+            fillColor: getColorForStatus(session.status),
         };
     }) || [];
 
@@ -52,39 +53,38 @@ export function SessionVolumeChart() {
     };
 
     return (
-        <div className="bg-card text-card-foreground rounded-3xl p-6 border border-border elevation-1 hover:border-accent/30 transition-all duration-300 relative overflow-hidden group">
-
-            {/* Header with Nav */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                <div>
-                    <h3 className="text-lg font-bold flex items-center gap-2">
-                        <TrendingUp className="w-5 h-5 text-primary" />
-                        Session Progression
+        <section className="border-b border-border/40 pb-6 text-card-foreground">
+                <div className="flex flex-col gap-4 border-b border-border/40 pb-4 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Routine volume</p>
+                    <h3 className="mt-2 flex items-center gap-2 font-display text-xl font-semibold tracking-tight text-foreground">
+                        <TrendingUp className="h-5 w-5 text-accent" />
+                        Session progression
                     </h3>
-                    <p className="text-xs text-muted-foreground mt-1">
-                        Track total volume per routine
+                    <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
+                        Track total volume per routine without leaving the surface.
                     </p>
                 </div>
 
-                <div className="w-full sm:w-auto flex items-center gap-2">
+                <div className="w-full sm:w-auto">
                     {loadingWorkouts ? (
-                        <div className="h-10 w-48 bg-muted animate-pulse rounded-xl" />
+                        <div className="h-10 w-full rounded-full bg-muted/40 sm:w-48" />
                     ) : (
-                        <div className="relative w-full sm:w-48">
+                        <div className="relative w-full sm:w-52">
                             <select
                                 value={effectiveWorkoutId}
                                 onChange={handleWorkoutChange}
-                                className="w-full appearance-none bg-background border border-border text-foreground text-sm rounded-xl px-4 py-2.5 pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                className="w-full appearance-none rounded-full border border-border/40 bg-background/50 px-4 py-2.5 pr-9 text-sm text-foreground transition-colors focus:border-accent focus:outline-none focus:ring-0"
                             >
-                                {workouts?.map(w => (
+                                {workouts?.map((w) => (
                                     <option key={w.id} value={w.id}>
                                         {w.name}
                                     </option>
                                 ))}
                             </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-muted-foreground">
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground">
                                 <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
-                                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path>
+                                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd" />
                                 </svg>
                             </div>
                         </div>
@@ -92,66 +92,75 @@ export function SessionVolumeChart() {
                 </div>
             </div>
 
-            {/* Main Chart Area */}
-            <div className="min-h-[220px] w-full relative">
+            <div className="relative mt-5 min-h-[220px] w-full">
                 {(loadingVolume || isFetching) && (
-                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-card/50 backdrop-blur-sm rounded-xl">
-                        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                    <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/70 backdrop-blur-sm">
+                        <Loader2 className="h-8 w-8 animate-spin text-accent" />
                     </div>
                 )}
 
                 {!loadingWorkouts && workouts?.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-muted-foreground py-10">
-                        <Activity className="w-8 h-8 opacity-20 mb-2" />
-                        <p>No workout templates found.</p>
+                    <div className="flex min-h-[220px] flex-col items-center justify-center text-muted-foreground">
+                        <Activity className="mb-2 h-8 w-8 opacity-20" />
+                        <p className="text-sm text-foreground/75">No workout templates found.</p>
                     </div>
                 ) : chartData.length === 0 && !loadingVolume ? (
-                    <div className="h-full flex flex-col items-center justify-center text-muted-foreground py-10">
-                        <Activity className="w-8 h-8 opacity-20 mb-2" />
-                        <p>No logged sessions found for this routine.</p>
+                    <div className="flex min-h-[220px] flex-col items-center justify-center text-muted-foreground">
+                        <Activity className="mb-2 h-8 w-8 opacity-20" />
+                        <p className="text-sm text-foreground/75">No logged sessions found for this routine.</p>
                     </div>
                 ) : (
                     <div className="w-full h-[220px] relative">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={chartData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.4} />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.35} />
                                 <XAxis
                                     dataKey="displayDate"
-                                    tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                                    tick={{ fontSize: 10, fill: "hsl(var(--foreground))" }}
                                     tickLine={false}
                                     axisLine={false}
                                 />
                                 <YAxis
-                                    tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
+                                    tick={{ fontSize: 10, fill: "hsl(var(--foreground))" }}
                                     tickLine={false}
                                     axisLine={false}
                                     tickFormatter={(val) => `${Math.round(val / 1000)}k`}
                                 />
                                 <Tooltip
-                                    cursor={{ fill: 'hsl(var(--muted))', opacity: 0.2 }}
+                                    cursor={{ fill: "hsl(var(--muted))", opacity: 0.2 }}
                                     content={({ active, payload }) => {
                                         if (active && payload && payload.length) {
                                             const data = payload[0].payload as SessionVolumeNode;
                                             return (
-                                                <div className="bg-card border border-border rounded-xl p-3 shadow-xl elevation-2 text-sm max-w-[200px]">
-                                                    <p className="font-semibold mb-1 text-foreground">{data.date.split('T')[0]}</p>
-                                                    <div className="flex justify-between items-center gap-4 mb-2">
-                                                        <span className="text-muted-foreground">Volume</span>
+                                                <div className="max-w-[200px] rounded-xl border border-border/40 bg-card p-3 text-sm">
+                                                    <p className="mb-1 font-semibold text-foreground">{data.date.split("T")[0]}</p>
+                                                    <div className="mb-2 flex items-center justify-between gap-4">
+                                                        <span className="text-foreground/75">Volume</span>
                                                         <span className="font-bold">{Math.round(data.volume).toLocaleString()} lbs</span>
                                                     </div>
 
                                                     {data.status !== "neutral" && (
-                                                        <div className={`flex items-center gap-1.5 pt-2 border-t border-border/50 ${data.status === 'optimal' ? 'text-emerald-500' :
-                                                            data.status === 'warning' ? 'text-amber-500' : 'text-slate-400'
-                                                            }`}>
-                                                            {data.status === 'warning' ? <AlertTriangle className="w-3 h-3" /> : <ArrowRight className="w-3 h-3 block -rotate-45" />}
-                                                            <span className="font-medium text-xs">
-                                                                {data.deltaPercentage > 0 ? '+' : ''}{data.deltaPercentage}% from prev
+                                                        <div
+                                                            className={`flex items-center gap-1.5 pt-2 ${
+                                                                data.status === "optimal"
+                                                                    ? "text-emerald-500"
+                                                                    : data.status === "warning"
+                                                                        ? "text-amber-500"
+                                                                        : "text-slate-400"
+                                                            }`}
+                                                        >
+                                                            {data.status === "warning" ? (
+                                                                <AlertTriangle className="h-3 w-3" />
+                                                            ) : (
+                                                                <ArrowRight className="block h-3 w-3 -rotate-45" />
+                                                            )}
+                                                            <span className="text-xs font-medium">
+                                                                {data.deltaPercentage > 0 ? "+" : ""}{data.deltaPercentage}% from prev
                                                             </span>
                                                         </div>
                                                     )}
-                                                    {data.status === 'neutral' && data.volume > 0 && (
-                                                        <div className="pt-2 border-t border-border/50 text-slate-400 text-xs text-center">
+                                                    {data.status === "neutral" && data.volume > 0 && (
+                                                        <div className="pt-2 text-center text-xs text-foreground/65">
                                                             Baseline (First Session)
                                                         </div>
                                                     )}
@@ -176,23 +185,22 @@ export function SessionVolumeChart() {
                 )}
             </div>
 
-            {/* Footer Legend */}
             {chartData.length > 0 && (
-                <div className="flex flex-wrap items-center justify-center gap-4 mt-6 pt-4 border-t border-border/40 text-[10px] sm:text-xs">
+                <div className="mt-5 grid gap-2 border-t border-border/40 pt-4 text-[10px] sm:flex sm:flex-wrap sm:items-center sm:gap-4 sm:text-xs">
                     <div className="flex items-center gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-sm bg-emerald-500"></div>
-                        <span className="text-muted-foreground">Optimal (0-5%)</span>
+                        <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                        <span className="text-foreground/75">Optimal (0-5%)</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-sm bg-amber-500"></div>
-                        <span className="text-muted-foreground">High Jump {'>'}5%</span>
+                        <div className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+                        <span className="text-foreground/75">High jump {'>'}5%</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-sm bg-slate-500"></div>
-                        <span className="text-muted-foreground">Deload {`<`}0%</span>
+                        <div className="h-2.5 w-2.5 rounded-full bg-slate-500" />
+                        <span className="text-foreground/75">Deload {`<`}0%</span>
                     </div>
                 </div>
             )}
-        </div>
+        </section>
     );
 }

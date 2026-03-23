@@ -71,14 +71,14 @@ export function StandaloneLogDrawer({ isOpen, onClose, exerciseId, exerciseName 
     return (
         <Portal>
             <BottomDrawer isOpen={isOpen} onClose={onClose} title="Quick Log">
-                <div className="flex flex-col -mt-4">
-                    <div className="flex items-center gap-3 mb-6 bg-accent/5 p-3 rounded-2xl border border-accent/10">
-                        <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
+                <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-3 border-b border-border/60 pb-4 sm:flex-row sm:items-center">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-background/70">
                             <Target className="w-5 h-5 text-accent" />
                         </div>
-                        <div>
-                            <p className="text-xs font-bold text-accent uppercase tracking-wider">Exercise</p>
-                            <h3 className="font-display font-bold text-foreground truncate">{exerciseName}</h3>
+                        <div className="min-w-0">
+                            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Exercise</p>
+                            <h3 className="truncate font-display text-lg font-semibold tracking-tight text-foreground">{exerciseName}</h3>
                         </div>
                     </div>
 
@@ -137,9 +137,9 @@ function LogForm({ lastLog, onSubmit, isPending }: LogFormProps) {
                 <button
                     type="button"
                     onClick={handleFillPrevious}
-                    className="w-full mb-6 flex items-center justify-between p-4 rounded-xl bg-muted/50 border border-border/50 text-sm transition-all active:scale-[0.98] hover:bg-muted"
+                    className="flex w-full flex-col gap-2 border-b border-border/60 py-3 text-left text-sm transition-colors hover:text-foreground sm:flex-row sm:items-center sm:justify-between"
                 >
-                    <div className="flex items-center gap-2 text-muted-foreground">
+                    <div className="flex items-center gap-2 text-foreground/85">
                         <History className="w-4 h-4" />
                         <span className="font-medium">Recent performance</span>
                     </div>
@@ -150,7 +150,7 @@ function LogForm({ lastLog, onSubmit, isPending }: LogFormProps) {
                 </button>
             )}
 
-            <div className="grid grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <NumberStepper
                     label="Weight"
                     value={weightNum}
@@ -172,13 +172,13 @@ function LogForm({ lastLog, onSubmit, isPending }: LogFormProps) {
                 />
             </div>
 
-            <div className="mb-8">
+            <div className="pt-6">
                 <RPESelector value={rpe} onChange={setRpe} />
             </div>
 
             <Button
                 variant="primary"
-                className="w-full py-4 text-lg font-bold shadow-lg shadow-accent/20"
+                className="w-full py-4 text-base font-semibold !text-background"
                 onClick={() => onSubmit(weight, reps, rpe?.toString() || null)}
                 disabled={isPending || !reps || reps === "0"}
             >

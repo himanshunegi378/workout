@@ -60,9 +60,9 @@ export function ExerciseListContent({
         return (
             <>
                 <PageHeader title="Loading..." backHref={`/programmes/${programmeId}`} showBackDefault />
-                <div className="min-h-screen flex flex-col pt-24 items-center gap-4">
+                <div className="flex min-h-screen flex-col items-center gap-4 px-4 pt-24 sm:px-6 lg:px-8">
                     <Loader2 className="w-8 h-8 animate-spin text-accent" />
-                    <span className="text-sm text-muted-foreground animate-pulse font-medium uppercase tracking-[0.2em]">Initializing Console...</span>
+                    <span className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground animate-pulse">Initializing session...</span>
                 </div>
             </>
         );
@@ -108,49 +108,53 @@ export function ExerciseListContent({
                 action={<AddExerciseTrigger programmeId={programmeId} workoutId={workoutId} variant="icon" />}
             />
 
-            {/* Tactical HUD */}
-            <div className="sticky top-16 md:top-20 z-30 bg-background/60 backdrop-blur-xl border-b border-border/40">
-                <div className="max-w-lg md:max-w-5xl mx-auto px-4 md:px-10 py-4">
-                    <div className="grid grid-cols-3 gap-4 mb-4">
-                        <div className="flex flex-col">
-                            <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
-                                <TimerIcon className="w-3 h-3" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest">Duration</span>
+            <div className="sticky top-16 z-30 border-b border-border/60 bg-background/85 backdrop-blur-xl md:top-20">
+                <div className="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6 lg:px-8">
+                    <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-3 md:grid-cols-4">
+                            <div className="space-y-0.5">
+                                <div className="flex items-center gap-1.5 text-foreground/70">
+                                    <TimerIcon className="h-3 w-3" />
+                                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em]">Duration</span>
+                                </div>
+                                <span className="font-display text-lg font-bold leading-none text-foreground tabular-nums">
+                                    {formatTime(secondsElapsed)}
+                                </span>
                             </div>
-                            <span className="font-display text-lg font-bold text-foreground tabular-nums leading-none">
-                                {formatTime(secondsElapsed)}
-                            </span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
-                                <Zap className="w-3 h-3 text-accent" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest">Sets</span>
+                            <div className="space-y-0.5">
+                                <div className="flex items-center gap-1.5 text-foreground/70">
+                                    <Zap className="h-3 w-3 text-accent" />
+                                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em]">Sets</span>
+                                </div>
+                                <span className="font-display text-lg font-bold leading-none text-foreground">
+                                    {totalSetsDone}
+                                </span>
                             </div>
-                            <span className="font-display text-lg font-bold text-foreground leading-none">
-                                {totalSetsDone}
-                            </span>
-                        </div>
-                        <div className="flex flex-col items-end">
-                            <div className="flex items-center gap-1.5 text-muted-foreground mb-0.5">
-                                <Trophy className="w-3 h-3 text-warning" />
-                                <span className="text-[10px] font-bold uppercase tracking-widest">Volume</span>
+                            <div className="space-y-0.5">
+                                <div className="flex items-center gap-1.5 text-foreground/70">
+                                    <Trophy className="h-3 w-3 text-warning" />
+                                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em]">Volume</span>
+                                </div>
+                                <span className="font-display text-lg font-bold leading-none text-foreground">
+                                    {currentVolume > 1000 ? `${(currentVolume / 1000).toFixed(1)}k` : currentVolume}kg
+                                </span>
                             </div>
-                            <span className="font-display text-lg font-bold text-foreground leading-none">
-                                {currentVolume > 1000 ? `${(currentVolume/1000).toFixed(1)}k` : currentVolume}kg
-                            </span>
+                            <p className="col-span-2 text-xs text-foreground/75 md:col-span-1 md:self-end">
+                                {completedExercises}/{totalExercises} exercises complete
+                            </p>
                         </div>
                     </div>
 
-                    <div className="relative h-1.5 bg-muted/20 rounded-full overflow-hidden border border-white/5">
-                        <div 
-                            className="h-full bg-gradient-to-r from-accent to-indigo-500 transition-all duration-700 ease-out shadow-[0_0_15px_rgba(99,102,241,0.5)]"
+                    <div className="mt-4 h-px overflow-hidden bg-border/60">
+                        <div
+                            className="h-px bg-accent transition-all duration-700 ease-out"
                             style={{ width: `${progressPercentage}%` }}
                         />
                     </div>
                 </div>
             </div>
 
-            <main className="max-w-lg md:max-w-5xl mx-auto px-4 md:px-8 py-8 md:py-12">
+            <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
                 {workout.exercisesWithMetadata.length === 0 ? (
                     <EmptyState
                         icon={Activity}
@@ -159,7 +163,7 @@ export function ExerciseListContent({
                         action={<AddExerciseTrigger programmeId={programmeId} workoutId={workoutId} variant="button" />}
                     />
                 ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
+                    <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
                         {workout.exercisesWithMetadata.filter((ewm) => !ewm.is_hidden).map((ewm, i) => {
                             const exerciseLogs = logsByEwm[ewm.id] || [];
                             const isDone = exerciseLogs.length >= (ewm.sets_min || 1);
@@ -167,7 +171,7 @@ export function ExerciseListContent({
                             return (
                                 <div
                                     key={ewm.id}
-                                    className={`group transition-all duration-500 ${isDone ? 'opacity-40 scale-[0.98] grayscale-[0.5]' : 'opacity-100 scale-100'}`}
+                                    className={`group transition-all duration-500 ${isDone ? 'opacity-75 scale-[0.99] grayscale-[0.15]' : 'opacity-100 scale-100'}`}
                                     style={{ animationDelay: `${i * 60}ms` }}
                                 >
                                     <ExerciseCard

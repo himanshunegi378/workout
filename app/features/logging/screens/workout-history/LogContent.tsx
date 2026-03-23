@@ -149,42 +149,56 @@ export function LogContent() {
 
     return (
         <div className="flex flex-col pb-20">
-            {/* Training Journey Dashboard */}
-            <section className="mb-10 animate-slide-up">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-accent/10 border border-accent/20 rounded-[2rem] p-6 flex flex-col gap-2">
-                        <div className="flex items-center gap-2 text-accent">
-                            <TrendingUp className="w-4 h-4" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">Consistency</span>
-                        </div>
-                        <h4 className="font-display text-2xl font-bold text-foreground">
-                            {stats.streak > 5 ? 'Elite Effort' : stats.streak > 2 ? 'Gaining Momentum' : 'Keep Going'}
-                        </h4>
-                        <div className="flex gap-1.5 mt-2">
-                            {stats.consistency.map((active, i) => (
-                                <div 
-                                    key={i} 
-                                    className={`flex-1 h-1.5 rounded-full transition-all duration-500 ${active ? 'bg-accent shadow-[0_0_8px_rgba(236,72,153,0.4)]' : 'bg-muted'}`} 
-                                />
-                            ))}
-                        </div>
-                    </div>
-                    
-                    <div className="bg-card border border-border/60 rounded-[2rem] p-6 flex flex-col justify-center">
-                        <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                            <Zap className="w-4 h-4 text-warning" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">Active Streak</span>
-                        </div>
-                        <span className="font-display text-3xl font-bold text-foreground">{stats.streak} Days</span>
+            <section className="mb-10 animate-slide-up border-b border-border/60 pb-6">
+                <div className="grid gap-5 md:flex md:flex-row md:items-end md:justify-between">
+                    <div className="max-w-xl space-y-2">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+                            Training log
+                        </p>
+                        <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+                            Keep the thread moving.
+                        </h2>
+                        <p className="max-w-lg text-sm leading-6 text-muted-foreground">
+                            A quiet view of your current streak, recent consistency, and this month&apos;s work.
+                        </p>
                     </div>
 
-                    <div className="bg-card border border-border/60 rounded-[2rem] p-6 flex flex-col justify-center">
-                        <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                            <Calendar className="w-4 h-4 text-info" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">Sessions</span>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-3">
+                        <div className="min-w-0 space-y-1.5">
+                            <div className="flex items-center gap-2">
+                                <TrendingUp className="h-4 w-4 text-accent" />
+                                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/80">Consistency</p>
+                            </div>
+                            <p className="text-sm text-foreground/90">
+                                {stats.streak > 5 ? "Elite effort" : stats.streak > 2 ? "Gaining momentum" : "Building rhythm"}
+                            </p>
                         </div>
-                        <span className="font-display text-3xl font-bold text-foreground">{stats.monthlySessions} This Month</span>
+                        <div className="min-w-0 space-y-1.5">
+                            <div className="flex items-center gap-2">
+                                <Zap className="h-4 w-4 text-warning" />
+                                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/80">Streak</p>
+                            </div>
+                            <p className="text-sm text-foreground/90">{stats.streak} days</p>
+                        </div>
+                        <div className="col-span-2 min-w-0 space-y-1.5 sm:col-span-1">
+                            <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4 text-info" />
+                                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/80">This month</p>
+                            </div>
+                            <p className="text-sm text-foreground/90">{stats.monthlySessions} sessions</p>
+                        </div>
                     </div>
+                </div>
+
+                <div className="mt-6 grid grid-cols-7 gap-2">
+                    {stats.consistency.map((active, i) => (
+                        <div
+                            key={i}
+                            className={`h-1.5 rounded-full transition-colors duration-500 ${
+                                active ? "bg-accent/80" : "bg-border/70"
+                            }`}
+                        />
+                    ))}
                 </div>
             </section>
 
@@ -201,7 +215,7 @@ export function LogContent() {
                     >
                         {/* Enhanced Date Label */}
                         <div className="flex items-center gap-4 group">
-                            <div className="w-9 h-9 rounded-2xl bg-card border border-border flex items-center justify-center shadow-sm group-hover:border-accent/40 transition-colors z-10">
+                            <div className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full border border-border/70 bg-card/70 transition-colors group-hover:border-accent/40">
                                 <Calendar className="w-4 h-4 text-accent" />
                             </div>
                             <h2 className="text-sm font-bold text-foreground uppercase tracking-[0.2em]">
@@ -253,15 +267,15 @@ export function LogContent() {
                         <button
                             onClick={() => fetchNextPage()}
                             disabled={isFetchingNextPage}
-                            className="px-8 py-3 text-xs font-bold uppercase tracking-widest text-muted-foreground bg-card border border-border rounded-2xl hover:bg-muted hover:text-foreground hover:border-accent/40 transition-all disabled:opacity-50 flex items-center gap-3 shadow-sm"
+                            className="inline-flex items-center gap-3 rounded-full border border-border/70 bg-background/60 px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.22em] text-foreground/85 transition-colors hover:border-accent/40 hover:text-foreground disabled:opacity-50"
                         >
                             {isFetchingNextPage ? (
                                 <>
                                     <Loader2 className="w-4 h-4 animate-spin text-accent" />
-                                    SYNCING...
+                                    Syncing
                                 </>
                             ) : (
-                                "Load More Entries"
+                                "Load more entries"
                             )}
                         </button>
                     </div>

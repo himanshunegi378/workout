@@ -20,39 +20,47 @@ export function PageHeader({ title, subtitle, backHref, action, showBackDefault 
         if (!backHref && !showBackDefault) return null;
 
         const content = (
-            <div className="flex items-center justify-center rounded-xl p-2 -ml-2 text-muted-foreground transition-colors hover:bg-muted/40 hover:text-foreground active:scale-95">
-                <ChevronLeft className="h-5 w-5 md:h-5 md:w-5" />
+            <div className="flex items-center justify-center rounded-full p-2.5 -ml-2 text-muted-foreground transition-colors hover:bg-muted/45 hover:text-foreground active:scale-95">
+                <ChevronLeft className="h-5 w-5" />
             </div>
         );
 
         if (backHref) {
             return (
-                <Link href={backHref} aria-label="Go back">
+                <Link
+                    href={backHref}
+                    aria-label="Go back"
+                    className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                >
                     {content}
                 </Link>
             );
         }
 
         return (
-            <button onClick={() => router.back()} aria-label="Go back">
+            <button
+                onClick={() => router.back()}
+                aria-label="Go back"
+                className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
                 {content}
             </button>
         );
     };
 
     return (
-        <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-            <div className="mx-auto grid h-16 max-w-lg grid-cols-[44px_1fr_44px] items-center gap-2 px-4 md:h-20 md:max-w-5xl md:grid-cols-[auto_1fr_auto] md:gap-6 md:px-10">
+        <header className="sticky top-0 z-40 border-b border-border/60 bg-background/84 backdrop-blur-xl">
+            <div className="mx-auto grid h-16 w-full max-w-6xl grid-cols-[44px_1fr_44px] items-center gap-2 px-4 sm:px-6 md:h-[4.5rem] md:grid-cols-[auto_1fr_auto] md:gap-6 lg:px-8">
                 <div className="flex shrink-0 items-center">
                     {renderBack()}
                 </div>
 
                 <div className="min-w-0 text-center md:text-left">
-                    <h1 className="truncate font-display text-lg font-semibold tracking-tight text-foreground md:text-2xl">
+                    <h1 className="truncate font-display text-lg font-semibold tracking-[-0.03em] text-foreground md:text-[1.75rem]">
                         {title}
                     </h1>
                     {subtitle && (
-                        <p className="truncate text-[10px] uppercase tracking-[0.2em] text-muted-foreground md:text-xs">
+                        <p className="truncate text-[11px] uppercase tracking-[0.16em] text-muted-foreground/90 md:mt-1 md:text-xs">
                             {subtitle}
                         </p>
                     )}

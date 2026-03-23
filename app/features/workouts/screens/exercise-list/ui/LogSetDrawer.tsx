@@ -68,9 +68,9 @@ export function LogSetDrawer({
 
     return (
         <BottomDrawer isOpen={isOpen} onClose={onClose} title={isEdit ? "Edit Set" : `Log Set ${setIndex + 1}`}>
-            <div className="flex flex-col -mt-4">
-                <div className="flex items-center gap-4 mb-6 bg-card/40 p-4 rounded-2xl border border-border/60">
-                    <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center border border-accent/20">
+            <div className="flex flex-col gap-6">
+                <div className="flex items-center gap-4 rounded-2xl border border-border/60 bg-background/50 p-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-accent/20 bg-accent/10">
                         <Target className="w-6 h-6 text-accent" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -83,22 +83,22 @@ export function LogSetDrawer({
                     <button
                         type="button"
                         onClick={fillPrevious}
-                        className="w-full mb-8 flex items-center justify-between p-4 rounded-2xl bg-card/30 border border-border/50 text-sm transition-all active:scale-[0.98] hover:bg-muted/20 hover:border-accent/30 group"
+                        className="group grid w-full gap-3 rounded-2xl border border-border/60 bg-background/40 p-4 text-sm transition-colors active:scale-[0.98] hover:border-accent/30 hover:bg-muted/20 sm:grid-cols-[1fr_auto] sm:items-center"
                     >
-                        <div className="flex items-center gap-3 text-muted-foreground group-hover:text-foreground transition-colors">
-                            <div className="p-2 rounded-lg bg-muted/40 group-hover:bg-accent/10 group-hover:text-accent transition-colors">
+                        <div className="flex items-center gap-3 text-muted-foreground transition-colors group-hover:text-foreground">
+                            <div className="rounded-lg bg-muted/30 p-2 transition-colors group-hover:bg-accent/10 group-hover:text-accent">
                                 <History className="w-4 h-4" />
                             </div>
                             <span className="font-bold tracking-tight">Best Previous</span>
                         </div>
-                        <span className="font-display font-bold text-foreground bg-muted/30 px-3 py-1.5 rounded-lg border border-border/40 group-hover:border-accent/20 transition-all">
+                        <span className="justify-self-start rounded-lg border border-border/40 bg-muted/20 px-3 py-1.5 font-display font-bold text-foreground transition-colors group-hover:border-accent/20 sm:justify-self-end">
                             {previousLog.weight ? `${previousLog.weight}kg × ` : ""}
                             {previousLog.reps} reps
                         </span>
                     </button>
                 )}
 
-                <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <NumberStepper
                         label="Weight"
                         value={weightNum}
@@ -120,14 +120,14 @@ export function LogSetDrawer({
                     />
                 </div>
 
-                <div className="mb-6">
+                <div>
                     <RPESelector value={rpe} onChange={setRpe} />
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 pt-2">
                     <Button
                         variant="primary"
-                        className="w-full py-4 text-lg font-bold shadow-lg shadow-accent/20"
+                        className="w-full py-4 text-lg font-bold shadow-none"
                         onClick={onSave}
                         disabled={isSaving || isDeleting || !reps}
                     >
@@ -142,7 +142,7 @@ export function LogSetDrawer({
                         <button
                             onClick={onDelete}
                             disabled={isSaving || isDeleting}
-                            className="w-full py-3 text-sm font-semibold text-destructive hover:bg-destructive/10 rounded-xl transition-all disabled:opacity-50"
+                            className="w-full rounded-xl py-3 text-sm font-semibold text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-50"
                         >
                             {isDeleting ? "Deleting..." : "Delete Set"}
                         </button>

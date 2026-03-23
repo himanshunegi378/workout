@@ -52,8 +52,8 @@ export function MuscleGroupSelector({
                     onClick={() => handleSelect(mg)}
                     className={`px-4 py-2 rounded-xl text-sm font-medium transition-all
                       duration-200 border ${selected === mg
-                            ? `${muscleColorMap[mg]} text-white border-transparent`
-                            : "bg-muted text-muted-foreground border-border hover:border-accent/40"
+                            ? `${muscleColorMap[mg]} text-white border-transparent shadow-sm`
+                            : "bg-muted/40 text-muted-foreground/90 border-border/70 hover:border-accent/40 hover:text-foreground"
                         }`}
                 >
                     {mg}

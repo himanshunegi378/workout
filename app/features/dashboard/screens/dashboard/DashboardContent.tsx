@@ -8,28 +8,30 @@ import { SessionVolumeChart } from "./ui/SessionVolumeChart";
 
 export function DashboardContent() {
     return (
-        <div className="flex flex-col min-h-screen bg-background text-foreground pb-20">
-            <PageHeader 
-                title="Dashboard" 
-                subtitle="Track your training progress and volume" 
+        <div className="min-h-screen pb-20 text-foreground">
+            <PageHeader
+                title="Dashboard"
+                subtitle="Track your training progress and volume"
             />
 
-            <div className="flex-1 max-w-lg md:max-w-5xl mx-auto w-full px-4 md:px-8 py-5 md:py-10 space-y-8">
-                <DashboardHeader />
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                    <div className="animate-slide-up" style={{ animationDelay: '50ms' }}>
-                        <FatigueTrendLine />
-                    </div>
-                    <div className="animate-slide-up" style={{ animationDelay: '100ms' }}>
-                        <SessionVolumeChart />
-                    </div>
-                </div>
+            <main className="mx-auto w-full max-w-6xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
+                <section className="space-y-6 md:space-y-8">
+                    <DashboardHeader />
 
-                <div className="animate-slide-up" style={{ animationDelay: '150ms' }}>
+                    <div className="grid gap-4 lg:grid-cols-[1.08fr_0.92fr]">
+                        <div className="animate-slide-up" style={{ animationDelay: "50ms" }}>
+                            <FatigueTrendLine />
+                        </div>
+                        <div className="animate-slide-up" style={{ animationDelay: "100ms" }}>
+                            <SessionVolumeChart />
+                        </div>
+                    </div>
+                </section>
+
+                <div className="mt-8 animate-slide-up" style={{ animationDelay: "150ms" }}>
                     <MuscleOutputTable />
                 </div>
-            </div>
+            </main>
         </div>
     );
 }

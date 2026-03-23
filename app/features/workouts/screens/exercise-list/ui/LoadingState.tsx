@@ -4,7 +4,7 @@ export function LoadingState({ programmeId }: { programmeId: string }) {
     return (
         <>
             <PageHeader title="Loading…" backHref={`/programmes/${programmeId}`} />
-            <main className="max-w-lg md:max-w-5xl mx-auto px-4 md:px-8 py-4 md:py-8">
+            <main className="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
                 <CardSkeletonList count={4} chips />
             </main>
         </>

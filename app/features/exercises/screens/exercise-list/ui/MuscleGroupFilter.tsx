@@ -27,7 +27,7 @@ interface MuscleGroupFilterProps {
  */
 export function MuscleGroupFilter({ selected, onChange }: MuscleGroupFilterProps) {
     return (
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+        <div className="flex flex-wrap gap-2">
             {ALL_GROUPS.map((group) => {
                 const isActive = selected === group;
                 const colorClass = group !== "All" ? muscleColorMap[group] : "";
@@ -37,13 +37,11 @@ export function MuscleGroupFilter({ selected, onChange }: MuscleGroupFilterProps
                         key={group}
                         type="button"
                         onClick={() => onChange(group)}
-                        className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold
-                            transition-all duration-200 border
-                            ${isActive
-                                ? group === "All"
-                                    ? "bg-accent text-accent-foreground border-accent"
-                                    : `${colorClass} text-white border-transparent`
-                                : "bg-muted text-muted-foreground border-border hover:border-accent/40"
+                        className={`shrink-0 rounded-full border px-3.5 py-2 text-xs font-semibold transition-colors duration-200 ${isActive
+                            ? group === "All"
+                                ? "border-accent/40 bg-accent/10 text-accent"
+                                : `${colorClass} border-transparent text-[#0c0c0e]`
+                            : "border-border/70 bg-background/70 text-muted-foreground hover:border-accent/40 hover:text-foreground"
                             }`}
                     >
                         {group}

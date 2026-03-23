@@ -55,8 +55,8 @@ export function ExerciseHistoryDrawer({
     return (
         <Portal>
             <BottomDrawer isOpen={isOpen} onClose={onClose}>
-                <div className="flex flex-col h-[70vh]">
-                    <div className="px-4 py-3 border-b border-border sticky top-0 bg-background/95 backdrop-blur-sm z-10 shrink-0">
+                <div className="flex h-[70vh] flex-col">
+                    <div className="sticky top-0 z-10 shrink-0 border-b border-border/60 bg-background/95 px-4 py-3 backdrop-blur-sm">
                         <div className="flex items-center justify-between w-full">
                             <div className="flex items-center gap-3">
                                 <div className="w-1.5 h-8 rounded-full bg-accent" />
@@ -81,7 +81,7 @@ export function ExerciseHistoryDrawer({
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto px-4 py-4 min-h-0">
+                    <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
                         {isLoading && (
                             <div className="flex items-center justify-center py-12 text-muted-foreground">
                                 <Loader2 className="w-6 h-6 animate-spin mr-2" />
@@ -106,32 +106,37 @@ export function ExerciseHistoryDrawer({
                                 {Object.entries(groupedLogs).map(([dateStr, sessionLogs], i) => (
                                     <div key={dateStr} className="space-y-3 animate-slide-up" style={{ animationDelay: `${i * 60}ms` }}>
                                         <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-accent shrink-0 shadow-[0_0_8px_rgba(236,72,153,0.6)]" />
-                                            <h3 className="text-sm font-semibold text-foreground tracking-wider">
+                                            <div className="h-2 w-2 shrink-0 rounded-full bg-accent" />
+                                            <h3 className="text-sm font-semibold tracking-wider text-foreground">
                                                 {dateStr}
                                             </h3>
                                         </div>
-                                        <div className="bg-card border border-border rounded-xl p-3 space-y-1">
+                                        <div className="space-y-1 border-t border-border/40 pt-2">
                                             {sessionLogs.map((log) => (
-                                                <div key={log.id} className="flex items-center justify-between text-base py-2 border-b border-border/30 last:border-0 last:pb-0">
-                                                    <div className="flex items-center gap-4">
-                                                        <span className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold
-                                                            ${log.pr_type
-                                                                ? "bg-accent/20 text-accent ring-1 ring-accent/30"
-                                                                : "bg-muted text-muted-foreground"}`}
+                                                <div
+                                                    key={log.id}
+                                                    className="grid gap-2 border-b border-border/30 py-2 text-base last:border-0 last:pb-0 sm:flex sm:items-center sm:justify-between"
+                                                >
+                                                    <div className="flex min-w-0 items-center gap-3">
+                                                        <span
+                                                            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded text-xs font-bold ${
+                                                                log.pr_type
+                                                                    ? "bg-accent/20 text-accent ring-1 ring-accent/30"
+                                                                    : "bg-muted text-muted-foreground"
+                                                            }`}
                                                         >
                                                             {log.pr_type ? (
-                                                                <Trophy className="w-3.5 h-3.5 stroke-[2.5]" />
+                                                                <Trophy className="h-3.5 w-3.5 stroke-[2.5]" />
                                                             ) : (
                                                                 log.set_order_index
                                                             )}
                                                         </span>
-                                                        <div className="flex items-baseline gap-1.5">
+                                                        <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
                                                             <span className="font-display font-bold text-foreground">
                                                                 {log.weight ? `${log.weight}` : "BW"}
                                                             </span>
-                                                            {log.weight && <span className="text-xs text-muted-foreground font-medium">kg</span>}
-                                                            <span className="text-muted-foreground/60 text-sm mx-1">×</span>
+                                                            {log.weight && <span className="text-xs font-medium text-muted-foreground">kg</span>}
+                                                            <span className="mx-1 text-sm text-muted-foreground/60">×</span>
                                                             <span className="font-display font-bold text-accent">
                                                                 {log.reps}
                                                             </span>

@@ -55,21 +55,21 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden">
+        <div className="relative flex min-h-[100dvh] flex-col items-center justify-start overflow-hidden px-4 py-10 sm:px-6 sm:justify-center sm:py-0 lg:px-8">
             {/* Background glow effects */}
             <div className="absolute top-1/3 -right-32 w-72 h-72 bg-accent/20 rounded-full blur-3xl" />
             <div className="absolute bottom-1/3 -left-32 w-72 h-72 bg-accent/10 rounded-full blur-3xl" />
 
             <div className="w-full max-w-sm relative z-10 animate-slide-up">
                 {/* Logo / Brand */}
-                <div className="flex flex-col items-center mb-8">
+                <div className="mb-8 flex flex-col items-center">
                     <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center mb-4 ring-1 ring-accent/20">
                         <Dumbbell className="w-8 h-8 text-accent" />
                     </div>
                     <h1 className="font-display text-2xl font-bold text-foreground">
                         Welcome Back
                     </h1>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="mt-1 text-sm text-muted-foreground/90">
                         Sign in to your workout tracker
                     </p>
                 </div>
@@ -77,13 +77,13 @@ export default function LoginPage() {
                 {/* Form Card */}
                 <form
                     onSubmit={handleSubmit}
-                    className="bg-card border border-border rounded-2xl p-6 space-y-5"
+                    className="space-y-5 rounded-3xl border border-border/70 bg-card/90 p-5 shadow-none sm:p-6"
                 >
                     {/* Username */}
                     <div className="space-y-1.5">
                         <label
                             htmlFor="login-username"
-                            className="text-sm font-medium text-foreground"
+                            className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/90"
                         >
                             Username
                         </label>
@@ -95,10 +95,8 @@ export default function LoginPage() {
                             placeholder="Your username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="w-full bg-muted border border-border rounded-xl
-                                px-4 py-3 text-foreground placeholder:text-muted-foreground/50
-                                focus:outline-none focus:ring-2 focus:ring-ring
-                                focus:border-accent transition-all duration-200
+                            className="w-full rounded-2xl border border-border/70 bg-background/60 px-4 py-3 text-foreground placeholder:text-muted-foreground/80 transition-all duration-200
+                                focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/40
                                 font-body text-base"
                         />
                     </div>
@@ -107,7 +105,7 @@ export default function LoginPage() {
                     <div className="space-y-1.5">
                         <label
                             htmlFor="login-password"
-                            className="text-sm font-medium text-foreground"
+                            className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/90"
                         >
                             Password
                         </label>
@@ -119,16 +117,14 @@ export default function LoginPage() {
                                 placeholder="Your password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full bg-muted border border-border rounded-xl
-                                    px-4 py-3 pr-12 text-foreground placeholder:text-muted-foreground/50
-                                    focus:outline-none focus:ring-2 focus:ring-ring
-                                    focus:border-accent transition-all duration-200
+                                className="w-full rounded-2xl border border-border/70 bg-background/60 px-4 py-3 pr-12 text-foreground placeholder:text-muted-foreground/80 transition-all duration-200
+                                    focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/40
                                     font-body text-base"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted-foreground
+                                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted-foreground/90
                                     hover:text-foreground transition-colors"
                                 aria-label={showPassword ? "Hide password" : "Show password"}
                             >
@@ -143,7 +139,7 @@ export default function LoginPage() {
 
                     {/* Error */}
                     {error && (
-                        <div className="bg-danger/10 border border-danger/20 rounded-xl px-4 py-3 text-danger text-sm animate-slide-up">
+                        <div className="rounded-2xl border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger animate-slide-up">
                             {error}
                         </div>
                     )}
@@ -152,11 +148,7 @@ export default function LoginPage() {
                     <button
                         type="submit"
                         disabled={!canSubmit}
-                        className="w-full bg-accent hover:bg-accent-hover text-accent-foreground
-                            font-display font-semibold py-3 px-5 rounded-xl
-                            transition-all duration-200 active:animate-press
-                            disabled:opacity-40 disabled:cursor-not-allowed
-                            flex items-center justify-center gap-2"
+                        className="flex w-full items-center justify-center gap-2 rounded-full border border-accent/25 bg-accent px-5 py-3 font-display font-semibold text-accent-foreground transition-all duration-200 active:animate-press hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
                     >
                         {loading ? (
                             <>
@@ -174,7 +166,7 @@ export default function LoginPage() {
                     Don&apos;t have an account?{" "}
                     <Link
                         href="/signup"
-                        className="text-accent hover:text-accent-hover font-medium transition-colors"
+                        className="font-medium text-accent transition-colors hover:text-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                     >
                         Create one
                     </Link>
