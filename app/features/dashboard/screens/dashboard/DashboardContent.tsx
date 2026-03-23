@@ -14,7 +14,7 @@ export function DashboardContent() {
                 subtitle="Track your training progress and volume" 
             />
 
-            <div className="flex-1 max-w-lg md:max-w-5xl mx-auto w-full px-4 md:px-8 py-4 md:py-8 space-y-6">
+            <div className="flex-1 max-w-lg md:max-w-5xl mx-auto w-full px-4 md:px-8 py-5 md:py-10 space-y-8">
                 <DashboardHeader />
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">

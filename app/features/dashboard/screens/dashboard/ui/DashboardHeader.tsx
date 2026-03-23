@@ -12,17 +12,16 @@ export function DashboardHeader() {
     }, []);
 
     return (
-        <div className="relative overflow-hidden p-6 rounded-3xl bg-card border border-border animate-slide-up elevation-1" style={{ animationDelay: '0ms' }}>
-            <div className="relative z-10 flex items-start justify-between">
-                <div>
-                    <h2 className="font-display text-2xl font-bold mb-1 text-foreground tracking-tight">Summary</h2>
-                    <p className="text-muted-foreground text-sm leading-relaxed min-h-[1.25rem]">
-                        {dateString}
-                    </p>
-                </div>
-                <div className="bg-accent/10 p-3 rounded-full flex items-center justify-center border border-accent/20">
-                    <Activity className="w-6 h-6 text-accent" />
-                </div>
+        <div className="flex items-start justify-between gap-4 animate-slide-up" style={{ animationDelay: "0ms" }}>
+            <div className="min-w-0">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Dashboard</p>
+                <h2 className="mt-2 font-display text-2xl font-semibold tracking-tight text-foreground">Summary</h2>
+                <p className="mt-1 text-sm text-muted-foreground min-h-[1.25rem]">
+                    {dateString}
+                </p>
+            </div>
+            <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-border bg-background text-accent">
+                <Activity className="h-5 w-5" />
             </div>
         </div>
     );

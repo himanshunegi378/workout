@@ -22,13 +22,11 @@ export function Sidebar() {
     }
 
     return (
-        <aside className="hidden md:flex flex-col w-64 h-screen sticky top-0 bg-card border-r border-border shrink-0">
-            <div className="p-6">
-                <div className="flex items-center gap-3 px-2 mb-8">
-                    <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center elevation-2">
-                        <Dumbbell className="w-6 h-6 text-accent-foreground" />
-                    </div>
-                    <span className="font-display font-bold text-xl tracking-tight">Workout</span>
+        <aside className="sticky top-0 hidden h-screen w-72 shrink-0 border-r border-border/70 bg-card/80 backdrop-blur-xl md:flex md:flex-col">
+            <div className="flex-1 px-5 py-6">
+                <div className="mb-8 flex items-center gap-3 px-3">
+                    <Dumbbell className="h-6 w-6 text-accent" />
+                    <p className="min-w-0 font-display text-lg font-semibold tracking-tight text-foreground">Workout</p>
                 </div>
 
                 <nav className="space-y-1">
@@ -38,26 +36,32 @@ export function Sidebar() {
                             <Link
                                 key={href}
                                 href={href}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${active
-                                    ? "bg-accent/10 text-accent font-semibold elevation-1"
-                                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors duration-200 ${
+                                    active
+                                        ? "bg-background/80 text-foreground"
+                                        : "text-muted-foreground hover:bg-muted/40 hover:text-foreground"
                                     }`}
                             >
-                                <Icon className={`w-5 h-5 transition-transform duration-200 ${active ? "scale-110" : "group-hover:scale-110"}`} />
-                                <span className="font-body text-sm">{label}</span>
+                                <span
+                                    className={`absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full transition-colors ${
+                                        active ? "bg-accent" : "bg-transparent"
+                                    }`}
+                                />
+                                <Icon className={`h-4 w-4 transition-colors ${active ? "text-accent" : "text-current"}`} />
+                                <span className={`${active ? "font-medium" : "font-normal"}`}>{label}</span>
                             </Link>
                         );
                     })}
                 </nav>
             </div>
 
-            <div className="mt-auto p-6 border-t border-border">
+            <div className="px-5 py-5">
                 <button
                     onClick={() => signOut({ callbackUrl: "/login" })}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl w-full text-muted-foreground hover:bg-danger/10 hover:text-danger transition-all duration-200 group"
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-muted-foreground transition-colors duration-200 hover:bg-danger/10 hover:text-danger"
                 >
-                    <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                    <span className="font-body text-sm font-medium">Sign Out</span>
+                    <LogOut className="h-5 w-5" />
+                    <span className="font-medium">Sign Out</span>
                 </button>
             </div>
         </aside>

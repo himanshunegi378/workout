@@ -24,9 +24,9 @@ export function ExercisesContent() {
 
     if (isLoading) {
         return (
-            <div className="flex flex-col items-center justify-center py-24 gap-4">
-                <Loader2 className="w-8 h-8 animate-spin text-accent" />
-                <span className="text-sm text-muted-foreground animate-pulse font-medium">Loading exercises...</span>
+            <div className="flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground">
+                <Loader2 className="h-7 w-7 animate-spin text-accent" />
+                <span className="text-sm font-medium">Loading exercises...</span>
             </div>
         );
     }

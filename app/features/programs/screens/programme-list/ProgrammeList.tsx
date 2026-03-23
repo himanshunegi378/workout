@@ -18,8 +18,8 @@ export function ProgrammeList() {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center py-12 text-muted-foreground">
-                <Loader2 className="w-6 h-6 animate-spin mr-2" />
+            <div className="flex items-center justify-center py-16 text-muted-foreground">
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 <span className="text-sm">Loading programs...</span>
             </div>
         );
@@ -30,7 +30,7 @@ export function ProgrammeList() {
     }
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-2 xl:grid-cols-3">
             {programmes.map((programme, i) => (
                 <div
                     key={programme.id}

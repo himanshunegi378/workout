@@ -23,21 +23,18 @@ export function ExerciseListCard({ name, description, muscleGroup }: ExerciseLis
     const colorClass = muscleColorMap[muscleGroup] ?? "bg-accent";
 
     return (
-        <div className="bg-card text-card-foreground rounded-2xl p-4 border border-border flex items-center gap-3 elevation-2">
-            {/* Muscle group color stripe */}
-            <div className={`w-1.5 self-stretch rounded-full ${colorClass}`} />
+        <div className="flex items-start gap-3 rounded-[1.5rem] border border-border bg-card px-4 py-4 text-card-foreground transition-colors duration-200 hover:border-border/80">
+            <div className={`mt-1 h-10 w-1.5 shrink-0 rounded-full ${colorClass}`} />
 
             <div className="flex-1 min-w-0">
-                <p className="font-display text-base font-semibold truncate">{name}</p>
+                <p className="truncate font-display text-base font-semibold tracking-tight text-foreground">{name}</p>
                 {description && (
-                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{description}</p>
+                    <p className="mt-1 line-clamp-2 text-sm leading-6 text-muted-foreground">{description}</p>
                 )}
             </div>
 
-            {/* Muscle group badge */}
             <span
-                className={`shrink-0 text-[10px] font-semibold uppercase tracking-wider
-                    px-2 py-1 rounded-lg text-white/90 ${colorClass}`}
+                className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/90 ${colorClass}`}
             >
                 {muscleGroup}
             </span>

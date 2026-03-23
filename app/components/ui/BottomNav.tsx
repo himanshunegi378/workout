@@ -21,21 +21,22 @@ export function BottomNav() {
     }
 
     return (
-        <nav className="fixed bottom-0 inset-x-0 bg-card/80 backdrop-blur-xl border-t border-border z-50 pb-safe shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_-4px_20px_rgba(0,0,0,0.2)] md:hidden">
-            <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
+        <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border/70 bg-background/90 pb-safe backdrop-blur-xl md:hidden">
+            <div className="mx-auto flex h-16 max-w-lg items-center justify-around px-2">
                 {navItems.map(({ href, icon: Icon, label }) => {
                     const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
                     return (
                         <Link
                             key={href}
                             href={href}
-                            className={`flex flex-col items-center gap-0.5 p-2 transition-colors duration-200 ${active
-                                ? "text-accent"
-                                : "text-muted-foreground hover:text-foreground"
-                                }`}
+                            className={`flex min-w-0 flex-1 flex-col items-center gap-1 rounded-xl px-2 py-2 transition-colors duration-200 ${
+                                active
+                                    ? "text-accent"
+                                    : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                            }`}
                         >
-                            <Icon className="w-5 h-5" />
-                            <span className="text-[10px] font-medium">{label}</span>
+                            <Icon className="h-5 w-5" />
+                            <span className="text-[10px] font-medium leading-none">{label}</span>
                         </Link>
                     );
                 })}

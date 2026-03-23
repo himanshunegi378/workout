@@ -26,42 +26,47 @@ export async function SettingsContent() {
     const initial = username.charAt(0).toUpperCase();
 
     return (
-        <div className="flex flex-col gap-8">
-            <section className="flex flex-col items-center gap-4 py-8">
+        <div className="space-y-8">
+            <section className="flex items-center gap-4 py-4">
                 <Avatar initial={initial} />
-                <h2 className="text-xl font-display font-semibold">{username}</h2>
+                <div className="min-w-0">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Profile</p>
+                    <h2 className="mt-2 font-display text-2xl font-semibold tracking-tight text-foreground">{username}</h2>
+                </div>
             </section>
 
-            <section className="bg-card rounded-2xl p-4 border border-border flex flex-col gap-4">
-                <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Appearance</h3>
+            <section className="space-y-4">
+                <div className="flex items-center justify-between">
+                    <h3 className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Appearance</h3>
+                </div>
                 <ThemeToggle />
             </section>
 
-            <section className="bg-card rounded-2xl border border-border p-4 transition-colors hover:bg-muted/40 focus-within:bg-muted/40">
+            <section className="space-y-3">
                 <Link
                     href="/settings/feedback"
-                    className="-m-4 flex items-center justify-between gap-4 p-4"
+                    className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-card px-4 py-4 transition-colors hover:bg-muted/20 focus-visible:bg-muted/20"
                 >
                     <div className="flex items-center gap-3">
-                        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-accent/10 text-accent">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border bg-background text-accent">
                             <MessageSquareMore className="h-5 w-5" />
                         </div>
-                        <div className="flex flex-col">
-                            <span className="font-medium">Feedback</span>
-                            <span className="text-sm text-muted-foreground">Share a suggestion or report an issue</span>
+                        <div className="min-w-0">
+                            <span className="block font-medium text-foreground">Feedback</span>
+                            <span className="block text-sm text-muted-foreground">Share a suggestion or report an issue</span>
                         </div>
                     </div>
                 </Link>
-            </section>
 
-            <ClearQueryCacheRow />
+                <ClearQueryCacheRow />
 
-            <section className="bg-card rounded-2xl p-4 border border-border flex items-center justify-between">
-                <div className="flex flex-col">
-                    <span className="font-medium">Sign Out</span>
-                    <span className="text-sm text-muted-foreground">Log out of your account</span>
+                <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-4">
+                    <div className="min-w-0">
+                        <span className="block font-medium text-foreground">Sign Out</span>
+                        <span className="block text-sm text-muted-foreground">Log out of your account</span>
+                    </div>
+                    <SignOutButton />
                 </div>
-                <SignOutButton />
             </section>
         </div>
     );

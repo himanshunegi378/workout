@@ -20,27 +20,24 @@ export function ProgrammeCard({ id, name, description, workoutCount }: Programme
     return (
         <Link
             href={`/programmes/${id}`}
-            className="block bg-card text-card-foreground rounded-2xl p-4
-                       border border-border hover:border-accent/40
-                       elevation-2 hover:elevation-4
-                       transition-all duration-300 active:animate-press group"
+            className="group block rounded-[1.5rem] border border-border bg-card px-4 py-4 text-card-foreground transition-colors duration-200 hover:border-border/80"
         >
-            <div className="flex items-center justify-between mb-2">
-                <h3 className="font-display text-lg font-semibold">
-                    {name}
-                </h3>
-                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-accent transition-colors" />
+            <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                    <h3 className="truncate font-display text-lg font-semibold tracking-tight text-foreground">
+                        {name}
+                    </h3>
+                    {description && (
+                        <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">
+                            {description}
+                        </p>
+                    )}
+                </div>
+                <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
             </div>
-            {description && (
-                <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                    {description}
-                </p>
-            )}
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Dumbbell className="w-4 h-4" />
-                <span>
-                    {workoutCount} workout{workoutCount !== 1 ? "s" : ""}
-                </span>
+            <div className="mt-4 flex items-center gap-2 border-t border-border/40 pt-3 text-xs text-muted-foreground">
+                <Dumbbell className="h-4 w-4" />
+                <span>{workoutCount} workout{workoutCount !== 1 ? "s" : ""}</span>
             </div>
         </Link>
     );

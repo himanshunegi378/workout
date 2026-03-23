@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Hash, Repeat, Timer, Activity, MoreHorizontal, CheckCircle2, Flame, Target, Trophy, Zap } from "lucide-react";
-import { MetadataChip, muscleColorMap } from "@/app/components/ui";
+import { muscleColorMap } from "@/app/components/ui";
 import { SetTracker } from "./SetTracker";
 import { LogSetDrawer } from "./LogSetDrawer";
 import { useLogSet } from "@/app/features/logging/api/mutation-hooks/use-log-set";
@@ -108,6 +108,7 @@ export function ExerciseCard({
     const currentLog = logs.find((l) => l.set_order_index === activeSetIndex);
     const isCompleted = logs.length >= setsMin && logs.length > 0;
     const isPerfect = logs.length >= setsMax;
+    const completedSetCount = logs.length;
 
     // The logic remains the same, but we'll focus on UI improvements
     const handleSetClick = async (setIndex: number) => {
@@ -191,30 +192,30 @@ export function ExerciseCard({
 
     return (
         <>
-            <div className={`relative bg-card text-card-foreground rounded-[2.5rem] p-8 border transition-all duration-500 overflow-hidden ${isCompleted ? 'border-success/20 bg-success/5 shadow-none' : 'border-border/60 hover:border-accent/40 elevation-4'}`}>
-                {/* Visual Glow for Active/Focused State */}
-                {!isCompleted && (
-                    <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-accent/40 to-transparent animate-pulse" />
-                )}
-
-                {/* Header Section */}
-                <div className="flex items-start justify-between mb-8 gap-4">
+            <div
+                className={`rounded-[1.75rem] border px-5 py-5 text-card-foreground transition-colors duration-200 md:px-6 md:py-6 ${
+                    isCompleted
+                        ? "border-success/25 bg-card"
+                        : "border-border bg-card hover:border-border/80"
+                }`}
+            >
+                <div className="flex items-start justify-between gap-4">
                     <button
                         type="button"
                         onClick={() => setIsHistoryDrawerOpen(true)}
-                        className="flex items-center gap-5 min-w-0 flex-1 text-left rounded-3xl -m-2 p-2 transition-all hover:bg-muted/20 active:scale-[0.99]"
+                        className="flex min-w-0 flex-1 items-start gap-4 rounded-2xl -m-2 p-2 text-left transition-colors hover:bg-muted/30"
                     >
-                        <div className={`shrink-0 w-2 h-12 rounded-full ${colorClass} shadow-[0_0_15px_rgba(0,0,0,0.2)]`} />
+                        <div className={`mt-1 h-10 w-1.5 shrink-0 rounded-full ${colorClass}`} />
                         <div className="min-w-0">
-                            <h3 className="font-display text-2xl font-bold truncate tracking-tight leading-none mb-2">
+                            <h3 className="truncate font-display text-xl font-semibold tracking-tight text-foreground md:text-2xl">
                                 {name}
                             </h3>
-                            <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] px-2.5 py-1 bg-muted/40 rounded-lg border border-border/20">
+                            <div className="mt-2 flex flex-wrap items-center gap-2">
+                                <span className="rounded-full border border-border/70 bg-background px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                                     {muscleGroup}
                                 </span>
                                 {isPerfect && (
-                                    <span className="flex items-center gap-1.5 text-[10px] font-bold text-success uppercase tracking-widest bg-success/10 px-2.5 py-1 rounded-lg border border-success/20">
+                                    <span className="flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-success">
                                         <Trophy className="w-3 h-3" /> Mastered
                                     </span>
                                 )}
@@ -222,15 +223,18 @@ export function ExerciseCard({
                         </div>
                     </button>
 
-                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-3 -mr-3 rounded-2xl hover:bg-muted transition-all shrink-0 active:scale-90">
-                        <MoreHorizontal className="w-6 h-6 text-muted-foreground" />
+                    <button
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        className="shrink-0 rounded-full p-2.5 text-muted-foreground transition-colors hover:bg-muted/40"
+                    >
+                        <MoreHorizontal className="w-5 h-5" />
                     </button>
 
                     {isMenuOpen && (
                         <>
                             <div className="fixed inset-0 z-10" onClick={() => setIsMenuOpen(false)} />
-                            <div className="absolute right-8 top-20 w-40 bg-card border border-border rounded-2xl elevation-8 z-20 py-2 overflow-hidden animate-slide-up">
-                                <button onClick={() => { setIsMenuOpen(false); setIsEditDrawerOpen(true); }} className="w-full px-5 py-3 text-left text-sm hover:bg-muted transition-colors flex items-center gap-3 font-bold">
+                            <div className="absolute right-5 top-16 z-20 w-40 overflow-hidden rounded-2xl border border-border bg-card py-2">
+                                <button onClick={() => { setIsMenuOpen(false); setIsEditDrawerOpen(true); }} className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium transition-colors hover:bg-muted">
                                     <Activity className="w-4 h-4 text-accent" /> Edit Protocol
                                 </button>
                             </div>
@@ -238,60 +242,76 @@ export function ExerciseCard({
                     )}
                 </div>
 
-                {/* Main Content Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    {/* Left Panel: The Briefing */}
-                    <div className="space-y-6">
-                        <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                <div className="mt-5 space-y-6">
+                    <div className="space-y-5">
+                        <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <Target className="w-4 h-4 text-accent/60" />
-                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Tempo</span>
+                                <Target className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Tempo</span>
                             </div>
-                            <span className="text-[10px] font-bold text-accent/80 font-mono">{tempo}</span>
+                            <span className="font-mono text-[11px] text-foreground">{tempo}</span>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <MetadataChip label="Goal" value={`${setsMin}–${setsMax} Sets`} icon={<Hash className="w-3.5 h-3.5" />} />
-                            <MetadataChip label="Range" value={`${repsMin}–${repsMax} Reps`} icon={<Repeat className="w-3.5 h-3.5" />} />
-                            <MetadataChip label="Rest" value={`${restMin}–${restMax}s`} icon={<Timer className="w-3.5 h-3.5" />} />
-                            <MetadataChip label="Work" value={`${logs.length} Done`} icon={<CheckCircle2 className="w-3.5 h-3.5" />} />
-                        </div>
-
-                        {/* Tactical Challenge Box */}
-                        {previousLogs.length > 0 && (
-                            <div className="mt-4 p-4 rounded-2xl bg-accent/5 border border-accent/10 flex items-center justify-between group/challenge hover:bg-accent/10 transition-colors cursor-default">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 rounded-xl bg-accent/10 text-accent">
-                                        <Flame className="w-4 h-4 animate-pulse" />
-                                    </div>
-                                    <span className="text-[10px] font-bold text-accent/80 uppercase tracking-widest">Beat Previous</span>
+                        <div className="flex flex-wrap gap-x-5 gap-y-4 border-y border-border/40 py-4">
+                            <div className="min-w-[8.5rem] flex-1 space-y-1 text-left">
+                                <div className="flex items-center gap-1.5 text-muted-foreground">
+                                    <Hash className="h-3.5 w-3.5" />
+                                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">Goal</span>
                                 </div>
-                                <span className="font-display font-bold text-sm text-foreground">
+                                <p className="text-sm font-medium text-foreground">{setsMin}–{setsMax} sets</p>
+                            </div>
+                            <div className="min-w-[8.5rem] flex-1 space-y-1 text-left">
+                                <div className="flex items-center gap-1.5 text-muted-foreground">
+                                    <Repeat className="h-3.5 w-3.5" />
+                                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">Range</span>
+                                </div>
+                                <p className="text-sm font-medium text-foreground">{repsMin}–{repsMax} reps</p>
+                            </div>
+                            <div className="min-w-[8.5rem] flex-1 space-y-1 text-left">
+                                <div className="flex items-center gap-1.5 text-muted-foreground">
+                                    <Timer className="h-3.5 w-3.5" />
+                                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">Rest</span>
+                                </div>
+                                <p className="text-sm font-medium text-foreground">{restMin}–{restMax}s</p>
+                            </div>
+                            <div className="min-w-[8.5rem] flex-1 space-y-1 text-left">
+                                <div className="flex items-center gap-1.5 text-muted-foreground">
+                                    <CheckCircle2 className="h-3.5 w-3.5" />
+                                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">Work</span>
+                                </div>
+                                <p className="text-sm font-medium text-foreground">{completedSetCount} done</p>
+                            </div>
+                        </div>
+
+                        {previousLogs.length > 0 && (
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 text-muted-foreground">
+                                    <Flame className="h-4 w-4 text-accent" />
+                                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">Beat Previous</span>
+                                </div>
+                                <span className="font-display text-sm font-semibold text-foreground">
                                     {previousLogs[0].weight ? `${previousLogs[0].weight}kg × ` : ""}{previousLogs[0].reps}
                                 </span>
                             </div>
                         )}
                     </div>
 
-                    {/* Right Panel: The Action */}
-                    <div className="space-y-6">
-                        <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <Zap className="w-4 h-4 text-warning/60" />
-                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Set Logging</span>
+                                <Zap className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Set Logging</span>
                             </div>
-                            <span className="text-[10px] font-bold text-muted-foreground/40 italic">Set Status</span>
+                            <span className="text-[10px] text-muted-foreground">{completedSetCount}/{setsMax}</span>
                         </div>
-                        <div className="bg-muted/10 rounded-3xl p-2 border border-border/20">
-                            <SetTracker
-                                setsMin={setsMin}
-                                setsMax={setsMax}
-                                logs={logs.map(l => ({ set_order_index: l.set_order_index, reps: l.reps, rpe: l.rpe }))}
-                                targetReps={repsMin}
-                                onSetClick={handleSetClick}
-                                previousLogs={previousLogs}
-                            />
-                        </div>
+                        <SetTracker
+                            setsMin={setsMin}
+                            setsMax={setsMax}
+                            logs={logs.map(l => ({ set_order_index: l.set_order_index, reps: l.reps, rpe: l.rpe }))}
+                            targetReps={repsMin}
+                            onSetClick={handleSetClick}
+                            previousLogs={previousLogs}
+                        />
                     </div>
                 </div>
             </div>

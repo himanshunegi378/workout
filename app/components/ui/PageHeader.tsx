@@ -20,8 +20,8 @@ export function PageHeader({ title, subtitle, backHref, action, showBackDefault 
         if (!backHref && !showBackDefault) return null;
 
         const content = (
-            <div className="p-2 -ml-2 rounded-2xl hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-all active:scale-90 flex items-center justify-center">
-                <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+            <div className="flex items-center justify-center rounded-xl p-2 -ml-2 text-muted-foreground transition-colors hover:bg-muted/40 hover:text-foreground active:scale-95">
+                <ChevronLeft className="h-5 w-5 md:h-5 md:w-5" />
             </div>
         );
 
@@ -41,32 +41,25 @@ export function PageHeader({ title, subtitle, backHref, action, showBackDefault 
     };
 
     return (
-        <header className="sticky top-0 z-40 bg-background/60 backdrop-blur-xl border-b border-border/40">
-            <div className="grid grid-cols-[48px_1fr_48px] md:grid-cols-[auto_1fr_auto] items-center px-4 md:px-10 h-16 md:h-20 max-w-lg md:max-w-5xl mx-auto gap-2 md:gap-8">
-                {/* Back Button Area */}
-                <div className="flex items-center shrink-0">
+        <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
+            <div className="mx-auto grid h-16 max-w-lg grid-cols-[44px_1fr_44px] items-center gap-2 px-4 md:h-20 md:max-w-5xl md:grid-cols-[auto_1fr_auto] md:gap-6 md:px-10">
+                <div className="flex shrink-0 items-center">
                     {renderBack()}
                 </div>
 
-                {/* Title Area - Centered on mobile, Left on desktop */}
-                <div className="flex flex-col min-w-0 text-center md:text-left">
-                    <h1 className="font-display text-lg md:text-2xl font-bold text-foreground truncate tracking-tight">
+                <div className="min-w-0 text-center md:text-left">
+                    <h1 className="truncate font-display text-lg font-semibold tracking-tight text-foreground md:text-2xl">
                         {title}
                     </h1>
                     {subtitle && (
-                        <p className="text-[10px] md:text-xs font-bold text-muted-foreground/80 uppercase tracking-widest truncate">
+                        <p className="truncate text-[10px] uppercase tracking-[0.2em] text-muted-foreground md:text-xs">
                             {subtitle}
                         </p>
                     )}
                 </div>
 
-                {/* Action Area */}
-                <div className="flex items-center justify-end shrink-0 min-w-[40px]">
-                    {action && (
-                        <div className="flex items-center gap-3">
-                            {action}
-                        </div>
-                    )}
+                <div className="flex min-w-[44px] shrink-0 items-center justify-end">
+                    {action && <div className="flex items-center gap-2">{action}</div>}
                 </div>
             </div>
         </header>
