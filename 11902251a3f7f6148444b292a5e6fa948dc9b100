@@ -1,0 +1,27 @@
+app/features/rest-timer/ui/RestTimerHeaderActionBridge.tsx
+  2341f8871be7c82d 18,31
+app/features/rest-timer/ui/RestTimerFloatingBubble.tsx
+  2341f8871be7c82d 12
+app/features/rest-timer/context/RestTimerContext.tsx
+  2341f8871be7c82d 67,155,171
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "11902251a3f7f6148444b292a5e6fa948dc9b100",
+  "prompts": {
+    "2341f8871be7c82d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d1e55-a7a6-7cc3-92ed-1d69a0bb4511",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 6,
+      "total_deletions": 0,
+      "accepted_lines": 6,
+      "overriden_lines": 0
+    }
+  }
+}
