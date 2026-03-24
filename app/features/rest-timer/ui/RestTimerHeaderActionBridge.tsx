@@ -15,6 +15,7 @@ export function RestTimerHeaderActionBridge() {
     useEffect(() => {
         if (!addAction || !removeAction) return;
 
+        // Keep the page-header action registered only while a timer is active.
         if (isActive && !actionIdRef.current) {
             actionIdRef.current = addAction(<RestTimerHeaderValue />);
         }
@@ -27,6 +28,7 @@ export function RestTimerHeaderActionBridge() {
 
     useEffect(() => {
         return () => {
+            // The timer can outlive the page shell, so we must explicitly unregister the header action on unmount.
             if (removeAction && actionIdRef.current) {
                 removeAction(actionIdRef.current);
                 actionIdRef.current = null;

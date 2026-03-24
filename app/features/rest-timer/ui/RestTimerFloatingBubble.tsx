@@ -9,6 +9,7 @@ export function RestTimerFloatingBubble() {
     const headerHost = usePageHeaderHost();
     const hasHeaderHost = headerHost?.hasHost ?? false;
 
+    // The bubble is only the fallback surface when the workout header cannot host the live timer action.
     if (!isActive || !isMinimized || hasHeaderHost) return null;
 
     return (

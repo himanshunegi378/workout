@@ -64,6 +64,7 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
             let expiry = new Date();
             let finalIsActive = persisted.isActive;
 
+            // Rebuild the countdown from persisted wall-clock state so refreshes and tab switches stay accurate.
             if (persisted.isActive) {
                 if (persisted.isRunning && persisted.expiryTimestamp) {
                     expiry = new Date(persisted.expiryTimestamp);
@@ -151,6 +152,7 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
         if (syncedRef.current) return;
         syncedRef.current = true;
 
+        // `useTimer` starts from a fresh hook state on mount, so we replay the persisted timer exactly once here.
         if (state.isActive) {
             if (!state.isPaused && state.expiryTimestamp > new Date()) {
                 restart(state.expiryTimestamp, true);
@@ -166,6 +168,7 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         if (!state.initialized) return;
 
+        // Persist enough information to recover both countdown progress and minimized/expanded UI state.
         const expiry = (isRunning || state.isPaused) ? state.expiryTimestamp.toISOString() : null;
         const persisted: PersistedState = {
             isActive: state.isActive,
