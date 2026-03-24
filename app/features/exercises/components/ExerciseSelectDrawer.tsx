@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search } from "lucide-react";
-import { BottomDrawer, muscleColorMap } from "@/app/components/ui";
+import { Search, Dumbbell } from "lucide-react";
+import { BottomDrawer, List, muscleColorMap } from "@/app/components/ui";
 
 interface Exercise {
     id: string;
@@ -69,39 +69,45 @@ export function ExerciseSelectDrawer({
 
             <div className="w-full flex-1 overflow-y-auto py-2 -mx-4 px-4">
                 {filteredExercises.length === 0 ? (
-                    <div className="py-12 text-center text-muted-foreground">
-                        <p className="text-sm">No exercises found.</p>
-                    </div>
+                    <List.Empty
+                        icon={Dumbbell}
+                        title="No exercises found"
+                        description="Try a different search term."
+                        className="py-12"
+                    />
                 ) : (
-                    <div className="space-y-1">
-                        {filteredExercises.map((ex) => (
-                            <button
-                                key={ex.id}
-                                onClick={() => {
-                                    onSelect(ex.id);
-                                    onClose();
-                                }}
-                                className={`flex w-full items-center gap-4 rounded-2xl px-3 py-4 text-left transition-colors duration-200 active:scale-[0.99] ${selectedId === ex.id
-                                    ? "bg-accent/5 text-foreground"
-                                    : "hover:bg-muted/20"
+                    <List.Content className="space-y-1" gap="sm">
+                        {filteredExercises.map((ex, index) => (
+                            <List.Item key={ex.id} index={index}>
+                                <button
+                                    onClick={() => {
+                                        onSelect(ex.id);
+                                        onClose();
+                                    }}
+                                    className={`flex w-full items-center gap-4 rounded-2xl px-3 py-4 text-left transition-colors duration-200 active:scale-[0.99] ${
+                                        selectedId === ex.id
+                                            ? "bg-accent/5 text-foreground"
+                                            : "hover:bg-muted/20"
                                     }`}
-                            >
-                                <div
-                                    className={`h-10 w-1.5 shrink-0 rounded-full ${muscleColorMap[ex.muscle_group as keyof typeof muscleColorMap] || "bg-muted"
+                                >
+                                    <div
+                                        className={`h-10 w-1.5 shrink-0 rounded-full ${
+                                            muscleColorMap[ex.muscle_group as keyof typeof muscleColorMap] || "bg-muted"
                                         }`}
-                                />
-                                <div className="flex-1 min-w-0">
-                                    <p className="font-medium text-foreground truncate">{ex.name}</p>
-                                    <p className="text-xs text-muted-foreground mt-0.5 capitalize truncate">{ex.muscle_group}</p>
-                                </div>
-                                <div className="ml-3 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted/35">
-                                    {selectedId === ex.id && (
-                                        <div className="w-3 h-3 rounded-full bg-accent" />
-                                    )}
-                                </div>
-                            </button>
+                                    />
+                                    <div className="min-w-0 flex-1">
+                                        <p className="truncate font-medium text-foreground">{ex.name}</p>
+                                        <p className="mt-0.5 truncate text-xs capitalize text-muted-foreground">{ex.muscle_group}</p>
+                                    </div>
+                                    <div className="ml-3 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted/35">
+                                        {selectedId === ex.id && (
+                                            <div className="h-3 w-3 rounded-full bg-accent" />
+                                        )}
+                                    </div>
+                                </button>
+                            </List.Item>
                         ))}
-                    </div>
+                    </List.Content>
                 )}
             </div>
         </BottomDrawer>

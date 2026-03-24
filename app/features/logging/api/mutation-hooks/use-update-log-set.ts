@@ -19,8 +19,8 @@ export function useUpdateLogSet() {
         onSuccess: () => {
             // Invalidate the workout details cache
             queryClient.invalidateQueries({ queryKey: workoutKeys.details() });
-            // Invalidate the global logs lists
-            queryClient.invalidateQueries({ queryKey: logKeys.lists() });
+            // Invalidate all log-derived queries so exercise-specific history stays in sync.
+            queryClient.invalidateQueries({ queryKey: logKeys.all });
             // Refresh server components
             router.refresh();
         },

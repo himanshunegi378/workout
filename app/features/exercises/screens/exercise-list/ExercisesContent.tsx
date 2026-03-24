@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2, Dumbbell } from "lucide-react";
-import { EmptyState } from "@/app/components/ui";
+import { List } from "@/app/components/ui";
 import { ExerciseListClient } from "./ui/ExerciseListClient";
 import { useExercises } from "../../api/query-hooks/use-exercises";
 
@@ -24,7 +24,7 @@ export function ExercisesContent() {
 
     if (isLoading) {
         return (
-            <div className="space-y-6">
+            <List.Root>
                 <div className="border-b border-border/50 pb-4">
                     <div className="h-11 w-full animate-pulse rounded-full bg-muted/30" />
                     <div className="mt-4 flex flex-wrap gap-2">
@@ -33,17 +33,14 @@ export function ExercisesContent() {
                         ))}
                     </div>
                 </div>
-                <div className="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
-                    <Loader2 className="h-7 w-7 animate-spin text-accent" />
-                    <span className="text-sm font-medium tracking-wide">Loading exercises...</span>
-                </div>
-            </div>
+                <List.Loading title="Loading exercises..." icon={Loader2} />
+            </List.Root>
         );
     }
 
     if (isError || !exercises) {
         return (
-            <EmptyState
+            <List.Error
                 icon={Dumbbell}
                 title="Something went wrong"
                 description="Could not load exercise library. Please try again."

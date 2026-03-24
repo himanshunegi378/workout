@@ -14,7 +14,7 @@ export default function AddWorkoutPage({ params }: PageProps) {
     return (
         <PageShell
             size="md"
-            contentClassName="py-6 sm:py-8 lg:py-10"
+            spacing="comfortable"
             header={<PageHeader title="New Workout" backHref={`/programmes/${programmeId}`} showBackDefault />}
         >
             <AddWorkoutForm programmeId={programmeId} />

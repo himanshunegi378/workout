@@ -1,7 +1,8 @@
 "use client";
 
+import { AlertTriangle, Inbox, Loader2 } from "lucide-react";
 import { FeedbackStatus } from "@/app/generated/prisma";
-import { Button } from "@/app/components/ui";
+import { Button, List } from "@/app/components/ui";
 import type { FeedbackListItem } from "../../../../api/query-hooks/use-feedback-history";
 
 const STATUS_STYLES: Record<FeedbackStatus, string> = {
@@ -37,45 +38,57 @@ export function PreviousFeedbackList({
     }
 
     return (
-        <section className="space-y-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground/85">Previous feedback</p>
-                    <h3 className="mt-2 text-lg font-display font-semibold text-foreground">Your earlier submissions</h3>
-                    <p className="text-sm text-foreground/85">
-                        Review your earlier submissions and their current status.
-                    </p>
-                </div>
-                <Button type="button" variant="ghost" onClick={onRefresh} disabled={isLoading}>
-                    Refresh
-                </Button>
-            </div>
+        <List.Root density="compact">
+            <List.Header className="space-y-4">
+                <List.Intro className="sm:items-start">
+                    <List.Heading>
+                        <List.Eyebrow className="text-muted-foreground/85">Previous feedback</List.Eyebrow>
+                        <List.Title className="text-lg md:text-lg">Your earlier submissions</List.Title>
+                        <List.Description className="text-foreground/85">
+                            Review your earlier submissions and their current status.
+                        </List.Description>
+                    </List.Heading>
+                    <List.Actions>
+                        <Button type="button" variant="ghost" onClick={onRefresh} disabled={isLoading}>
+                            Refresh
+                        </Button>
+                    </List.Actions>
+                </List.Intro>
+            </List.Header>
 
             {isLoading && (
-                <div className="py-3 text-sm text-foreground/85">
-                    Loading feedback history...
-                </div>
+                <List.Loading
+                    icon={Loader2}
+                    title="Loading feedback history..."
+                    className="py-8"
+                />
             )}
 
             {error && (
-                <div className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
-                    {error.message}
-                </div>
+                <List.Error
+                    icon={AlertTriangle}
+                    title="Could not load feedback"
+                    description={error.message}
+                    className="py-8"
+                />
             )}
 
             {!isLoading && !error && feedbackEntries.length === 0 && (
-                <div className="py-3 text-sm text-foreground/85">
-                    You have not submitted any feedback yet.
-                </div>
+                <List.Empty
+                    icon={Inbox}
+                    title="No feedback yet"
+                    description="You have not submitted any feedback yet."
+                    className="py-8"
+                />
             )}
 
             {!isLoading && !error && feedbackEntries.length > 0 && (
-                <div className="space-y-0">
+                <List.Content className="space-y-0" gap="md">
                     {feedbackEntries.map((entry, index) => (
-                        <article
+                        <List.Item
                             key={entry.id}
-                            className="space-y-3 py-4 first:pt-0 animate-slide-up"
-                            style={{ animationDelay: `${index * 40}ms` }}
+                            index={index}
+                            className="space-y-3 py-4 first:pt-0"
                         >
                             <div className="flex items-start justify-between gap-3">
                                 <div className="space-y-1">
@@ -96,10 +109,10 @@ export function PreviousFeedbackList({
                             <p className="text-sm leading-6 text-foreground whitespace-pre-wrap">
                                 {entry.description}
                             </p>
-                        </article>
+                        </List.Item>
                     ))}
-                </div>
+                </List.Content>
             )}
-        </section>
+        </List.Root>
     );
 }

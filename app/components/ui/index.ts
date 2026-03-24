@@ -1,6 +1,8 @@
 // Global UI primitives — import from "@/app/components/ui"
 export { PageHeader } from "./PageHeader";
 export { PageShell } from "./PageShell";
+export { usePageHeaderActions } from "./PageHeaderActionsContext";
+export { PageHeaderHostProvider, usePageHeaderHost } from "./PageHeaderActionsContext";
 export { BottomNav } from "./BottomNav";
 export { Sidebar } from "./Sidebar";
 export { Button } from "./Button";
@@ -11,6 +13,7 @@ export { MuscleGroupSelector } from "./MuscleGroupSelector";
 export * from "./Portal";
 export { muscleColorMap } from "./muscle-colors";
 export { EmptyState } from "./EmptyState";
+export { List } from "./List";
 export { NumberStepper } from "./NumberStepper";
 export { BottomDrawer } from "./BottomDrawer";
 export { BottomDrawerProvider } from "./BottomDrawerContext";

@@ -10,7 +10,7 @@ import { useLogSet } from "@/app/features/logging/api/mutation-hooks/use-log-set
 import { useUpdateLogSet } from "@/app/features/logging/api/mutation-hooks/use-update-log-set";
 import { useDeleteLogSet } from "@/app/features/logging/api/mutation-hooks/use-delete-log-set";
 import { getLastLog } from "@/app/features/logging/api/query-hooks/use-last-log";
-import { useRestTimer } from "@/app/features/workouts/contexts/RestTimerContext";
+import { useRestTimer } from "@/app/features/rest-timer";
 import { usePRCelebration } from "@/app/features/personal-records/PRCelebrationContext";
 import { EditExerciseMetadataDrawer } from "./EditExerciseMetadataDrawer";
 import { ExerciseHistoryDrawer } from "@/app/features/exercises/components/ExerciseHistoryDrawer";

@@ -3,7 +3,8 @@
 import { notFound } from "next/navigation";
 import { Activity, Loader2, Timer as TimerIcon, Zap, Trophy } from "lucide-react";
 import { useState, useEffect } from "react";
-import { PageHeader, EmptyState } from "@/app/components/ui";
+import { PageHeader, PageShell, List } from "@/app/components/ui";
+import { RestTimerHeaderActionBridge } from "@/app/features/rest-timer";
 import { ExerciseCard } from "./ui/ExerciseCard";
 import { AddExerciseTrigger } from "../../../exercises/components/AddExerciseTrigger";
 import { useWorkoutDetails, WorkoutDetailsResponse } from "../../api/query-hooks/use-workout-details";
@@ -58,19 +59,31 @@ export function ExerciseListContent({
 
     if (isLoading) {
         return (
-            <>
-                <PageHeader title="Loading..." backHref={`/programmes/${programmeId}`} showBackDefault />
-                <div className="flex min-h-screen flex-col items-center gap-4 px-4 pt-24 sm:px-6 lg:px-8">
-                    <Loader2 className="w-8 h-8 animate-spin text-accent" />
-                    <span className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground animate-pulse">Initializing session...</span>
-                </div>
-            </>
+            <PageShell
+                header={<PageHeader title="Loading..." backHref={`/programmes/${programmeId}`} showBackDefault />}
+                size="xl"
+            >
+                <List.Loading
+                    className="min-h-[50vh]"
+                    title="Initializing session..."
+                    icon={Loader2}
+                />
+            </PageShell>
         );
     }
 
     if (isError || !data) {
         if (isError) return (
-            <div className="p-8"><EmptyState icon={Activity} title="System Error" description="Could not link to training session." /></div>
+            <PageShell
+                header={<PageHeader title="Workout Session" backHref={`/programmes/${programmeId}`} showBackDefault />}
+                size="xl"
+            >
+                <List.Error
+                    icon={Activity}
+                    title="System Error"
+                    description="Could not link to training session."
+                />
+            </PageShell>
         );
         notFound();
     }
@@ -99,14 +112,20 @@ export function ExerciseListContent({
     const progressPercentage = totalExercises > 0 ? (completedExercises / totalExercises) * 100 : 0;
 
     return (
-        <div className="min-h-screen bg-background text-foreground">
-            <PageHeader
-                title={workout.name}
-                subtitle="Live Training Session"
-                backHref={`/programmes/${programmeId}`}
-                showBackDefault
-                action={<AddExerciseTrigger programmeId={programmeId} workoutId={workoutId} variant="icon" />}
-            />
+        <PageShell
+            header={
+                <PageHeader
+                    title={workout.name}
+                    subtitle="Live Training Session"
+                    backHref={`/programmes/${programmeId}`}
+                    showBackDefault
+                    action={<AddExerciseTrigger programmeId={programmeId} workoutId={workoutId} variant="icon" />}
+                />
+            }
+            size="xl"
+            contentClassName="max-w-none px-0 py-0"
+        >
+            <RestTimerHeaderActionBridge />
 
             <div className="sticky top-16 z-30 border-b border-border/60 bg-background/85 backdrop-blur-xl md:top-20">
                 <div className="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6 lg:px-8">
@@ -154,25 +173,26 @@ export function ExerciseListContent({
                 </div>
             </div>
 
-            <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+            <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
                 {workout.exercisesWithMetadata.length === 0 ? (
-                    <EmptyState
+                    <List.Empty
                         icon={Activity}
                         title="Empty Protocol"
                         description="Load exercises into the console to begin deployment."
                         action={<AddExerciseTrigger programmeId={programmeId} workoutId={workoutId} variant="button" />}
                     />
                 ) : (
-                    <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                    <List.Content layout="grid" columns={2} gap="lg" className="lg:gap-5">
                         {workout.exercisesWithMetadata.filter((ewm) => !ewm.is_hidden).map((ewm, i) => {
                             const exerciseLogs = logsByEwm[ewm.id] || [];
                             const isDone = exerciseLogs.length >= (ewm.sets_min || 1);
 
                             return (
-                                <div
+                                <List.Item
                                     key={ewm.id}
-                                    className={`group transition-all duration-500 ${isDone ? 'opacity-75 scale-[0.99] grayscale-[0.15]' : 'opacity-100 scale-100'}`}
-                                    style={{ animationDelay: `${i * 60}ms` }}
+                                    index={i}
+                                    tone={isDone ? "completed" : "default"}
+                                    className="group"
                                 >
                                     <ExerciseCard
                                         workoutId={workoutId}
@@ -191,12 +211,12 @@ export function ExerciseListContent({
                                         initialLogs={exerciseLogs}
                                         previousLogs={previousLogsByExercise[ewm.exercise_id] || []}
                                     />
-                                </div>
+                                </List.Item>
                             );
                         })}
-                    </div>
+                    </List.Content>
                 )}
-            </main>
-        </div>
+            </div>
+        </PageShell>
     );
 }

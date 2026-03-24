@@ -92,8 +92,8 @@ export function useLogSet() {
             if (variables.workoutId) {
                 queryClient.invalidateQueries({ queryKey: workoutKeys.detail(variables.workoutId) });
             }
-            // Invalidate the global logs lists
-            queryClient.invalidateQueries({ queryKey: logKeys.lists() });
+            // Invalidate all log-derived queries so quick logs also appear in exercise history and last-log views.
+            queryClient.invalidateQueries({ queryKey: logKeys.all });
         },
         /**
          * Always refetch after error or success to ensure synchronization.

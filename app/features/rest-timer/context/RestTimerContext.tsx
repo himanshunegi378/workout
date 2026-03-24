@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useTimer } from "react-timer-hook";
 
 interface RestTimerContextValue {
@@ -8,11 +8,14 @@ interface RestTimerContextValue {
     timeLeft: number;
     totalDuration: number;
     isRunning: boolean;
-    startTimer: (seconds: number, options: { closeOnFinish?: boolean }) => void;
+    isMinimized: boolean;
+    startTimer: (seconds: number, options?: { closeOnFinish?: boolean; startMinimized?: boolean }) => void;
     pauseTimer: () => void;
     resumeTimer: () => void;
     addTime: (seconds: number) => void;
     stopTimer: () => void;
+    openTimer: () => void;
+    minimizeTimer: () => void;
 }
 
 interface TimerState {
@@ -20,11 +23,10 @@ interface TimerState {
     totalDuration: number;
     closeOnFinish: boolean;
     isPaused: boolean;
+    isMinimized: boolean;
     initialized: boolean;
     expiryTimestamp: Date;
 }
-
-const STORAGE_KEY = "@workout/rest-timer-state";
 
 interface PersistedState {
     isActive: boolean;
@@ -34,26 +36,12 @@ interface PersistedState {
     closeOnFinish: boolean;
     expiryTimestamp: string | null;
     timeLeftAtPause: number | null;
+    isMinimized: boolean;
 }
 
+const STORAGE_KEY = "@workout/rest-timer-state";
 const RestTimerContext = createContext<RestTimerContextValue | null>(null);
 
-/**
- * A context provider that manages a persistent, global rest timer for workout sessions.
- * 
- * Context:
- * This provider tracks the time remaining between sets, even across page refreshes or 
- * app backgrounding, by persisting state to `localStorage`. It also integrates with 
- * the Browser Notification API to alert users when their rest period is over.
- * 
- * Why:
- * - Persistence: Standard React state is lost on refresh; during a workout, users often 
- *   check other apps or refresh. LocalStorage sync ensures the timer remains accurate.
- * - UX Reliability: Uses `visibilitychange` events to catch timers that should have 
- *   expired while the browser was inactive.
- * - Convenience: Provides a single source of truth for the rest timer that can be 
- *   controlled from any component (e.g., the SetTracker or a global RestOverlay).
- */
 export function RestTimerProvider({ children }: { children: React.ReactNode }) {
     const [state, setState] = useState<TimerState>(() => {
         const initialState = {
@@ -61,11 +49,12 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
             totalDuration: 0,
             closeOnFinish: false,
             isPaused: false,
+            isMinimized: true,
             initialized: false,
             expiryTimestamp: new Date(),
         };
 
-        if (typeof window === 'undefined') return initialState;
+        if (typeof window === "undefined") return initialState;
 
         const saved = localStorage.getItem(STORAGE_KEY);
         if (!saved) return { ...initialState, initialized: true };
@@ -80,9 +69,7 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
                     expiry = new Date(persisted.expiryTimestamp);
                     if (expiry <= new Date()) {
                         expiry = new Date();
-                        if (persisted.closeOnFinish) {
-                            finalIsActive = false;
-                        }
+                        finalIsActive = false;
                     }
                 } else if (persisted.isPaused && persisted.timeLeftAtPause !== null) {
                     expiry = new Date();
@@ -95,6 +82,7 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
                 totalDuration: persisted.totalDuration,
                 closeOnFinish: persisted.closeOnFinish,
                 isPaused: persisted.isPaused,
+                isMinimized: persisted.isMinimized ?? true,
                 initialized: true,
                 expiryTimestamp: expiry,
             };
@@ -106,28 +94,43 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
 
     const [notified, setNotified] = useState(false);
 
+    const resetTimerState = useCallback((overrides?: Partial<TimerState>) => {
+        setState({
+            isActive: false,
+            totalDuration: 0,
+            closeOnFinish: false,
+            isPaused: false,
+            isMinimized: true,
+            initialized: true,
+            expiryTimestamp: new Date(),
+            ...overrides,
+        });
+    }, []);
+
     const triggerNotification = useCallback(() => {
         if (!notified && "Notification" in window && Notification.permission === "granted") {
             const notification = new Notification("Rest Finished", {
                 body: "Time to start your next set!",
                 icon: "/favicon.ico",
                 tag: "rest-timer-finished",
-                requireInteraction: true
+                requireInteraction: true,
             });
+
             notification.onclick = () => {
                 window.focus();
                 notification.close();
             };
+
             setNotified(true);
         }
     }, [notified]);
 
     const onExpire = useCallback(() => {
         triggerNotification();
-        if (state.closeOnFinish) {
-            setState(prev => ({ ...prev, isActive: false }));
-        }
-    }, [state.closeOnFinish, triggerNotification]);
+        resetTimerState();
+        setNotified(false);
+        localStorage.removeItem(STORAGE_KEY);
+    }, [resetTimerState, triggerNotification]);
 
     const {
         seconds,
@@ -142,9 +145,8 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
     });
 
     const timeLeft = state.isActive ? (minutes * 60 + seconds) : 0;
-
     const syncedRef = useRef(false);
-    // Sync useTimer with loaded state on mount
+
     useEffect(() => {
         if (syncedRef.current) return;
         syncedRef.current = true;
@@ -161,7 +163,6 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
         }
     }, [restart, state.isActive, state.isPaused, state.expiryTimestamp, onExpire]);
 
-    // Save state to localStorage whenever it changes
     useEffect(() => {
         if (!state.initialized) return;
 
@@ -174,84 +175,87 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
             closeOnFinish: state.closeOnFinish,
             expiryTimestamp: expiry,
             timeLeftAtPause: state.isPaused ? timeLeft : null,
+            isMinimized: state.isMinimized,
         };
+
         localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted));
     }, [state, isRunning, timeLeft]);
 
-    // Request notification permission
     useEffect(() => {
         if ("Notification" in window && Notification.permission === "default") {
             Notification.requestPermission();
         }
     }, []);
 
-    // Handle visibility changes for reliability
     useEffect(() => {
         const handleVisibilityChange = () => {
-            if (document.visibilityState === "visible") {
-                // If the timer should have finished while we were away
-                if (state.isActive && state.expiryTimestamp < new Date()) {
-                    onExpire();
-                }
+            if (document.visibilityState === "visible" && state.isActive && state.expiryTimestamp < new Date()) {
+                onExpire();
             }
         };
+
         document.addEventListener("visibilitychange", handleVisibilityChange);
         return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
     }, [state.isActive, state.expiryTimestamp, onExpire]);
 
-    const startTimer = useCallback((seconds: number, options: { closeOnFinish?: boolean }) => {
+    const startTimer = useCallback((seconds: number, options: { closeOnFinish?: boolean; startMinimized?: boolean } = {}) => {
         const time = new Date();
         time.setSeconds(time.getSeconds() + seconds);
+
         setState({
             isActive: true,
             totalDuration: seconds,
             closeOnFinish: options.closeOnFinish || false,
             isPaused: false,
+            isMinimized: options.startMinimized ?? true,
             initialized: true,
             expiryTimestamp: time,
         });
+
         setNotified(false);
         restart(time, true);
     }, [restart]);
 
     const pauseTimer = useCallback(() => {
         pause();
-        setState(prev => ({ ...prev, isPaused: true }));
+        setState((prev) => ({ ...prev, isPaused: true }));
     }, [pause]);
 
     const resumeTimer = useCallback(() => {
         if (state.isActive && timeLeft > 0) {
             const time = new Date();
             time.setSeconds(time.getSeconds() + timeLeft);
-            setState(prev => ({ ...prev, isPaused: false, expiryTimestamp: time }));
+            setState((prev) => ({ ...prev, isPaused: false, expiryTimestamp: time }));
             restart(time, true);
         }
     }, [state.isActive, timeLeft, restart]);
 
-    const addTime = useCallback((seconds: number) => {
-        const newTimeLeft = Math.max(0, timeLeft + seconds);
+    const addTime = useCallback((secondsToAdd: number) => {
+        const newTimeLeft = Math.max(0, timeLeft + secondsToAdd);
         const time = new Date();
         time.setSeconds(time.getSeconds() + newTimeLeft);
-        setState(prev => ({ ...prev, expiryTimestamp: time }));
+        setState((prev) => ({ ...prev, expiryTimestamp: time }));
         restart(time, isRunning);
+
         if (newTimeLeft === 0 && isRunning) {
             onExpire();
         }
     }, [timeLeft, restart, isRunning, onExpire]);
 
     const stopTimer = useCallback(() => {
-        setState({
-            isActive: false,
-            totalDuration: 0,
-            closeOnFinish: false,
-            isPaused: false,
-            initialized: true,
-            expiryTimestamp: new Date(),
-        });
+        resetTimerState();
         setNotified(false);
         restart(new Date(), false);
         localStorage.removeItem(STORAGE_KEY);
-    }, [restart]);
+    }, [resetTimerState, restart]);
+
+    const openTimer = useCallback(() => {
+        setState((prev) => ({ ...prev, isMinimized: false }));
+    }, []);
+
+    const minimizeTimer = useCallback(() => {
+        setState((prev) => ({ ...prev, isMinimized: true }));
+    }, []);
 
     return (
         <RestTimerContext.Provider
@@ -260,11 +264,14 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
                 timeLeft,
                 totalDuration: state.totalDuration,
                 isRunning,
+                isMinimized: state.isMinimized,
                 startTimer,
                 pauseTimer,
                 resumeTimer,
                 addTime,
                 stopTimer,
+                openTimer,
+                minimizeTimer,
             }}
         >
             {children}
@@ -272,21 +279,12 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
     );
 }
 
-/**
- * A custom hook to access the rest timer state and controls.
- * 
- * Context:
- * Used by components to display the countdown, start new rest periods, or adjust 
- * time (add/subtract) on the fly.
- * 
- * Why:
- * - Simple API: Abstracting the complexity of `react-timer-hook` and persistence 
- *   logic into a clean, intuitive interface for the rest of the app.
- */
 export function useRestTimer(): RestTimerContextValue {
     const ctx = useContext(RestTimerContext);
+
     if (!ctx) {
         throw new Error("useRestTimer must be used inside <RestTimerProvider>");
     }
+
     return ctx;
 }

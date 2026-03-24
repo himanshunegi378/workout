@@ -13,4 +13,6 @@ export const logKeys = {
     sessions: () => [...logKeys.all, "sessions"] as const,
     /** Key for exercise history queries, optionally filtered by exerciseId. */
     history: (exerciseId?: string) => [...logKeys.all, "history", exerciseId].filter(Boolean),
+    /** Key for the most recent log of a specific exercise. */
+    lastLog: (exerciseId?: string) => [...logKeys.all, "last-log", exerciseId].filter(Boolean),
 };

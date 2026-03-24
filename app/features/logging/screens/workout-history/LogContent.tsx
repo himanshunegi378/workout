@@ -10,7 +10,7 @@ import {
     differenceInDays,
     parseISO 
 } from "date-fns";
-import { EmptyState } from "@/app/components/ui";
+import { List } from "@/app/components/ui";
 import { SessionCard } from "./ui/SessionCard";
 import { useInfiniteSessions } from "../../api/query-hooks/use-sessions";
 import { QuickLogActions } from "./ui/QuickLogActions";
@@ -116,20 +116,19 @@ export function LogContent() {
         return Array.from(merged.values());
     })();
 
-    // ... (Loading and Error states remain the same)
-
     if (isLoading) {
         return (
-            <div className="flex flex-col items-center justify-center py-24 gap-4">
-                <Loader2 className="w-8 h-8 animate-spin text-accent" />
-                <span className="text-sm text-muted-foreground animate-pulse font-medium">Retrieving your journey...</span>
-            </div>
+            <List.Loading
+                title="Retrieving your journey..."
+                icon={Loader2}
+                className="py-24"
+            />
         );
     }
 
     if (isError) {
         return (
-            <EmptyState
+            <List.Error
                 icon={Check}
                 title="Something went wrong"
                 description="Could not load your log. Please try again."
@@ -139,7 +138,7 @@ export function LogContent() {
 
     if (!grouped || grouped.length === 0) {
         return (
-            <EmptyState
+            <List.Empty
                 icon={Check}
                 title="Your Journey Starts Here"
                 description="Log your first training session to begin your consistency streak."
@@ -149,19 +148,15 @@ export function LogContent() {
 
     return (
         <div className="flex flex-col pb-20">
-            <section className="mb-10 animate-slide-up pb-6">
-                <div className="grid gap-5 md:flex md:flex-row md:items-end md:justify-between">
-                    <div className="max-w-xl space-y-2">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-                            Training log
-                        </p>
-                        <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-                            Keep the thread moving.
-                        </h2>
-                        <p className="max-w-lg text-sm leading-6 text-muted-foreground">
+            <List.Header className="mb-10 animate-slide-up pb-6">
+                <List.Intro className="grid gap-5 md:flex md:flex-row md:items-end md:justify-between">
+                    <List.Heading className="max-w-xl space-y-2">
+                        <List.Eyebrow>Training log</List.Eyebrow>
+                        <List.Title>Keep the thread moving.</List.Title>
+                        <List.Description className="max-w-lg">
                             A quiet view of your current streak, recent consistency, and this month&apos;s work.
-                        </p>
-                    </div>
+                        </List.Description>
+                    </List.Heading>
 
                     <div className="grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-3">
                         <div className="min-w-0 space-y-1.5">
@@ -188,7 +183,7 @@ export function LogContent() {
                             <p className="text-sm text-foreground/90">{stats.monthlySessions} sessions</p>
                         </div>
                     </div>
-                </div>
+                </List.Intro>
 
                 <div className="mt-6 grid grid-cols-7 gap-2">
                     {stats.consistency.map((active, i) => (
@@ -200,7 +195,7 @@ export function LogContent() {
                         />
                     ))}
                 </div>
-            </section>
+            </List.Header>
 
             {/* Timeline View */}
             <div className="space-y-12 relative">
@@ -214,11 +209,11 @@ export function LogContent() {
                         style={{ animationDelay: `${gi * 100}ms` }}
                     >
                         {/* Enhanced Date Label */}
-                        <div className="flex items-center gap-4 group">
+                        <div className="group flex items-center gap-4">
                             <div className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full bg-card/70 transition-colors group-hover:bg-accent/10">
                                 <Calendar className="w-4 h-4 text-accent" />
                             </div>
-                            <h2 className="text-sm font-bold text-foreground uppercase tracking-[0.2em]">
+                            <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-foreground">
                                 {label}
                             </h2>
                             <div className="flex-1 h-px bg-border/40" />
@@ -263,7 +258,7 @@ export function LogContent() {
                 ))}
 
                 {hasNextPage && (
-                    <div className="pt-8 flex justify-center w-full md:ml-6">
+                    <div className="flex w-full justify-center pt-2 md:ml-6">
                         <button
                             onClick={() => fetchNextPage()}
                             disabled={isFetchingNextPage}

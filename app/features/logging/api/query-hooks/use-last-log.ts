@@ -28,7 +28,7 @@ export async function getLastLog(exerciseId: string) {
  */
 export function useLastLog(exerciseId: string, enabled = true) {
     return useQuery({
-        queryKey: [...logKeys.all, "last-log", exerciseId],
+        queryKey: logKeys.lastLog(exerciseId),
         queryFn: () => getLastLog(exerciseId),
         enabled,
     });

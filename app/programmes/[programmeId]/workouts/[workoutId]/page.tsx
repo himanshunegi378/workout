@@ -11,10 +11,8 @@ export default function ExerciseListPage({ params }: PageProps) {
     const { programmeId, workoutId } = use(params);
 
     return (
-        <div className="min-h-screen pb-20">
-            <Suspense fallback={<LoadingState programmeId={programmeId} />}>
-                <ExerciseListContent programmeId={programmeId} workoutId={workoutId} />
-            </Suspense>
-        </div>
+        <Suspense fallback={<LoadingState programmeId={programmeId} />}>
+            <ExerciseListContent programmeId={programmeId} workoutId={workoutId} />
+        </Suspense>
     );
 }

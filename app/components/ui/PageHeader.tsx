@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
+import { usePageHeaderActions } from "./PageHeaderActionsContext";
 
 interface PageHeaderProps {
     title: string;
@@ -15,6 +16,7 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, subtitle, backHref, action, showBackDefault }: PageHeaderProps) {
     const router = useRouter();
+    const headerActions = usePageHeaderActions();
 
     const renderBack = () => {
         if (!backHref && !showBackDefault) return null;
@@ -67,7 +69,16 @@ export function PageHeader({ title, subtitle, backHref, action, showBackDefault 
                 </div>
 
                 <div className="flex min-w-[44px] shrink-0 items-center justify-end">
-                    {action && <div className="flex items-center gap-2">{action}</div>}
+                    {(action || headerActions?.actions.length) ? (
+                        <div className="flex items-center gap-2">
+                            {action}
+                            {headerActions?.actions.map((item) => (
+                                <div key={item.id} className="flex items-center">
+                                    {item.node}
+                                </div>
+                            ))}
+                        </div>
+                    ) : null}
                 </div>
             </div>
         </header>
