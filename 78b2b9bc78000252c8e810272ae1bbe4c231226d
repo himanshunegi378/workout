@@ -1,0 +1,44 @@
+app/features/rest-timer/ui/RestTimerHeaderActionBridge.tsx
+  883974ee5b282f4f 8-11,22,35
+  f9e7dcf3bc7c87cb 4
+app/features/rest-timer/context/RestTimerContext.tsx
+  883974ee5b282f4f 45-48,71,159,175,199,290-292
+app/features/rest-timer/ui/RestTimerOverlay.tsx
+  883974ee5b282f4f 8-11
+app/features/rest-timer/ui/RestTimerFloatingBubble.tsx
+  f9e7dcf3bc7c87cb 3-4
+  883974ee5b282f4f 8-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "78b2b9bc78000252c8e810272ae1bbe4c231226d",
+  "prompts": {
+    "883974ee5b282f4f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d20a5-fc76-7901-a45b-65e766b002cc",
+        "model": "unknown"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 25,
+      "total_deletions": 7,
+      "accepted_lines": 25,
+      "overriden_lines": 0
+    },
+    "f9e7dcf3bc7c87cb": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d20a4-da26-7801-9c6b-68b084b2b813",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 3,
+      "total_deletions": 2,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    }
+  }
+}
