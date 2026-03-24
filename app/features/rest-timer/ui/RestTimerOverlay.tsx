@@ -5,6 +5,10 @@ import { Button, Portal } from "@/app/components/ui";
 import { useRestTimer } from "../context/RestTimerContext";
 import { formatTime } from "../lib/formatTime";
 
+/**
+ * Provides a modal-like experience for managing the rest period to ensure the
+ * user does not miss their next set.
+ */
 export function RestTimerOverlay() {
     const {
         isActive,

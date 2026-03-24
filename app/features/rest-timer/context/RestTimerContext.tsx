@@ -42,6 +42,10 @@ interface PersistedState {
 const STORAGE_KEY = "@workout/rest-timer-state";
 const RestTimerContext = createContext<RestTimerContextValue | null>(null);
 
+/**
+ * Manages the rest timer lifecycle, synchronizing with the wall clock to
+ * ensure accuracy persists across page refreshes and background tabs.
+ */
 export function RestTimerProvider({ children }: { children: React.ReactNode }) {
     const [state, setState] = useState<TimerState>(() => {
         const initialState = {
@@ -64,7 +68,7 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
             let expiry = new Date();
             let finalIsActive = persisted.isActive;
 
-            // Restore against wall-clock time so refreshes and background tabs do not drift the countdown.
+            // Use wall-clock time so restarts and background tabs do not cause timer drift.
             if (persisted.isActive) {
                 if (persisted.isRunning && persisted.expiryTimestamp) {
                     expiry = new Date(persisted.expiryTimestamp);
@@ -152,7 +156,7 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
         if (syncedRef.current) return;
         syncedRef.current = true;
 
-        // `useTimer` always mounts "fresh", so replay the persisted timer once after hydration.
+        // Mount the persisted timer state once after hydration since the underlying hook restarts on mount.
         if (state.isActive) {
             if (!state.isPaused && state.expiryTimestamp > new Date()) {
                 restart(state.expiryTimestamp, true);
@@ -168,7 +172,7 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         if (!state.initialized) return;
 
-        // Keep timer progress and presentation state together so the same UI comes back after reload.
+        // Store progress and presentation state so the same UI is restored after a reload.
         const expiry = (isRunning || state.isPaused) ? state.expiryTimestamp.toISOString() : null;
         const persisted: PersistedState = {
             isActive: state.isActive,
@@ -192,7 +196,7 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         const handleVisibilityChange = () => {
-            // Browsers can throttle timers in background tabs; reconcile as soon as the tab becomes visible again.
+            // Reconcile the timer if the browser throttled it while the tab was hidden.
             if (document.visibilityState === "visible" && state.isActive && state.expiryTimestamp < new Date()) {
                 onExpire();
             }
@@ -283,6 +287,9 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
     );
 }
 
+/**
+ * Access the rest timer state. Must be used within a RestTimerProvider.
+ */
 export function useRestTimer(): RestTimerContextValue {
     const ctx = useContext(RestTimerContext);
 

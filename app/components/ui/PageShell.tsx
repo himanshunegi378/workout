@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { PageHeaderActionsProvider, PageHeaderHostMount } from "./PageHeaderActionsContext";
+import { PageHeaderActionsProvider, PageHeaderHostMount } from "@/app/features/page-header/internal";
 
 type PageShellSize = "md" | "lg" | "xl";
 type PageShellSpacing = "default" | "comfortable";

@@ -3,7 +3,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Dumbbell, Plus, Loader2 } from "lucide-react";
-import { PageHeader, List } from "@/app/components/ui";
+import { List } from "@/app/components/ui";
+import { PageHeader } from "@/app/features/page-header";
 import { useIsRestoring } from "@tanstack/react-query";
 import { useProgramme } from "../../api/query-hooks/use-programme";
 import { WorkoutCard } from "./WorkoutCard";

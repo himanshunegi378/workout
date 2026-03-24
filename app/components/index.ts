@@ -1,6 +1,5 @@
 // Re-export all global UI primitives
 export {
-    PageHeader,
     BottomNav,
     Button,
     FAB,

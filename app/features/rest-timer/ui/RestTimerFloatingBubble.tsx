@@ -1,15 +1,19 @@
 "use client";
 
-import { Portal, usePageHeaderHost } from "@/app/components/ui";
+import { Portal } from "@/app/components/ui";
+import { usePageHeaderHost } from "@/app/features/page-header";
 import { useRestTimer } from "../context/RestTimerContext";
 import { formatTime } from "../lib/formatTime";
 
+/**
+ * Prevents overlapping UI elements by only rendering as a fallback when the page
+ * cannot host the timer in its primary navigation bar.
+ */
 export function RestTimerFloatingBubble() {
     const { isActive, isMinimized, timeLeft, openTimer } = useRestTimer();
     const headerHost = usePageHeaderHost();
     const hasHeaderHost = headerHost?.hasHost ?? false;
 
-    // The bubble is only the fallback surface when the workout header cannot host the live timer action.
     if (!isActive || !isMinimized || hasHeaderHost) return null;
 
     return (

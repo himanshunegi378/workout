@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { PageHeader } from "@/app/components/ui/PageHeader";
+import { PageHeader } from "@/app/features/page-header";
 import { PageShell } from "@/app/components/ui/PageShell";
 import { FeedbackForm } from "@/app/features/settings/screens/feedback/FeedbackForm";
 import { requireUserId } from "@/lib/auth-helpers";

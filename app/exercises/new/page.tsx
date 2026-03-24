@@ -1,4 +1,5 @@
-import { PageHeader, PageShell } from "@/app/components/ui";
+import { PageShell } from "@/app/components/ui";
+import { PageHeader } from "@/app/features/page-header";
 import { AddExerciseForm } from "@/app/features/exercises/screens";
 
 export default function AddExercisePage() {

@@ -1,5 +1,6 @@
 "use client";
-import { PageHeader, PageShell } from "@/app/components/ui";
+import { PageShell } from "@/app/components/ui";
+import { PageHeader } from "@/app/features/page-header";
 import { AddProgrammeForm } from "@/app/features/programs/screens";
 
 export default function AddProgrammePage() {

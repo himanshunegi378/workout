@@ -1,7 +1,8 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { PageHeader, PageShell, CardSkeletonList } from "@/app/components/ui";
+import { PageShell, CardSkeletonList } from "@/app/components/ui";
+import { PageHeader } from "@/app/features/page-header";
 import { ProgrammeList } from "@/app/features/programs/screens";
 
 export default function HomePage() {

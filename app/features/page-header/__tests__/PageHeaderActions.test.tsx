@@ -1,9 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { PageHeader } from "@/app/components/ui/PageHeader";
 import { PageShell } from "@/app/components/ui/PageShell";
-import { usePageHeaderActions } from "@/app/components/ui";
+import { PageHeader, usePageHeaderActions } from "@/app/features/page-header";
 
 vi.mock("next/navigation", () => ({
     useRouter: () => ({

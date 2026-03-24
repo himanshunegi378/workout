@@ -1,5 +1,5 @@
 import { Loader2 } from "lucide-react";
-import { PageHeader } from "@/app/components/ui";
+import { PageHeader } from "@/app/features/page-header";
 
 export function LoadingHeader() {
     return (

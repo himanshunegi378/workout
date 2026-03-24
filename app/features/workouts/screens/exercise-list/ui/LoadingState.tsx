@@ -1,4 +1,5 @@
-import { PageHeader, PageShell, CardSkeletonList } from "@/app/components/ui";
+import { PageShell, CardSkeletonList } from "@/app/components/ui";
+import { PageHeader } from "@/app/features/page-header";
 
 export function LoadingState({ programmeId }: { programmeId: string }) {
     return (

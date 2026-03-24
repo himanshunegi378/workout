@@ -1,7 +1,8 @@
 import React from "react";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { PageHeader, PageHeaderHostProvider, PageShell } from "@/app/components/ui";
+import { PageShell } from "@/app/components/ui";
+import { PageHeader, PageHeaderHostProvider } from "@/app/features/page-header";
 import {
     RestTimerFloatingBubble,
     RestTimerHeaderActionBridge,

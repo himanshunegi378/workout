@@ -4,7 +4,8 @@ import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 import { QueryProvider } from "@/app/components/providers/QueryProvider";
 import { RestTimerFloatingBubble, RestTimerOverlay, RestTimerProvider } from "@/app/features/rest-timer";
-import { BottomDrawerProvider, Sidebar, BottomNav, PageHeaderHostProvider } from "@/app/components/ui";
+import { BottomDrawerProvider, Sidebar, BottomNav } from "@/app/components/ui";
+import { PageHeaderHostProvider } from "@/app/features/page-header";
 
 import { PRCelebrationProvider } from "@/app/features/personal-records/PRCelebrationContext";
 import { PRCelebrationOverlay } from "@/app/features/personal-records/PRCelebrationOverlay";

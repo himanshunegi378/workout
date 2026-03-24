@@ -1,7 +1,8 @@
 "use client";
 
 import { use } from "react";
-import { PageHeader, PageShell } from "@/app/components/ui";
+import { PageShell } from "@/app/components/ui";
+import { PageHeader } from "@/app/features/page-header";
 import { AddWorkoutForm } from "@/app/features/workouts/screens";
 
 interface PageProps {

@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader } from "@/app/components/ui";
+import { PageHeader } from "@/app/features/page-header";
 import { MuscleOutputTable } from "./ui/MuscleOutputTable";
 import { DashboardHeader } from "./ui/DashboardHeader";
 import { FatigueTrendLine } from "./ui/FatigueTrendLine";

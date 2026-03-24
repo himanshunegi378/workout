@@ -1,5 +1,6 @@
 import { Suspense } from "react";
-import { PageHeader, PageShell, CardSkeletonList } from "@/app/components/ui";
+import { PageShell, CardSkeletonList } from "@/app/components/ui";
+import { PageHeader } from "@/app/features/page-header";
 import { ExercisesContent } from "@/app/features/exercises/screens";
 
 export default function ExercisesPage() {

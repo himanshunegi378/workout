@@ -1,5 +1,6 @@
 import { Suspense } from "react";
-import { PageHeader, PageShell, CardSkeletonList } from "@/app/components/ui";
+import { PageShell, CardSkeletonList } from "@/app/components/ui";
+import { PageHeader } from "@/app/features/page-header";
 import { LogContent } from "@/app/features/logging/screens";
 
 export default function LogPage() {

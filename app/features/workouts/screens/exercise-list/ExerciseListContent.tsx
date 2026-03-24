@@ -3,7 +3,8 @@
 import { notFound } from "next/navigation";
 import { Activity, Loader2, Timer as TimerIcon, Zap, Trophy } from "lucide-react";
 import { useState, useEffect } from "react";
-import { PageHeader, PageShell, List } from "@/app/components/ui";
+import { PageShell, List } from "@/app/components/ui";
+import { PageHeader } from "@/app/features/page-header";
 import { RestTimerHeaderActionBridge } from "@/app/features/rest-timer";
 import { ExerciseCard } from "./ui/ExerciseCard";
 import { AddExerciseTrigger } from "../../../exercises/components/AddExerciseTrigger";

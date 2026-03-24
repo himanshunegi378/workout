@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
-import { usePageHeaderActions } from "./PageHeaderActionsContext";
+import { usePageHeaderActions } from "../context/PageHeaderContext";
 
 interface PageHeaderProps {
     title: string;
