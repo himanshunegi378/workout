@@ -46,10 +46,10 @@ export function SetRow({ id, index, weight, reps, rpe, prType }: SetRowProps) {
 
     return (
         <div className={`flex items-center gap-3 group py-2 transition-opacity ${isDeleting || isPending ? "opacity-50 pointer-events-none" : ""}`}>
-            <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold
+            <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold
                 ${prType
-                    ? "border-accent/35 bg-accent/15 text-foreground"
-                    : "border-border/60 bg-accent/10 text-foreground/90"
+                    ? "bg-accent/15 text-foreground"
+                    : "bg-accent/10 text-foreground/90"
                 }`}
             >
                 {prType ? (
@@ -67,7 +67,7 @@ export function SetRow({ id, index, weight, reps, rpe, prType }: SetRowProps) {
                     {reps}
                 </span>
                 {rpe && (
-                    <span className="rounded-full border border-border/60 bg-background/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/90">
+                    <span className="rounded-full bg-background/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/90">
                         @{rpe}
                     </span>
                 )}
@@ -115,7 +115,7 @@ export function ExerciseLogGroup({ exerciseId, exerciseName, muscleGroup, sets }
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
     return (
-        <div className="rounded-[1.5rem] border border-border/40 bg-background/20 px-4 py-4">
+        <div className="rounded-3xl bg-background/20 px-4 py-4">
             <button
                 onClick={() => setIsHistoryOpen(true)}
                 className="flex w-full items-center gap-3 text-left group outline-none focus-visible:ring-2 focus-visible:ring-accent/40"

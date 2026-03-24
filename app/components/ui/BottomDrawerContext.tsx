@@ -24,9 +24,8 @@ export function BottomDrawerProvider({ children }: { children: ReactNode }) {
     const getZIndex = useCallback(
         (id: string) => {
             const index = stack.indexOf(id);
-            // Base z-index 40, incrementing by 1 for each stacked drawer
-            // BottomNav sits at z-50, so we stay below it unless we stack 10+ drawers (unlikely)
-            return 40 + (index === -1 ? 0 : index);
+            // Keep drawers above the mobile bottom nav (z-50) while preserving stacking order.
+            return 60 + (index === -1 ? 0 : index);
         },
         [stack]
     );

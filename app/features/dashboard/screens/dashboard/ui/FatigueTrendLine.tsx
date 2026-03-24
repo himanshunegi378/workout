@@ -34,7 +34,7 @@ export function FatigueTrendLine() {
         setStartDateOffset((prev) => Math.max(0, prev - 90));
     };
 
-    const shellClassName = "border-b border-border/40 pb-6";
+    const shellClassName = "pb-6";
 
     const data = rawData?.map((d) => {
         const dateObj = new Date(d.date);
@@ -63,7 +63,7 @@ export function FatigueTrendLine() {
 
     return (
         <section className={shellClassName}>
-            <div className="flex flex-col gap-4 border-b border-border/40 pb-4 md:flex-row md:items-end md:justify-between">
+            <div className="flex flex-col gap-4 pb-4 md:flex-row md:items-end md:justify-between">
                 <div>
                     <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Load balance</p>
                     <h3 className="mt-2 flex items-center gap-2 font-display text-xl font-semibold tracking-tight text-foreground">
@@ -74,10 +74,10 @@ export function FatigueTrendLine() {
                         <button
                             onClick={handlePrev}
                             disabled={!hasMoreHistory || isFetching}
-                            className={`flex h-9 w-9 items-center justify-center rounded-full border border-border/60 transition-colors ${
+                            className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
                                 !hasMoreHistory || isFetching
                                     ? "cursor-not-allowed text-muted-foreground/30"
-                                    : "text-foreground hover:border-border/70 hover:bg-muted/30"
+                                    : "bg-background/45 text-foreground hover:bg-muted/30"
                             }`}
                         >
                             <ChevronLeft className="h-4 w-4" />
@@ -88,10 +88,10 @@ export function FatigueTrendLine() {
                         <button
                             onClick={handleNext}
                             disabled={startDateOffset === 0 || isFetching}
-                            className={`flex h-9 w-9 items-center justify-center rounded-full border border-border/60 transition-colors ${
+                            className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
                                 startDateOffset === 0 || isFetching
                                     ? "cursor-not-allowed text-muted-foreground/30"
-                                    : "text-foreground hover:border-border/70 hover:bg-muted/30"
+                                    : "bg-background/45 text-foreground hover:bg-muted/30"
                             }`}
                         >
                             <ChevronRight className="h-4 w-4" />
@@ -156,7 +156,7 @@ export function FatigueTrendLine() {
                             <Tooltip
                                 contentStyle={{
                                     backgroundColor: "hsl(var(--card))",
-                                    borderColor: "hsl(var(--border))",
+                                    border: "none",
                                     borderRadius: "12px",
                                     padding: "12px",
                                     boxShadow: "none",

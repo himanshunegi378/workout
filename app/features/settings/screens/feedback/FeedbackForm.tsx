@@ -61,7 +61,7 @@ export function FeedbackForm() {
 
     return (
         <div className="space-y-8 animate-slide-up">
-            <form onSubmit={handleSubmit} className="space-y-6 border-b border-border/60 pb-8">
+            <form onSubmit={handleSubmit} className="space-y-6 pb-8">
                 <div className="space-y-3">
                     <div className="space-y-2">
                         <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground/85">
@@ -83,7 +83,7 @@ export function FeedbackForm() {
                                 resetSubmitFeedback();
                             }
                         }}
-                        className="min-h-36 w-full resize-y rounded-2xl border border-border/70 bg-background/70 px-4 py-3 text-base text-foreground placeholder:text-muted-foreground/90 transition-colors focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring"
+                        className="min-h-36 w-full resize-y rounded-2xl bg-background/65 px-4 py-3 text-base text-foreground placeholder:text-muted-foreground/90 transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
                     />
                     <div className="flex items-center justify-between text-xs text-foreground/80">
                         <span>Minimum {MIN_DESCRIPTION_LENGTH} characters</span>
@@ -92,13 +92,13 @@ export function FeedbackForm() {
                 </div>
 
                 {submitError && (
-                    <div className="rounded-2xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
+                    <div className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
                         {submitError instanceof Error ? submitError.message : "Failed to submit feedback"}
                     </div>
                 )}
 
                 {showSubmissionSuccess && (
-                    <div className="rounded-2xl border border-accent/20 bg-accent/10 px-4 py-3 text-sm text-foreground">
+                    <div className="rounded-2xl bg-accent/10 px-4 py-3 text-sm text-foreground">
                         Thanks. Your feedback has been submitted.
                     </div>
                 )}

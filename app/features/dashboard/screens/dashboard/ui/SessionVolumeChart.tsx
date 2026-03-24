@@ -53,8 +53,8 @@ export function SessionVolumeChart() {
     };
 
     return (
-        <section className="border-b border-border/40 pb-6 text-card-foreground">
-                <div className="flex flex-col gap-4 border-b border-border/40 pb-4 sm:flex-row sm:items-end sm:justify-between">
+        <section className="pb-6 text-card-foreground">
+                <div className="flex flex-col gap-4 pb-4 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                     <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Routine volume</p>
                     <h3 className="mt-2 flex items-center gap-2 font-display text-xl font-semibold tracking-tight text-foreground">
@@ -74,7 +74,7 @@ export function SessionVolumeChart() {
                             <select
                                 value={effectiveWorkoutId}
                                 onChange={handleWorkoutChange}
-                                className="w-full appearance-none rounded-full border border-border/40 bg-background/50 px-4 py-2.5 pr-9 text-sm text-foreground transition-colors focus:border-accent focus:outline-none focus:ring-0"
+                                className="w-full appearance-none rounded-full bg-background/50 px-4 py-2.5 pr-9 text-sm text-foreground transition-colors focus:outline-none focus:ring-0"
                             >
                                 {workouts?.map((w) => (
                                     <option key={w.id} value={w.id}>
@@ -132,7 +132,7 @@ export function SessionVolumeChart() {
                                         if (active && payload && payload.length) {
                                             const data = payload[0].payload as SessionVolumeNode;
                                             return (
-                                                <div className="max-w-[200px] rounded-xl border border-border/40 bg-card p-3 text-sm">
+                                                <div className="max-w-[200px] rounded-xl bg-card p-3 text-sm">
                                                     <p className="mb-1 font-semibold text-foreground">{data.date.split("T")[0]}</p>
                                                     <div className="mb-2 flex items-center justify-between gap-4">
                                                         <span className="text-foreground/75">Volume</span>
@@ -186,7 +186,7 @@ export function SessionVolumeChart() {
             </div>
 
             {chartData.length > 0 && (
-                <div className="mt-5 grid gap-2 border-t border-border/40 pt-4 text-[10px] sm:flex sm:flex-wrap sm:items-center sm:gap-4 sm:text-xs">
+                <div className="mt-5 grid gap-2 pt-4 text-[10px] sm:flex sm:flex-wrap sm:items-center sm:gap-4 sm:text-xs">
                     <div className="flex items-center gap-1.5">
                         <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
                         <span className="text-foreground/75">Optimal (0-5%)</span>

@@ -25,7 +25,7 @@ export function ThemeToggle() {
     }, []);
 
     if (!mounted) {
-        return <div className="h-12 w-full rounded-full border border-border/60 bg-muted/30 animate-pulse" />;
+        return <div className="h-12 w-full rounded-full bg-muted/30 animate-pulse" />;
     }
 
     const options = [
@@ -35,15 +35,15 @@ export function ThemeToggle() {
     ];
 
     return (
-        <div className="flex flex-wrap gap-2 rounded-[1.5rem] border border-border/60 bg-background/40 p-2">
+        <div className="flex flex-wrap gap-2 rounded-3xl bg-background/40 p-2">
             {options.map(({ value, icon: Icon, label }) => (
                 <button
                     key={value}
                     onClick={() => setTheme(value)}
-                    className={`flex min-w-[6.5rem] flex-1 items-center justify-center gap-2 rounded-[1.1rem] px-3 py-2 text-[11px] font-medium leading-none transition-colors sm:text-sm ${
+                    className={`flex min-w-[6.5rem] flex-1 items-center justify-center gap-2 rounded-2xl px-3 py-2 text-[11px] font-medium leading-none transition-colors sm:text-sm ${
                         theme === value
-                            ? "border border-border/70 bg-background/90 text-foreground shadow-sm"
-                            : "border border-transparent text-foreground/85 hover:border-border/60 hover:bg-background/60 hover:text-foreground"
+                            ? "bg-background/85 text-foreground"
+                            : "text-foreground/85 hover:bg-background/60 hover:text-foreground"
                     }`}
                 >
                     <Icon className="w-4 h-4" />

@@ -61,15 +61,15 @@ export function NumberStepper({
             <div className="flex items-center justify-between min-h-[26px]">
                 {label && <label className="text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground/90">{label}</label>}
                 {stepOptions.length > 0 ? (
-                    <div className="flex rounded-lg border border-border/70 bg-card/50 p-0.5">
+                    <div className="flex rounded-full bg-muted/25 p-0.5">
                         {stepOptions.map((opt) => (
                             <button
                                 key={opt}
                                 type="button"
                                 onClick={() => setCurrentStep(opt)}
-                                className={`rounded-md px-2 py-0.5 text-[11px] font-bold transition-all ${currentStep === opt
-                                    ? "bg-accent text-accent-foreground shadow-sm shadow-accent/20"
-                                    : "text-muted-foreground/90 hover:bg-muted/30 hover:text-foreground"
+                                className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold transition-all ${currentStep === opt
+                                    ? "bg-accent text-accent-foreground"
+                                    : "text-muted-foreground/90 hover:bg-background/70 hover:text-foreground"
                                     }`}
                             >
                                 ±{opt}
@@ -81,12 +81,12 @@ export function NumberStepper({
                 )}
             </div>
 
-            <div className="group flex items-center justify-between rounded-xl border border-border/70 bg-card/50 p-1.5 transition-colors focus-within:border-accent/50">
+            <div className="group flex items-center justify-between rounded-2xl bg-card/45 p-1.5 transition-colors focus-within:bg-card/70">
                 <button
                     type="button"
                     onClick={handleDecrement}
                     disabled={value <= min}
-                    className="flex h-10 w-10 items-center justify-center rounded-lg text-foreground transition-all hover:bg-muted/35 active:scale-95 disabled:opacity-30 disabled:active:scale-100"
+                    className="flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-all hover:bg-background/70 active:scale-95 disabled:opacity-30 disabled:active:scale-100"
                 >
                     <Minus className="w-5 h-5" />
                 </button>
@@ -108,7 +108,7 @@ export function NumberStepper({
                     type="button"
                     onClick={handleIncrement}
                     disabled={value >= max}
-                    className="flex h-10 w-10 items-center justify-center rounded-lg text-foreground transition-all hover:bg-muted/35 active:scale-95 disabled:opacity-30 disabled:active:scale-100"
+                    className="flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-all hover:bg-background/70 active:scale-95 disabled:opacity-30 disabled:active:scale-100"
                 >
                     <Plus className="w-5 h-5" />
                 </button>

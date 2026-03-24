@@ -51,7 +51,7 @@ export function AddProgrammeForm() {
                 </p>
             </div>
 
-            <div className="space-y-2 border-b border-border/40 pb-4">
+            <div className="space-y-2 pb-4">
                 <label
                     className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground"
                     htmlFor="programme-name"
@@ -64,11 +64,11 @@ export function AddProgrammeForm() {
                     placeholder="e.g. Push Pull Legs"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full border-0 border-b border-border/60 bg-transparent px-0 py-3 text-foreground placeholder:text-muted-foreground/90 focus:border-accent focus:outline-none focus:ring-0 font-body text-base"
+                    className="w-full rounded-2xl bg-background/45 px-4 py-3 text-foreground placeholder:text-muted-foreground/90 focus:outline-none focus:ring-2 focus:ring-ring/40 font-body text-base"
                 />
             </div>
 
-            <div className="space-y-2 border-b border-border/40 pb-4">
+            <div className="space-y-2 pb-4">
                 <label
                     className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground"
                     htmlFor="programme-desc"
@@ -84,12 +84,12 @@ export function AddProgrammeForm() {
                     placeholder="A 3-day split focused on..."
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full resize-none border-0 bg-transparent px-0 py-3 text-foreground placeholder:text-muted-foreground/90 focus:outline-none focus:ring-0 font-body text-base"
+                    className="w-full resize-none rounded-2xl bg-background/45 px-4 py-3 text-foreground placeholder:text-muted-foreground/90 focus:outline-none focus:ring-2 focus:ring-ring/40 font-body text-base"
                 />
             </div>
 
             {mutationError && (
-                <div className="rounded-2xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger animate-slide-up">
+                <div className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger animate-slide-up">
                     {mutationError instanceof Error ? mutationError.message : "Something went wrong"}
                 </div>
             )}

@@ -50,7 +50,7 @@ export function ExerciseListClient({ exercises }: ExerciseListClientProps) {
 
     return (
         <div className="space-y-6">
-            <section className="space-y-5 border-b border-border/40 pb-5">
+            <section className="space-y-5 pb-5">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                     <div className="max-w-2xl">
                         <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">Library overview</p>
@@ -71,7 +71,7 @@ export function ExerciseListClient({ exercises }: ExerciseListClientProps) {
                             placeholder="Search exercises…"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            className="w-full rounded-full border border-border/70 bg-background/70 py-3 pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/40"
+                            className="w-full rounded-full bg-background/50 py-3 pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground/50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-ring/40"
                         />
                     </div>
 
@@ -82,7 +82,7 @@ export function ExerciseListClient({ exercises }: ExerciseListClientProps) {
                         </p>
                         <Link
                             href="/exercises/new"
-                            className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-accent/35 hover:bg-muted/25"
+                            className="inline-flex items-center gap-2 rounded-full bg-background/60 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted/25"
                         >
                             <Plus className="h-4 w-4" />
                             New exercise
@@ -105,7 +105,7 @@ export function ExerciseListClient({ exercises }: ExerciseListClientProps) {
                     action={
                         <Link
                             href="/exercises/new"
-                            className="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent-hover active:scale-[0.98]"
+                            className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent-hover active:scale-[0.98]"
                         >
                             <Plus className="w-4 h-4" /> Add Exercise
                         </Link>

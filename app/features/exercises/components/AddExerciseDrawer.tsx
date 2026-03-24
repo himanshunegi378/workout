@@ -86,7 +86,7 @@ export function AddExerciseDrawer({ isOpen, onClose, programmeId, workoutId }: A
                         <button
                             type="button"
                             onClick={() => setIsSelectDrawerOpen(true)}
-                            className="flex w-full items-center justify-between rounded-2xl border border-border/70 bg-background/60 px-4 py-3 text-left transition-colors hover:border-accent/30 hover:bg-muted/20 active:scale-[0.98]"
+                            className="flex w-full items-center justify-between rounded-2xl bg-background/50 px-4 py-3 text-left transition-colors hover:bg-muted/20 active:scale-[0.98]"
                         >
                             {selectedExercise ? (
                                 <div className="flex items-center gap-3">
@@ -125,15 +125,15 @@ export function AddExerciseDrawer({ isOpen, onClose, programmeId, workoutId }: A
                                 placeholder="e.g. 2-0-1-0"
                                 value={tempo}
                                 onChange={(e) => setTempo(e.target.value)}
-                                className="h-12 w-full rounded-2xl border border-border/70 bg-background/60 px-4 text-center font-display text-lg font-semibold text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/40"
+                                className="h-12 w-full rounded-2xl bg-background/50 px-4 text-center font-display text-lg font-semibold text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring/40"
                             />
                         </div>
                     </div>
                 </div>
 
-                <div className="mt-auto shrink-0 border-t border-border/50 pt-4">
+                <div className="mt-auto shrink-0 pt-4">
                     {mutationError && (
-                        <div className="mb-4 rounded-2xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
+                        <div className="mb-4 rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
                             {mutationError instanceof Error ? mutationError.message : "Something went wrong"}
                         </div>
                     )}

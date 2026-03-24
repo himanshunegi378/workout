@@ -44,14 +44,14 @@ export function SetTracker({ setsMin, setsMax, logs, targetReps, onSetClick, pre
                         <button
                             onClick={() => onSetClick(i)}
                             className={`
-                            relative flex h-10 w-10 items-center justify-center rounded-full border text-sm transition-colors duration-200
+                            relative flex h-10 w-10 items-center justify-center rounded-full text-sm transition-colors duration-200
                             ${isCompleted
                                     ? missedTarget
-                                        ? "border-warning/30 bg-warning/10 text-warning"
-                                        : "border-accent/25 bg-accent/10 text-accent"
+                                        ? "bg-warning/10 text-warning"
+                                        : "bg-accent/10 text-accent"
                                     : isOptional
-                                        ? "border-dashed border-border/70 bg-background text-foreground/70 hover:border-foreground/30"
-                                        : "border-border/70 bg-muted/35 text-foreground hover:border-foreground/30"
+                                        ? "bg-background text-foreground/70 hover:bg-muted/20"
+                                        : "bg-muted/35 text-foreground hover:bg-muted/50"
                                 }
                         `}
                             aria-label={`Log set ${i + 1}`}
@@ -60,7 +60,7 @@ export function SetTracker({ setsMin, setsMax, logs, targetReps, onSetClick, pre
                                 <div className="flex flex-col items-center justify-center leading-none">
                                     <span className="font-display text-sm font-semibold">{log.reps}</span>
                                     {log.rpe && (
-                                        <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full border border-background bg-foreground text-[8px] font-semibold text-background">
+                                        <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-foreground text-[8px] font-semibold text-background">
                                             {log.rpe}
                                         </span>
                                     )}

@@ -106,7 +106,7 @@ export default function SignupPage() {
                 {/* Form Card */}
                 <form
                     onSubmit={handleSubmit}
-                    className="space-y-5 rounded-3xl border border-border/70 bg-card/90 p-5 shadow-none sm:p-6"
+                    className="space-y-5 rounded-3xl bg-card/75 p-5 shadow-none sm:p-6"
                 >
                     {/* Username */}
                     <div className="space-y-1.5">
@@ -124,8 +124,8 @@ export default function SignupPage() {
                             placeholder="e.g. ironlifter"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="w-full rounded-2xl border border-border/70 bg-background/60 px-4 py-3 text-foreground placeholder:text-muted-foreground/80 transition-all duration-200
-                                focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/40
+                            className="w-full rounded-2xl bg-background/55 px-4 py-3 text-foreground placeholder:text-muted-foreground/80 transition-all duration-200
+                                focus:outline-none focus:ring-2 focus:ring-ring/40
                                 font-body text-base"
                         />
                         {username.length > 0 && username.trim().length < 3 && (
@@ -151,8 +151,8 @@ export default function SignupPage() {
                                 placeholder="Min 6 characters"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full rounded-2xl border border-border/70 bg-background/60 px-4 py-3 pr-12 text-foreground placeholder:text-muted-foreground/80 transition-all duration-200
-                                    focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/40
+                                className="w-full rounded-2xl bg-background/55 px-4 py-3 pr-12 text-foreground placeholder:text-muted-foreground/80 transition-all duration-200
+                                    focus:outline-none focus:ring-2 focus:ring-ring/40
                                     font-body text-base"
                             />
                             <button
@@ -191,8 +191,8 @@ export default function SignupPage() {
                             placeholder="Re-enter your password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full rounded-2xl border border-border/70 bg-background/60 px-4 py-3 text-foreground placeholder:text-muted-foreground/80 transition-all duration-200
-                                focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/40
+                            className="w-full rounded-2xl bg-background/55 px-4 py-3 text-foreground placeholder:text-muted-foreground/80 transition-all duration-200
+                                focus:outline-none focus:ring-2 focus:ring-ring/40
                                 font-body text-base"
                         />
                         {confirmPassword.length > 0 &&
@@ -205,7 +205,7 @@ export default function SignupPage() {
 
                     {/* Error */}
                     {error && (
-                        <div className="rounded-2xl border border-danger/25 bg-danger/10 px-4 py-3 text-sm text-danger animate-slide-up">
+                        <div className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger animate-slide-up">
                             {error}
                         </div>
                     )}
@@ -214,7 +214,7 @@ export default function SignupPage() {
                     <button
                         type="submit"
                         disabled={!canSubmit}
-                        className="flex w-full items-center justify-center gap-2 rounded-full border border-accent/25 bg-accent px-5 py-3 font-display font-semibold text-accent-foreground transition-all duration-200 active:animate-press hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex w-full items-center justify-center gap-2 rounded-full bg-accent px-5 py-3 font-display font-semibold text-accent-foreground transition-all duration-200 active:animate-press hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
                     >
                         {loading ? (
                             <>

@@ -193,10 +193,8 @@ export function ExerciseCard({
     return (
         <>
             <div
-                className={`rounded-[1.75rem] border border-border/60 bg-background/60 px-5 py-5 text-card-foreground transition-colors duration-200 md:px-6 md:py-6 ${
-                    isCompleted
-                        ? "border-success/20"
-                        : "hover:border-border/80"
+                className={`rounded-3xl bg-background/50 px-5 py-5 text-card-foreground transition-colors duration-200 md:px-6 md:py-6 ${
+                    isCompleted ? "bg-success/5" : "hover:bg-background/65"
                 }`}
             >
                 <div className="flex flex-wrap items-start justify-between gap-4">
@@ -212,7 +210,7 @@ export function ExerciseCard({
                                     {name}
                                 </h3>
                                 {isPerfect && (
-                                    <span className="flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-success">
+                                    <span className="flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-success">
                                         <Trophy className="w-3 h-3" /> Mastered
                                     </span>
                                 )}
@@ -223,7 +221,7 @@ export function ExerciseCard({
 
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="shrink-0 rounded-full border border-border/60 p-2.5 text-muted-foreground transition-colors hover:border-border/80 hover:bg-muted/20"
+                        className="shrink-0 rounded-full p-2.5 text-muted-foreground transition-colors hover:bg-muted/20"
                     >
                         <MoreHorizontal className="w-5 h-5" />
                     </button>
@@ -231,7 +229,7 @@ export function ExerciseCard({
                     {isMenuOpen && (
                         <>
                             <div className="fixed inset-0 z-10" onClick={() => setIsMenuOpen(false)} />
-                            <div className="absolute right-5 top-16 z-20 w-44 overflow-hidden rounded-2xl border border-border/70 bg-background/95 py-2 backdrop-blur">
+                            <div className="absolute right-5 top-16 z-20 w-44 overflow-hidden rounded-2xl bg-background/95 py-2 backdrop-blur">
                                 <button onClick={() => { setIsMenuOpen(false); setIsEditDrawerOpen(true); }} className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium transition-colors hover:bg-muted/30">
                                     <Activity className="w-4 h-4 text-accent" /> Edit Protocol
                                 </button>
@@ -280,7 +278,7 @@ export function ExerciseCard({
                     </div>
 
                     {previousLogs.length > 0 && (
-                        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/50 pb-3">
+                        <div className="flex flex-wrap items-center justify-between gap-3 pb-3">
                             <div className="flex items-center gap-2 text-foreground/70">
                                 <Flame className="h-4 w-4 text-accent" />
                                 <span className="text-[10px] font-semibold uppercase tracking-[0.18em]">Beat Previous</span>

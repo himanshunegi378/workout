@@ -36,7 +36,7 @@ export function RestTimerOverlay() {
     return (
         <Portal>
             <div className="pointer-events-none fixed inset-x-0 bottom-16 z-40 animate-slide-up p-4 md:inset-x-auto md:right-32 md:bottom-8">
-                <div className="mx-auto flex w-full max-w-md flex-col gap-4 rounded-3xl border border-border/70 bg-background/95 p-4 backdrop-blur-md md:w-80 pointer-events-auto">
+                <div className="mx-auto flex w-full max-w-md flex-col gap-4 rounded-3xl bg-background/95 p-4 backdrop-blur-md md:w-80 pointer-events-auto">
                     <div className="flex items-center justify-between">
                         <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                             Rest Timer
@@ -53,7 +53,7 @@ export function RestTimerOverlay() {
                         <div className="flex gap-2">
                             <button
                                 onClick={() => addTime(-30)}
-                                className="flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-muted/30 text-foreground transition-colors hover:bg-muted/60 active:scale-95"
+                                className="flex h-10 w-10 items-center justify-center rounded-full bg-muted/30 text-foreground transition-colors hover:bg-muted/60 active:scale-95"
                             >
                                 <Minus className="w-4 h-4" />
                                 <span className="sr-only">-30s</span>
@@ -72,7 +72,7 @@ export function RestTimerOverlay() {
                         <div className="flex gap-2">
                             <button
                                 onClick={() => addTime(30)}
-                                className="flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-muted/30 text-foreground transition-colors hover:bg-muted/60 active:scale-95"
+                                className="flex h-10 w-10 items-center justify-center rounded-full bg-muted/30 text-foreground transition-colors hover:bg-muted/60 active:scale-95"
                             >
                                 <Plus className="w-4 h-4" />
                                 <span className="sr-only">+30s</span>

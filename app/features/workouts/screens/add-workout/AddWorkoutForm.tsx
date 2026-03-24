@@ -66,7 +66,7 @@ export function AddWorkoutForm({ programmeId }: AddWorkoutFormProps) {
                     placeholder="e.g. Pull Day, Legs B"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-2xl border border-border/80 bg-background/60 px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/40 font-body text-base"
+                    className="w-full rounded-2xl bg-background/50 px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-ring/40 font-body text-base"
                 />
             </div>
 
@@ -86,12 +86,12 @@ export function AddWorkoutForm({ programmeId }: AddWorkoutFormProps) {
                     placeholder="Focus on deadlifts and upper back..."
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full resize-none rounded-2xl border border-border/80 bg-background/60 px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/40 font-body text-base"
+                    className="w-full resize-none rounded-2xl bg-background/50 px-4 py-3.5 text-foreground placeholder:text-muted-foreground/50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-ring/40 font-body text-base"
                 />
             </div>
 
             {mutationError && (
-                <div className="rounded-2xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger animate-slide-up">
+                <div className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger animate-slide-up">
                     {mutationError instanceof Error ? mutationError.message : "Something went wrong"}
                 </div>
             )}

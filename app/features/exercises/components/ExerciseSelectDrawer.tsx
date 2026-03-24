@@ -54,7 +54,7 @@ export function ExerciseSelectDrawer({
 
     return (
         <BottomDrawer isOpen={isOpen} onClose={onClose} title="Select Exercise" height="85vh">
-            <div className="shrink-0 border-b border-border/50 pb-4">
+            <div className="shrink-0 pb-4">
                 <div className="relative">
                     <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <input
@@ -62,7 +62,7 @@ export function ExerciseSelectDrawer({
                         placeholder="Search exercises..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full rounded-full border border-border/70 bg-background/60 py-3 pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground/50 transition-colors duration-200 focus:border-accent focus:outline-none focus:ring-2 focus:ring-ring/40"
+                        className="w-full rounded-full bg-background/50 py-3 pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground/50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-ring/40"
                     />
                 </div>
             </div>
@@ -73,7 +73,7 @@ export function ExerciseSelectDrawer({
                         <p className="text-sm">No exercises found.</p>
                     </div>
                 ) : (
-                    <div className="divide-y divide-border/50">
+                    <div className="space-y-1">
                         {filteredExercises.map((ex) => (
                             <button
                                 key={ex.id}
@@ -81,7 +81,7 @@ export function ExerciseSelectDrawer({
                                     onSelect(ex.id);
                                     onClose();
                                 }}
-                                className={`flex w-full items-center gap-4 px-1 py-4 text-left transition-colors duration-200 active:scale-[0.99] ${selectedId === ex.id
+                                className={`flex w-full items-center gap-4 rounded-2xl px-3 py-4 text-left transition-colors duration-200 active:scale-[0.99] ${selectedId === ex.id
                                     ? "bg-accent/5 text-foreground"
                                     : "hover:bg-muted/20"
                                     }`}
@@ -94,7 +94,7 @@ export function ExerciseSelectDrawer({
                                     <p className="font-medium text-foreground truncate">{ex.name}</p>
                                     <p className="text-xs text-muted-foreground mt-0.5 capitalize truncate">{ex.muscle_group}</p>
                                 </div>
-                                <div className="ml-3 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border/50">
+                                <div className="ml-3 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-muted/35">
                                     {selectedId === ex.id && (
                                         <div className="w-3 h-3 rounded-full bg-accent" />
                                     )}

@@ -56,7 +56,7 @@ export function ExerciseHistoryDrawer({
         <Portal>
             <BottomDrawer isOpen={isOpen} onClose={onClose}>
                 <div className="flex h-[70vh] flex-col">
-                    <div className="sticky top-0 z-10 shrink-0 border-b border-border/60 bg-background/95 px-4 py-3 backdrop-blur-sm">
+                    <div className="sticky top-0 z-10 shrink-0 bg-background/95 px-4 py-3 backdrop-blur-sm">
                         <div className="flex items-center justify-between w-full">
                             <div className="flex items-center gap-3">
                                 <div className="w-1.5 h-8 rounded-full bg-accent" />
@@ -111,17 +111,17 @@ export function ExerciseHistoryDrawer({
                                                 {dateStr}
                                             </h3>
                                         </div>
-                                        <div className="space-y-1 border-t border-border/40 pt-2">
+                                        <div className="space-y-1 pt-2">
                                             {sessionLogs.map((log) => (
                                                 <div
                                                     key={log.id}
-                                                    className="grid gap-2 border-b border-border/30 py-2 text-base last:border-0 last:pb-0 sm:flex sm:items-center sm:justify-between"
+                                                    className="grid gap-2 rounded-2xl bg-background/30 px-3 py-2 text-base sm:flex sm:items-center sm:justify-between"
                                                 >
                                                     <div className="flex min-w-0 items-center gap-3">
                                                         <span
                                                             className={`flex h-6 w-6 shrink-0 items-center justify-center rounded text-xs font-bold ${
                                                                 log.pr_type
-                                                                    ? "bg-accent/20 text-accent ring-1 ring-accent/30"
+                                                                    ? "bg-accent/20 text-accent"
                                                                     : "bg-muted text-muted-foreground"
                                                             }`}
                                                         >

@@ -30,32 +30,33 @@ export function BottomDrawer({ isOpen, onClose, title, height = "auto", children
     if (!isOpen) return null;
 
     const zIndex = getZIndex(id);
+    const panelHeight = height !== "auto" ? height : "auto";
+    const panelMaxHeight = "calc(100dvh - 2rem)";
 
     return (
         <Portal>
-            {/* Backdrop */}
+            {/* Backdrop closes the active drawer without affecting lower stacked layers. */}
             <div
                 className="fixed inset-0 bg-background/80 backdrop-blur-sm transition-opacity duration-300"
                 style={{ zIndex }}
                 onClick={onClose}
             />
 
-            {/* Drawer container — bottom-aligned on mobile, centered on desktop */}
+            {/* Mobile uses a bottom sheet; desktop reuses the same content as a centered modal. */}
             <div
                 className="fixed inset-0 flex items-end justify-center p-0 transition-all duration-300 pointer-events-none md:items-center md:p-4"
                 style={{ zIndex: zIndex + 1 }}
             >
                 <div
-                    className="flex w-full max-w-lg flex-col rounded-t-[32px] border border-border/70 bg-card/96 px-5 pb-20 pt-4 elevation-8 pointer-events-auto md:max-w-md md:rounded-[32px] md:px-6 md:pb-8"
-                    style={{ 
-                        height: height !== "auto" ? height : "auto",
-                        maxHeight: "calc(100dvh - 2rem)"
+                    className="flex w-full max-w-lg flex-col rounded-t-3xl bg-card/98 px-5 pb-20 pt-4 elevation-8 pointer-events-auto md:max-w-md md:rounded-3xl md:px-6 md:pb-8"
+                    style={{
+                        height: panelHeight,
+                        maxHeight: panelMaxHeight
                     }}
                 >
-                    {/* Drag Handle (hide on desktop) */}
+                    {/* Visual affordance for the mobile sheet pattern. */}
                     <div className="mx-auto mb-4 h-1.5 w-12 shrink-0 rounded-full bg-muted-foreground/30 md:hidden" />
 
-                    {/* Header (only if title provided) */}
                     {title && (
                         <div className="flex items-center justify-between mb-6 shrink-0">
                             <h2 className="font-display text-xl font-bold tracking-tight">{title}</h2>

@@ -149,7 +149,7 @@ export function LogContent() {
 
     return (
         <div className="flex flex-col pb-20">
-            <section className="mb-10 animate-slide-up border-b border-border/60 pb-6">
+            <section className="mb-10 animate-slide-up pb-6">
                 <div className="grid gap-5 md:flex md:flex-row md:items-end md:justify-between">
                     <div className="max-w-xl space-y-2">
                         <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
@@ -215,7 +215,7 @@ export function LogContent() {
                     >
                         {/* Enhanced Date Label */}
                         <div className="flex items-center gap-4 group">
-                            <div className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full border border-border/70 bg-card/70 transition-colors group-hover:border-accent/40">
+                            <div className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full bg-card/70 transition-colors group-hover:bg-accent/10">
                                 <Calendar className="w-4 h-4 text-accent" />
                             </div>
                             <h2 className="text-sm font-bold text-foreground uppercase tracking-[0.2em]">
@@ -267,7 +267,7 @@ export function LogContent() {
                         <button
                             onClick={() => fetchNextPage()}
                             disabled={isFetchingNextPage}
-                            className="inline-flex items-center gap-3 rounded-full border border-border/70 bg-background/60 px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.22em] text-foreground/85 transition-colors hover:border-accent/40 hover:text-foreground disabled:opacity-50"
+                            className="inline-flex items-center gap-3 rounded-full bg-background/60 px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.22em] text-foreground/85 transition-colors hover:bg-background/80 hover:text-foreground disabled:opacity-50"
                         >
                             {isFetchingNextPage ? (
                                 <>

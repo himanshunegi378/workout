@@ -1,6 +1,6 @@
 export function CardSkeleton({ chips = false }: { chips?: boolean }) {
     return (
-        <div className="rounded-2xl border border-border/70 bg-card/80 p-4 animate-pulse">
+        <div className="rounded-2xl bg-card/80 p-4 animate-pulse">
             <div className="flex items-center gap-3 mb-3">
                 <div className="h-10 w-10 rounded-xl bg-muted/70" />
                 <div className="flex-1 space-y-2">

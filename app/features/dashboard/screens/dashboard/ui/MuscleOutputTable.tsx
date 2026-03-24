@@ -17,7 +17,7 @@ const TrendBadge = ({ status, label }: { status: TrendStatus; label: string }) =
     const Icon = config.icon;
 
     return (
-        <div className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 ${config.bg} ${config.border} transition-colors duration-300`}>
+        <div className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 ${config.bg} transition-colors duration-300`}>
             <Icon size={10} strokeWidth={3} className={config.color} />
             <span className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${config.color}`}>{label}</span>
         </div>
@@ -58,7 +58,7 @@ const PulseCard = ({
     return (
         <button
             onClick={onClick}
-            className="group flex w-full items-start gap-4 rounded-[1.5rem] border border-border/50 bg-background/35 px-4 py-4 text-left text-foreground transition-colors duration-300 hover:border-border/80 hover:bg-background/55 active:scale-[0.99] animate-slide-up"
+            className="group flex w-full items-start gap-4 rounded-3xl bg-background/35 px-4 py-4 text-left text-foreground transition-colors duration-300 hover:bg-background/55 active:scale-[0.99] animate-slide-up"
             style={{ animationDelay: `${index * 40}ms` }}
         >
             <div className={`mt-1 h-10 w-1 shrink-0 rounded-full ${muscleColor} opacity-70 transition-opacity group-hover:opacity-100`} />
@@ -83,7 +83,7 @@ const PulseCard = ({
                             label="Sets"
                             value={data.currentWeekSets}
                         />
-                        <div className="space-y-1 border-l border-border/50 pl-3 sm:pl-4">
+                        <div className="space-y-1 pl-3 sm:pl-4">
                             <MetricBlock
                                 label="Load"
                                 value={
@@ -177,7 +177,7 @@ export function MuscleOutputTable() {
 
     return (
         <div className="space-y-5 pb-6">
-            <div className="flex flex-col gap-3 border-b border-border/50 pb-4 md:flex-row md:items-end md:justify-between">
+            <div className="flex flex-col gap-3 pb-4 md:flex-row md:items-end md:justify-between">
                 <div className="max-w-2xl">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Muscle balance</p>
                     <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight text-foreground">Performance pulse</h2>
@@ -186,7 +186,7 @@ export function MuscleOutputTable() {
                     </p>
                 </div>
 
-                <div className="flex items-center gap-3 rounded-full border border-border/60 bg-background/50 px-4 py-2">
+                <div className="flex items-center gap-3 rounded-full bg-background/40 px-4 py-2">
                     <div className="flex -space-x-2">
                         {["Chest", "Back", "Legs"].map((m) => (
                             <div key={m} className={`h-6 w-6 rounded-full border-2 border-background ${muscleColorMap[m] || "bg-accent"}`} />
@@ -217,7 +217,7 @@ export function MuscleOutputTable() {
                     height="85vh"
                 >
                     <div className="flex-1 overflow-y-auto pb-16 no-scrollbar">
-                        <div className="mb-6 border-b border-border/50 pb-5">
+                        <div className="mb-6 pb-5">
                             <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
                                 <div>
                                     <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Intelligence report</p>
@@ -243,7 +243,7 @@ export function MuscleOutputTable() {
                             {selectedMuscle.exercises.map((ex: ExercisePerformanceData, idx: number) => (
                                 <div
                                     key={ex.name}
-                                    className="animate-slide-up border-b border-border/30 py-4 transition-colors hover:border-border/50"
+                                    className="animate-slide-up rounded-2xl py-4 transition-colors hover:bg-background/25"
                                     style={{ animationDelay: `${idx * 40}ms` }}
                                 >
                                     <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
@@ -264,7 +264,7 @@ export function MuscleOutputTable() {
                                         <div className="grid grid-cols-2 gap-3 sm:contents">
                                             <MetricBlock label="Sets" value={ex.currentWeekSets} />
 
-                                            <div className="space-y-1 border-l border-border/50 pl-3 sm:pl-4">
+                                            <div className="space-y-1 pl-3 sm:pl-4">
                                                 <MetricBlock
                                                     label="Load"
                                                     value={

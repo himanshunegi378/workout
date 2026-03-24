@@ -1,6 +1,6 @@
 "use client";
 
-import { History, Target } from "lucide-react";
+import { History } from "lucide-react";
 import { Button, BottomDrawer, NumberStepper, RPESelector } from "@/app/components/ui";
 
 interface LogSetDrawerProps {
@@ -67,57 +67,53 @@ export function LogSetDrawer({
     const repsNum = parseInt(reps) || 0;
 
     return (
-        <BottomDrawer isOpen={isOpen} onClose={onClose} title={isEdit ? "Edit Set" : `Log Set ${setIndex + 1}`}>
+        <BottomDrawer isOpen={isOpen} onClose={onClose} title={exerciseName}>
             <div className="flex flex-col gap-6">
-                <div className="flex items-center gap-4 rounded-2xl border border-border/60 bg-background/50 p-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-accent/20 bg-accent/10">
-                        <Target className="w-6 h-6 text-accent" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-[10px] font-bold text-accent uppercase tracking-widest mb-0.5">Logging for</p>
-                        <h3 className="font-display font-bold text-foreground text-lg truncate">{exerciseName}</h3>
-                    </div>
-                </div>
-
                 {previousLog && (
                     <button
                         type="button"
                         onClick={fillPrevious}
-                        className="group grid w-full gap-3 rounded-2xl border border-border/60 bg-background/40 p-4 text-sm transition-colors active:scale-[0.98] hover:border-accent/30 hover:bg-muted/20 sm:grid-cols-[1fr_auto] sm:items-center"
+                        className="group flex w-full flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-xl px-1 py-1 text-sm transition-colors active:scale-[0.98]"
                     >
                         <div className="flex items-center gap-3 text-muted-foreground transition-colors group-hover:text-foreground">
-                            <div className="rounded-lg bg-muted/30 p-2 transition-colors group-hover:bg-accent/10 group-hover:text-accent">
+                            <div className="rounded-full bg-muted/20 p-2 transition-colors group-hover:bg-accent/10 group-hover:text-accent">
                                 <History className="w-4 h-4" />
                             </div>
                             <span className="font-bold tracking-tight">Best Previous</span>
                         </div>
-                        <span className="justify-self-start rounded-lg border border-border/40 bg-muted/20 px-3 py-1.5 font-display font-bold text-foreground transition-colors group-hover:border-accent/20 sm:justify-self-end">
+                        <span className="ml-auto whitespace-nowrap font-display font-bold text-foreground">
                             {previousLog.weight ? `${previousLog.weight}kg × ` : ""}
                             {previousLog.reps} reps
                         </span>
                     </button>
                 )}
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <NumberStepper
-                        label="Weight"
-                        value={weightNum}
-                        onChange={(val) => setWeight(val.toString())}
-                        min={0}
-                        max={500}
-                        step={2.5}
-                        suffix="kg"
-                        stepOptions={[2.5, 5]}
-                    />
+                <div>
+                    <div className="flex flex-wrap items-start gap-3">
+                        <div className="min-w-0 flex-1">
+                            <NumberStepper
+                                label="Weight"
+                                value={weightNum}
+                                onChange={(val) => setWeight(val.toString())}
+                                min={0}
+                                max={500}
+                                step={2.5}
+                                suffix="kg"
+                                stepOptions={[2.5, 5]}
+                            />
+                        </div>
 
-                    <NumberStepper
-                        label="Reps"
-                        value={repsNum}
-                        onChange={(val) => setReps(val.toString())}
-                        min={0}
-                        max={100}
-                        step={1}
-                    />
+                        <div className="min-w-0 flex-1">
+                            <NumberStepper
+                                label="Reps"
+                                value={repsNum}
+                                onChange={(val) => setReps(val.toString())}
+                                min={0}
+                                max={100}
+                                step={1}
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 <div>

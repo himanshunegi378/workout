@@ -33,7 +33,7 @@ export const MuscleVolumeChart: React.FC<MuscleVolumeChartProps> = ({ muscleGrou
 
     if (isLoading) {
         return (
-            <div className="flex h-48 w-full items-center justify-center rounded-[1.5rem] border border-border/40 bg-background/20">
+            <div className="flex h-48 w-full items-center justify-center rounded-3xl bg-background/20">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground/30" />
             </div>
         );
@@ -41,7 +41,7 @@ export const MuscleVolumeChart: React.FC<MuscleVolumeChartProps> = ({ muscleGrou
 
     if (error || !data) {
         return (
-            <div className="flex h-48 w-full flex-col items-center justify-center rounded-[1.5rem] border border-border/40 bg-background/20 gap-2">
+            <div className="flex h-48 w-full flex-col items-center justify-center gap-2 rounded-3xl bg-background/20">
                 <Activity size={24} className="text-muted-foreground/40" />
                 <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground/70">History unavailable</p>
             </div>
@@ -49,7 +49,7 @@ export const MuscleVolumeChart: React.FC<MuscleVolumeChartProps> = ({ muscleGrou
     }
 
     return (
-        <div className="relative h-56 w-full overflow-hidden rounded-[1.5rem] border border-border/40 bg-background/25 p-4">
+        <div className="relative h-56 w-full overflow-hidden rounded-3xl bg-background/25 p-4">
             <div className="absolute left-4 top-4 z-10">
                 <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/70">Volume trend (kg)</p>
                 <p className="font-display text-xl font-semibold leading-none text-foreground">8 week pulse</p>
@@ -82,7 +82,7 @@ export const MuscleVolumeChart: React.FC<MuscleVolumeChartProps> = ({ muscleGrou
                     <Tooltip
                         contentStyle={{
                             backgroundColor: "hsl(var(--card))",
-                            border: "1px solid hsl(var(--border))",
+                            border: "none",
                             borderRadius: "12px",
                             backdropFilter: "blur(8px)",
                             padding: "8px 12px",

@@ -23,7 +23,7 @@ export function ExerciseListCard({ name, description, muscleGroup }: ExerciseLis
     const colorClass = muscleColorMap[muscleGroup] ?? "bg-accent";
 
     return (
-        <div className="group flex items-start gap-4 border-b border-border/40 px-1 py-4 text-card-foreground transition-colors duration-200 hover:border-border/70">
+        <div className="group flex items-start gap-4 rounded-2xl px-3 py-4 text-card-foreground transition-colors duration-200 hover:bg-background/35">
             <div className={`mt-1 h-10 w-1.5 shrink-0 rounded-full ${colorClass}`} />
 
             <div className="min-w-0 flex-1">

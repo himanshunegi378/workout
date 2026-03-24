@@ -5,11 +5,11 @@ import { Button } from "@/app/components/ui";
 import type { FeedbackListItem } from "../../../../api/query-hooks/use-feedback-history";
 
 const STATUS_STYLES: Record<FeedbackStatus, string> = {
-    [FeedbackStatus.Submitted]: "bg-background/75 text-foreground border-border/70",
-    [FeedbackStatus.UnderReview]: "bg-warning/20 text-foreground border-warning/30",
-    [FeedbackStatus.Planned]: "bg-sky-500/20 text-sky-950 dark:text-sky-50 border-sky-500/35",
-    [FeedbackStatus.Completed]: "bg-emerald-500/20 text-emerald-950 dark:text-emerald-50 border-emerald-500/35",
-    [FeedbackStatus.Rejected]: "bg-danger/20 text-danger border-danger/30",
+    [FeedbackStatus.Submitted]: "bg-background/75 text-foreground",
+    [FeedbackStatus.UnderReview]: "bg-warning/20 text-foreground",
+    [FeedbackStatus.Planned]: "bg-sky-500/20 text-sky-950 dark:text-sky-50",
+    [FeedbackStatus.Completed]: "bg-emerald-500/20 text-emerald-950 dark:text-emerald-50",
+    [FeedbackStatus.Rejected]: "bg-danger/20 text-danger",
 };
 
 type PreviousFeedbackListProps = {
@@ -58,7 +58,7 @@ export function PreviousFeedbackList({
             )}
 
             {error && (
-                <div className="rounded-2xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
+                <div className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger">
                     {error.message}
                 </div>
             )}
@@ -74,7 +74,7 @@ export function PreviousFeedbackList({
                     {feedbackEntries.map((entry, index) => (
                         <article
                             key={entry.id}
-                            className="space-y-3 border-t border-border/60 py-4 first:border-t-0 first:pt-0 animate-slide-up"
+                            className="space-y-3 py-4 first:pt-0 animate-slide-up"
                             style={{ animationDelay: `${index * 40}ms` }}
                         >
                             <div className="flex items-start justify-between gap-3">
@@ -87,7 +87,7 @@ export function PreviousFeedbackList({
                                     </p>
                                 </div>
                                 <span
-                                    className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${STATUS_STYLES[entry.status]}`}
+                                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${STATUS_STYLES[entry.status]}`}
                                 >
                                     {entry.status}
                                 </span>

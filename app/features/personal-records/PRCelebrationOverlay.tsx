@@ -85,7 +85,7 @@ export function PRCelebrationOverlay() {
                 className="fixed inset-x-0 bottom-24 md:bottom-8 z-9999 flex justify-center px-5 pointer-events-none"
             >
                 <div
-                    className="pointer-events-auto relative w-full max-w-sm bg-card border border-border rounded-3xl p-7 elevation-5 text-center overflow-hidden"
+                    className="pointer-events-auto relative w-full max-w-sm overflow-hidden rounded-3xl bg-card/95 p-7 text-center elevation-5"
                     style={{ animation: "pr-slide-in 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) both" }}
                 >
                     {/* Accent glow backdrop */}
@@ -128,10 +128,9 @@ export function PRCelebrationOverlay() {
 
                     {/* PR type badge */}
                     <div
-                        className="relative inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3 border"
+                        className="relative mb-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest"
                         style={{
                             background: `${config.color}18`,
-                            borderColor: `${config.color}40`,
                             color: config.color,
                         }}
                     >
@@ -154,7 +153,7 @@ export function PRCelebrationOverlay() {
 
                     <button
                         onClick={dismiss}
-                        className="relative text-xs text-muted-foreground hover:text-foreground transition-colors px-4 py-1.5 rounded-full border border-border hover:border-accent/30 hover:bg-accent/5"
+                        className="relative rounded-full px-4 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-accent/5 hover:text-foreground"
                     >
                         Dismiss
                     </button>

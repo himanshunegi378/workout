@@ -20,7 +20,7 @@ export function ProgrammeCard({ id, name, description, workoutCount }: Programme
     return (
         <Link
             href={`/programmes/${id}`}
-            className="group flex w-full items-start gap-4 border-b border-border/50 py-4 text-card-foreground transition-colors duration-200 hover:border-border/70"
+            className="group flex w-full items-start gap-4 rounded-2xl px-3 py-4 text-card-foreground transition-colors duration-200 hover:bg-background/35"
         >
             <div className="mt-1 h-10 w-1 shrink-0 rounded-full bg-accent/45 transition-colors group-hover:bg-accent" />
             <div className="min-w-0 flex-1">

@@ -22,11 +22,11 @@ export function Sidebar() {
     }
 
     return (
-        <aside className="sticky top-0 hidden h-screen w-72 shrink-0 border-r border-border/70 bg-background/84 backdrop-blur-xl md:flex md:flex-col">
+        <aside className="sticky top-0 hidden h-screen w-72 shrink-0 bg-background/84 backdrop-blur-xl md:flex md:flex-col">
             <div className="flex-1 px-5 py-6">
                 <div className="mb-10 px-3">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-card/80">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-card/80">
                             <Dumbbell className="h-5 w-5 text-accent" />
                         </div>
                         <div className="min-w-0">
@@ -43,9 +43,9 @@ export function Sidebar() {
                             <Link
                                 key={href}
                                 href={href}
-                                className={`group relative flex items-center gap-3 rounded-full px-3 py-2.5 text-sm transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                                    className={`group relative flex items-center gap-3 rounded-full px-3 py-2.5 text-sm transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                                     active
-                                        ? "bg-card/95 text-foreground ring-1 ring-border/80"
+                                        ? "bg-card/95 text-foreground"
                                         : "text-muted-foreground/90 hover:bg-card/55 hover:text-foreground"
                                     }`}
                             >

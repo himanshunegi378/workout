@@ -17,7 +17,7 @@ export function RPESelector({ value, onChange, label = "RPE (Intensity)" }: RPES
                 <Gauge className="w-4 h-4 text-accent" />
                 <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground/90">{label}</span>
                 {value && (
-                    <span className="ml-auto rounded-lg border border-accent/20 bg-accent px-2 py-0.5 text-[11px] font-bold text-accent-foreground">
+                    <span className="ml-auto rounded-full bg-accent/12 px-2.5 py-1 text-[11px] font-bold text-accent">
                         Intensity: {value === 10 ? 'Max Effort' : `${value}/10`}
                     </span>
                 )}
@@ -31,10 +31,10 @@ export function RPESelector({ value, onChange, label = "RPE (Intensity)" }: RPES
                             key={rpe}
                             type="button"
                             onClick={() => onChange(isSelected ? null : rpe)}
-                            className={`flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl border transition-all duration-300 active:scale-90
+                            className={`flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-full transition-all duration-300 active:scale-90
                                 ${isSelected
-                                    ? "border-accent/20 bg-accent text-accent-foreground shadow-sm shadow-accent/20"
-                                    : "border-border/70 bg-card/50 text-muted-foreground/90 hover:border-accent/40 hover:bg-muted/30 hover:text-foreground"
+                                    ? "bg-accent text-accent-foreground"
+                                    : "bg-card/50 text-muted-foreground/90 hover:bg-muted/30 hover:text-foreground"
                                 }`}
                         >
                             <span className="text-lg font-display font-bold leading-none">{rpe}</span>
