@@ -1,0 +1,23 @@
+app/components/ui/BottomDrawerContext.tsx
+  c6851fdfcf421ede 27-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "02ead3789ccbc26ef4b1a5b8d2756ada22bb9252",
+  "prompts": {
+    "c6851fdfcf421ede": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d1da3-a438-7f93-9bd9-e76b6cf4cb8c",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 3,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
