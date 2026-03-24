@@ -10,6 +10,9 @@ vi.mock("next/navigation", () => ({
     }),
 }));
 
+/**
+ * Registers a sample injected header action for the integration test.
+ */
 function ActionRegistrar() {
     const headerActions = usePageHeaderActions();
 

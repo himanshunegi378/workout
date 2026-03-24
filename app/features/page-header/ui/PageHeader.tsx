@@ -14,10 +14,16 @@ interface PageHeaderProps {
     showBackDefault?: boolean;
 }
 
+/**
+ * Renders the sticky page header with optional back navigation and action slots.
+ */
 export function PageHeader({ title, subtitle, backHref, action, showBackDefault }: PageHeaderProps) {
     const router = useRouter();
     const headerActions = usePageHeaderActions();
 
+    /**
+     * Chooses between link-based and history-based back navigation.
+     */
     const renderBack = () => {
         if (!backHref && !showBackDefault) return null;
 
