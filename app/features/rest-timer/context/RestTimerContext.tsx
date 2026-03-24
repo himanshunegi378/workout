@@ -64,7 +64,7 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
             let expiry = new Date();
             let finalIsActive = persisted.isActive;
 
-            // Rebuild the countdown from persisted wall-clock state so refreshes and tab switches stay accurate.
+            // Restore against wall-clock time so refreshes and background tabs do not drift the countdown.
             if (persisted.isActive) {
                 if (persisted.isRunning && persisted.expiryTimestamp) {
                     expiry = new Date(persisted.expiryTimestamp);
@@ -152,7 +152,7 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
         if (syncedRef.current) return;
         syncedRef.current = true;
 
-        // `useTimer` starts from a fresh hook state on mount, so we replay the persisted timer exactly once here.
+        // `useTimer` always mounts "fresh", so replay the persisted timer once after hydration.
         if (state.isActive) {
             if (!state.isPaused && state.expiryTimestamp > new Date()) {
                 restart(state.expiryTimestamp, true);
@@ -168,7 +168,7 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         if (!state.initialized) return;
 
-        // Persist enough information to recover both countdown progress and minimized/expanded UI state.
+        // Keep timer progress and presentation state together so the same UI comes back after reload.
         const expiry = (isRunning || state.isPaused) ? state.expiryTimestamp.toISOString() : null;
         const persisted: PersistedState = {
             isActive: state.isActive,
@@ -192,6 +192,7 @@ export function RestTimerProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         const handleVisibilityChange = () => {
+            // Browsers can throttle timers in background tabs; reconcile as soon as the tab becomes visible again.
             if (document.visibilityState === "visible" && state.isActive && state.expiryTimestamp < new Date()) {
                 onExpire();
             }

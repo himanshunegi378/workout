@@ -140,6 +140,11 @@ export function ExerciseHistoryDrawer({
                                                             <span className="font-display font-bold text-accent">
                                                                 {log.reps}
                                                             </span>
+                                                            {log.rpe && (
+                                                                <span className="ml-2 rounded-full bg-background/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/90">
+                                                                    @{log.rpe}
+                                                                </span>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>

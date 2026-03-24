@@ -7,6 +7,7 @@ export interface ExerciseHistoryLog {
     id: string;
     weight: number | null;
     reps: number;
+    rpe: number | null;
     set_order_index: number;
     workoutSession: {
         date: string;

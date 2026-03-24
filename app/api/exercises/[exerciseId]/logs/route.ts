@@ -36,6 +36,7 @@ export async function GET(
                 id: true,
                 weight: true,
                 reps: true,
+                rpe: true,
                 set_order_index: true,
                 pr_type: true,
                 sessionExerciseLog: {
@@ -67,6 +68,7 @@ export async function GET(
             id: log.id,
             weight: log.weight,
             reps: log.reps,
+            rpe: log.rpe,
             set_order_index: log.set_order_index,
             pr_type: log.pr_type,
             workoutSession: log.sessionExerciseLog?.workoutSession ?? { date: new Date().toISOString(), start_time: null },

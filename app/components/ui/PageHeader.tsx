@@ -71,12 +71,12 @@ export function PageHeader({ title, subtitle, backHref, action, showBackDefault 
                 <div className="flex min-w-[44px] shrink-0 items-center justify-end">
                     {(action || headerActions?.actions.length) ? (
                         <div className="flex items-center gap-2">
-                            {action}
                             {headerActions?.actions.map((item) => (
                                 <div key={item.id} className="flex items-center">
                                     {item.node}
                                 </div>
                             ))}
+                            {action}
                         </div>
                     ) : null}
                 </div>

@@ -15,7 +15,7 @@ export function RestTimerHeaderActionBridge() {
     useEffect(() => {
         if (!addAction || !removeAction) return;
 
-        // Keep the page-header action registered only while a timer is active.
+        // Register lazily so pages without an active timer do not reserve header action space.
         if (isActive && !actionIdRef.current) {
             actionIdRef.current = addAction(<RestTimerHeaderValue />);
         }
