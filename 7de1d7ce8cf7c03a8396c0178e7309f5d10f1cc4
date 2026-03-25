@@ -1,0 +1,55 @@
+app/layout.tsx
+  e4c35d26945d092e 6,13,60-68,70-80
+app/features/workouts/screens/exercise-list/ExerciseListContent.tsx
+  e4c35d26945d092e 46,50
+app/components/ui/PageShell.tsx
+  e4c35d26945d092e 27-32
+app/features/page-header/ui/PageHeader.tsx
+  7b91274f394b168f 6,60-66,68-77,79-90,92-93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.17",
+  "base_commit_sha": "7de1d7ce8cf7c03a8396c0178e7309f5d10f1cc4",
+  "prompts": {
+    "7b91274f394b168f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d20d1-f27b-72c2-b32f-1fd67b4657f6",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 34,
+      "total_deletions": 33,
+      "accepted_lines": 34,
+      "overriden_lines": 0
+    },
+    "e04f2174e06b301e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d20cd-56ba-7770-980c-ec016d0b24ea",
+        "model": "gpt-5.4"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 2,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "e4c35d26945d092e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d20cd-a80b-7e82-a289-b4bcce075348",
+        "model": "unknown"
+      },
+      "human_author": "Himanshu Singh Negi <himanshunegi378@gmail.com>",
+      "messages": [],
+      "total_additions": 33,
+      "total_deletions": 30,
+      "accepted_lines": 31,
+      "overriden_lines": 0
+    }
+  }
+}
