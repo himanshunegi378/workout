@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { PageHeaderActionsProvider, PageHeaderHostMount } from "@/app/features/page-header/internal";
 
 type PageShellSize = "md" | "lg" | "xl";
 type PageShellSpacing = "default" | "comfortable";
@@ -25,14 +24,11 @@ interface PageShellProps {
 
 export function PageShell({ children, header, size = "xl", spacing = "default", contentClassName = "" }: PageShellProps) {
     return (
-        <PageHeaderActionsProvider>
-            <div className="min-h-screen pb-20">
-                {header ? <PageHeaderHostMount /> : null}
-                {header}
-                <main className={`mx-auto w-full ${sizeClasses[size]} px-4 sm:px-6 lg:px-8 ${spacingClasses[spacing]} ${contentClassName}`.trim()}>
-                    {children}
-                </main>
-            </div>
-        </PageHeaderActionsProvider>
+        <div className="min-h-screen pb-20">
+            {header}
+            <main className={`mx-auto w-full ${sizeClasses[size]} px-4 sm:px-6 lg:px-8 ${spacingClasses[spacing]} ${contentClassName}`.trim()}>
+                {children}
+            </main>
+        </div>
     );
 }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
-import { usePageHeaderActions } from "../context/PageHeaderContext";
+import { PageHeaderHostMount, usePageHeaderActions } from "../context/PageHeaderContext";
 
 interface PageHeaderProps {
     title: string;
@@ -57,36 +57,39 @@ export function PageHeader({ title, subtitle, backHref, action, showBackDefault 
     };
 
     return (
-        <header className="sticky top-0 z-40 border-b border-border/60 bg-background/84 backdrop-blur-xl">
-            <div className="mx-auto grid h-16 w-full max-w-6xl grid-cols-[44px_1fr_44px] items-center gap-2 px-4 sm:px-6 md:h-[4.5rem] md:grid-cols-[auto_1fr_auto] md:gap-6 lg:px-8">
-                <div className="flex shrink-0 items-center">
-                    {renderBack()}
-                </div>
+        <>
+            <PageHeaderHostMount />
+            <header className="sticky top-0 z-40 border-b border-border/60 bg-background/84 backdrop-blur-xl">
+                <div className="mx-auto grid h-16 w-full max-w-6xl grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-2 px-4 sm:px-6 md:h-[4.5rem] md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-6 lg:px-8">
+                    <div className="flex shrink-0 items-center">
+                        {renderBack()}
+                    </div>
 
-                <div className="min-w-0 text-center md:text-left">
-                    <h1 className="truncate font-display text-lg font-semibold tracking-[-0.03em] text-foreground md:text-[1.75rem]">
-                        {title}
-                    </h1>
-                    {subtitle && (
-                        <p className="truncate text-[11px] uppercase tracking-[0.16em] text-muted-foreground/90 md:mt-1 md:text-xs">
-                            {subtitle}
-                        </p>
-                    )}
-                </div>
+                    <div className="min-w-0 text-center md:text-left">
+                        <h1 className="truncate font-display text-lg font-semibold tracking-[-0.03em] text-foreground md:text-[1.75rem]">
+                            {title}
+                        </h1>
+                        {subtitle && (
+                            <p className="truncate text-[11px] uppercase tracking-[0.16em] text-muted-foreground/90 md:mt-1 md:text-xs">
+                                {subtitle}
+                            </p>
+                        )}
+                    </div>
 
-                <div className="flex min-w-[44px] shrink-0 items-center justify-end">
-                    {(action || headerActions?.actions.length) ? (
-                        <div className="flex items-center gap-2">
-                            {headerActions?.actions.map((item) => (
-                                <div key={item.id} className="flex items-center">
-                                    {item.node}
-                                </div>
-                            ))}
-                            {action}
-                        </div>
-                    ) : null}
+                    <div className="flex shrink-0 items-center justify-end">
+                        {(action || headerActions?.actions.length) ? (
+                            <div className="flex items-center gap-2">
+                                {headerActions?.actions.map((item) => (
+                                    <div key={item.id} className="flex items-center">
+                                        {item.node}
+                                    </div>
+                                ))}
+                                {action}
+                            </div>
+                        ) : null}
+                    </div>
                 </div>
-            </div>
-        </header>
+            </header>
+        </>
     );
 }

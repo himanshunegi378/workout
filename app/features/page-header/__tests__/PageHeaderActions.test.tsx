@@ -2,7 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { PageShell } from "@/app/components/ui/PageShell";
-import { PageHeader, usePageHeaderActions } from "@/app/features/page-header";
+import { PageHeader, PageHeaderHostProvider, usePageHeaderActions } from "@/app/features/page-header";
+import { PageHeaderActionsProvider } from "@/app/features/page-header/internal";
 
 vi.mock("next/navigation", () => ({
     useRouter: () => ({
@@ -32,11 +33,15 @@ describe("PageHeaderActions", () => {
         const user = userEvent.setup();
 
         render(
-            <PageShell
-                header={<PageHeader title="Workout" action={<button type="button">Add Exercise</button>} />}
-            >
-                <ActionRegistrar />
-            </PageShell>
+            <PageHeaderHostProvider>
+                <PageHeaderActionsProvider>
+                    <PageShell
+                        header={<PageHeader title="Workout" action={<button type="button">Add Exercise</button>} />}
+                    >
+                        <ActionRegistrar />
+                    </PageShell>
+                </PageHeaderActionsProvider>
+            </PageHeaderHostProvider>
         );
 
         await user.click(screen.getByRole("button", { name: /register action/i }));

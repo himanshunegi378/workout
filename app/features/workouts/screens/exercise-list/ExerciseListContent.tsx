@@ -43,11 +43,11 @@ export function ExerciseListContent({
     useEffect(() => {
         if (!data?.session?.start_time) return;
         const start = new Date(data.session.start_time).getTime();
-        
+
         const interval = setInterval(() => {
             setSecondsElapsed(Math.floor((Date.now() - start) / 1000));
         }, 1000);
-        
+
         return () => clearInterval(interval);
     }, [data?.session?.start_time]);
 
@@ -126,7 +126,6 @@ export function ExerciseListContent({
             size="xl"
             contentClassName="max-w-none px-0 py-0"
         >
-            <RestTimerHeaderActionBridge />
 
             <div className="sticky top-16 z-30 border-b border-border/60 bg-background/85 backdrop-blur-xl md:top-20">
                 <div className="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6 lg:px-8">

@@ -1,6 +1,6 @@
 "use client";
 
-import { Minimize2, Minus, Pause, Play, Plus, X } from "lucide-react";
+import { Minimize2, Minus, Pause, Play, Plus } from "lucide-react";
 import { Button, Portal } from "@/app/components/ui";
 import { useRestTimer } from "../context/RestTimerContext";
 import { formatTime } from "../lib/formatTime";
@@ -34,22 +34,13 @@ export function RestTimerOverlay() {
                         <span className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
                             Rest Timer
                         </span>
-                        <div className="flex items-center gap-1">
-                            <button
-                                onClick={minimizeTimer}
-                                className="rounded-full p-1 text-muted-foreground transition-colors hover:text-foreground"
-                                aria-label="Minimize rest timer"
-                            >
-                                <Minimize2 className="h-4 w-4" />
-                            </button>
-                            <button
-                                onClick={stopTimer}
-                                className="rounded-full p-1 text-muted-foreground transition-colors hover:text-foreground"
-                                aria-label="Stop rest timer"
-                            >
-                                <X className="h-5 w-5" />
-                            </button>
-                        </div>
+                        <button
+                            onClick={minimizeTimer}
+                            className="rounded-full p-1 text-muted-foreground transition-colors hover:text-foreground"
+                            aria-label="Minimize rest timer"
+                        >
+                            <Minimize2 className="h-4 w-4" />
+                        </button>
                     </div>
 
                     <div className="flex items-center justify-between gap-3">

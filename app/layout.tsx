@@ -3,13 +3,14 @@ import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 import { QueryProvider } from "@/app/components/providers/QueryProvider";
-import { RestTimerFloatingBubble, RestTimerOverlay, RestTimerProvider } from "@/app/features/rest-timer";
+import { RestTimerFloatingBubble, RestTimerHeaderActionBridge, RestTimerOverlay, RestTimerProvider } from "@/app/features/rest-timer";
 import { BottomDrawerProvider, Sidebar, BottomNav } from "@/app/components/ui";
 import { PageHeaderHostProvider } from "@/app/features/page-header";
 
 import { PRCelebrationProvider } from "@/app/features/personal-records/PRCelebrationContext";
 import { PRCelebrationOverlay } from "@/app/features/personal-records/PRCelebrationOverlay";
 import "./globals.css";
+import { PageHeaderActionsProvider } from "./features/page-header/internal";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -56,23 +57,28 @@ export default function RootLayout({
           <SessionProvider>
             <QueryProvider>
               <PageHeaderHostProvider>
-                <RestTimerProvider>
-                  <PRCelebrationProvider>
-                    <BottomDrawerProvider>
-                      <div className="flex min-h-screen">
-                        <Sidebar />
-                        <div className="flex-1 flex flex-col min-w-0">
-                          {children}
+                <PageHeaderActionsProvider>
+                  <RestTimerProvider>
+                    <PRCelebrationProvider>
+                      <BottomDrawerProvider>
+                        <div className="flex min-h-screen">
+                          <Sidebar />
+                          <div className="flex-1 flex flex-col min-w-0">
+                            {children}
+                          </div>
                         </div>
-                      </div>
-                      <BottomNav />
-                    </BottomDrawerProvider>
-                    <PRCelebrationOverlay />
-                    <RestTimerOverlay />
-                    <RestTimerFloatingBubble />
+                        <BottomNav />
+                      </BottomDrawerProvider>
+                      <PRCelebrationOverlay />
+                      <RestTimerOverlay />
+                      <RestTimerFloatingBubble />
 
-                  </PRCelebrationProvider>
-                </RestTimerProvider>
+                    </PRCelebrationProvider>
+                    <RestTimerHeaderActionBridge />
+
+                  </RestTimerProvider>
+                </PageHeaderActionsProvider>
+
               </PageHeaderHostProvider>
             </QueryProvider>
           </SessionProvider>

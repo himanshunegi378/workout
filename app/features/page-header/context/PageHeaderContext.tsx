@@ -78,6 +78,7 @@ export function usePageHeaderHost() {
 
 /**
  * Marks the current subtree as owning a mounted page header host while it is rendered.
+ * basically to detect whether PageHeader is used or not
  */
 export function PageHeaderHostMount() {
     const host = usePageHeaderHost();
