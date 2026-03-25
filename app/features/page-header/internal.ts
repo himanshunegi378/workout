@@ -1,1 +1,1 @@
-export { PageHeaderActionsProvider, PageHeaderHostMount } from "./context/PageHeaderContext";
+export { PageHeaderActionsProvider } from "./context/PageHeaderContext";

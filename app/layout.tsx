@@ -5,7 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { QueryProvider } from "@/app/components/providers/QueryProvider";
 import { RestTimerFloatingBubble, RestTimerHeaderActionBridge, RestTimerOverlay, RestTimerProvider } from "@/app/features/rest-timer";
 import { BottomDrawerProvider, Sidebar, BottomNav } from "@/app/components/ui";
-import { PageHeaderHostProvider } from "@/app/features/page-header";
+import { PageHeaderStatusProvider } from "@/app/features/page-header";
 
 import { PRCelebrationProvider } from "@/app/features/personal-records/PRCelebrationContext";
 import { PRCelebrationOverlay } from "@/app/features/personal-records/PRCelebrationOverlay";
@@ -56,7 +56,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
           <SessionProvider>
             <QueryProvider>
-              <PageHeaderHostProvider>
+              <PageHeaderStatusProvider>
                 <PageHeaderActionsProvider>
                   <RestTimerProvider>
                     <PRCelebrationProvider>
@@ -79,7 +79,7 @@ export default function RootLayout({
                   </RestTimerProvider>
                 </PageHeaderActionsProvider>
 
-              </PageHeaderHostProvider>
+              </PageHeaderStatusProvider>
             </QueryProvider>
           </SessionProvider>
         </ThemeProvider>

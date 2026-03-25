@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useRef, useState } from "react";
 
 interface PageHeaderActionEntry {
     id: string;
@@ -13,22 +13,42 @@ interface PageHeaderActionsContextValue {
     removeAction: (id: string) => void;
 }
 
+interface PageHeaderStatusContextValue {
+    /** Whether a page header is currently mounted in the viewport. */
+    isAvailable: boolean;
+    /** Registers a header instance as mounted. */
+    registerHeader: () => void;
+    /** Unregisters a header instance. */
+    unregisterHeader: () => void;
+}
+
 const PageHeaderActionsContext = createContext<PageHeaderActionsContextValue | null>(null);
-const PageHeaderHostContext = createContext<{
-    hasHost: boolean;
-    setHasHost: (value: boolean) => void;
-} | null>(null);
+const PageHeaderStatusContext = createContext<PageHeaderStatusContextValue | null>(null);
 
 /**
- * Tracks whether a page header host is mounted in the current layout tree.
+ * Tracks the presence of page headers to manage layout and fallback components.
  */
-export function PageHeaderHostProvider({ children }: { children: React.ReactNode }) {
-    const [hasHost, setHasHost] = useState(false);
+export function PageHeaderStatusProvider({ children }: { children: React.ReactNode }) {
+    const [mountedCount, setMountedCount] = useState(0);
+
+    const registerHeader = useCallback(() => {
+        setMountedCount((prev) => prev + 1);
+    }, []);
+
+    const unregisterHeader = useCallback(() => {
+        setMountedCount((prev) => Math.max(0, prev - 1));
+    }, []);
+
+    const value = {
+        isAvailable: mountedCount > 0,
+        registerHeader,
+        unregisterHeader,
+    };
 
     return (
-        <PageHeaderHostContext.Provider value={{ hasHost, setHasHost }}>
+        <PageHeaderStatusContext.Provider value={value}>
             {children}
-        </PageHeaderHostContext.Provider>
+        </PageHeaderStatusContext.Provider>
     );
 }
 
@@ -70,27 +90,8 @@ export function usePageHeaderActions() {
 }
 
 /**
- * Returns the host registration state for the shared page header mount point.
+ * Returns the presence status of the page header.
  */
-export function usePageHeaderHost() {
-    return useContext(PageHeaderHostContext);
-}
-
-/**
- * Marks the current subtree as owning a mounted page header host while it is rendered.
- * basically to detect whether PageHeader is used or not
- */
-export function PageHeaderHostMount() {
-    const host = usePageHeaderHost();
-
-    useEffect(() => {
-        if (!host) return;
-
-        host.setHasHost(true);
-        return () => {
-            host.setHasHost(false);
-        };
-    }, [host]);
-
-    return null;
+export function usePageHeaderStatus() {
+    return useContext(PageHeaderStatusContext);
 }

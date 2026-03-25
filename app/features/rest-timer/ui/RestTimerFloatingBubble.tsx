@@ -1,7 +1,7 @@
 "use client";
 
 import { Portal } from "@/app/components/ui";
-import { usePageHeaderHost } from "@/app/features/page-header";
+import { usePageHeaderStatus } from "@/app/features/page-header";
 import { useRestTimer } from "../context/RestTimerContext";
 import { formatTime } from "../lib/formatTime";
 
@@ -11,10 +11,10 @@ import { formatTime } from "../lib/formatTime";
  */
 export function RestTimerFloatingBubble() {
     const { isActive, isMinimized, timeLeft, openTimer } = useRestTimer();
-    const headerHost = usePageHeaderHost();
-    const hasHeaderHost = headerHost?.hasHost ?? false;
+    const headerStatus = usePageHeaderStatus();
+    const isHeaderAvailable = headerStatus?.isAvailable ?? false;
 
-    if (!isActive || !isMinimized || hasHeaderHost) return null;
+    if (!isActive || !isMinimized || isHeaderAvailable) return null;
 
     return (
         <Portal>

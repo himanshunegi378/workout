@@ -1,6 +1,6 @@
 export { PageHeader } from "./ui/PageHeader";
 export {
-    PageHeaderHostProvider,
+    PageHeaderStatusProvider,
     usePageHeaderActions,
-    usePageHeaderHost,
+    usePageHeaderStatus,
 } from "./context/PageHeaderContext";

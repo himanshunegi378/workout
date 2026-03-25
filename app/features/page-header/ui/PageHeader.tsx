@@ -1,9 +1,10 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
-import { PageHeaderHostMount, usePageHeaderActions } from "../context/PageHeaderContext";
+import { usePageHeaderActions, usePageHeaderStatus } from "../context/PageHeaderContext";
 
 interface PageHeaderProps {
     title: string;
@@ -20,6 +21,16 @@ interface PageHeaderProps {
 export function PageHeader({ title, subtitle, backHref, action, showBackDefault }: PageHeaderProps) {
     const router = useRouter();
     const headerActions = usePageHeaderActions();
+    const headerStatus = usePageHeaderStatus();
+
+    useEffect(() => {
+        if (!headerStatus) return;
+
+        headerStatus.registerHeader();
+        return () => {
+            headerStatus.unregisterHeader();
+        };
+    }, [headerStatus]);
 
     /**
      * Chooses between link-based and history-based back navigation.
@@ -57,9 +68,7 @@ export function PageHeader({ title, subtitle, backHref, action, showBackDefault 
     };
 
     return (
-        <>
-            <PageHeaderHostMount />
-            <header className="sticky top-0 z-40 border-b border-border/60 bg-background/84 backdrop-blur-xl">
+        <header className="sticky top-0 z-40 border-b border-border/60 bg-background/84 backdrop-blur-xl">
                 <div className="mx-auto grid h-16 w-full max-w-6xl grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-2 px-4 sm:px-6 md:h-[4.5rem] md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-6 lg:px-8">
                     <div className="flex shrink-0 items-center">
                         {renderBack()}
@@ -89,7 +98,6 @@ export function PageHeader({ title, subtitle, backHref, action, showBackDefault 
                         ) : null}
                     </div>
                 </div>
-            </header>
-        </>
+        </header>
     );
 }

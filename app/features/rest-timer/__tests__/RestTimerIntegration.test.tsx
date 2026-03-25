@@ -2,7 +2,7 @@ import React from "react";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PageShell } from "@/app/components/ui";
-import { PageHeader, PageHeaderHostProvider } from "@/app/features/page-header";
+import { PageHeader, PageHeaderStatusProvider } from "@/app/features/page-header";
 import {
     RestTimerFloatingBubble,
     RestTimerHeaderActionBridge,
@@ -61,7 +61,7 @@ function TimerControls() {
 
 function TimerScreen({ withHeader = true }: { withHeader?: boolean }) {
     return (
-        <PageHeaderHostProvider>
+        <PageHeaderStatusProvider>
             <RestTimerProvider>
                 <PageShell header={withHeader ? <PageHeader title="Workout" action={<button type="button">Add Exercise</button>} /> : undefined}>
                     {withHeader ? <RestTimerHeaderActionBridge /> : null}
@@ -70,7 +70,7 @@ function TimerScreen({ withHeader = true }: { withHeader?: boolean }) {
                 <RestTimerOverlay />
                 <RestTimerFloatingBubble />
             </RestTimerProvider>
-        </PageHeaderHostProvider>
+        </PageHeaderStatusProvider>
     );
 }
 
@@ -218,13 +218,13 @@ describe("RestTimer integration", () => {
         expect(screen.getByRole("button", { name: /open rest timer with 1:00 remaining/i })).toBeInTheDocument();
 
         rerender(
-            <PageHeaderHostProvider>
+            <PageHeaderStatusProvider>
                 <RestTimerProvider>
                     <div>Other page</div>
                     <RestTimerOverlay />
                     <RestTimerFloatingBubble />
                 </RestTimerProvider>
-            </PageHeaderHostProvider>
+            </PageHeaderStatusProvider>
         );
 
         expect(screen.queryByRole("button", { name: /open rest timer with 1:00 remaining/i })).toBeInTheDocument();
