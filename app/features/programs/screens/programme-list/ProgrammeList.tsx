@@ -14,9 +14,9 @@ import { List } from "@/app/components/ui";
  * empty state if no programmes exist.
  */
 export function ProgrammeList() {
-    const { data: programmes, isLoading, isError } = useProgrammes();
+    const { data: programmes, isPending, isError } = useProgrammes();
 
-    if (isLoading) {
+    if (isPending) {
         return (
             <List.State className="items-start space-y-5 py-8 text-left text-muted-foreground">
                 <div className="flex items-center gap-3">

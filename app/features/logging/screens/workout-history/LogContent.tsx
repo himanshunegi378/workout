@@ -36,7 +36,7 @@ import type { SessionWithLogs } from "../../types";
 export function LogContent() {
     const {
         data,
-        isLoading,
+        isPending,
         isError,
         hasNextPage,
         fetchNextPage,
@@ -116,7 +116,7 @@ export function LogContent() {
         return Array.from(merged.values());
     })();
 
-    if (isLoading) {
+    if (isPending) {
         return (
             <List.Loading
                 title="Retrieving your journey..."

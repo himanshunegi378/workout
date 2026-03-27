@@ -36,7 +36,7 @@ export function ExerciseListContent({
     programmeId: string;
     workoutId: string;
 }) {
-    const { data, isLoading, isError } = useWorkoutDetails(programmeId, workoutId);
+    const { data, isPending, isError } = useWorkoutDetails(programmeId, workoutId);
     const [secondsElapsed, setSecondsElapsed] = useState(0);
 
     // Live Timer Logic
@@ -58,7 +58,7 @@ export function ExerciseListContent({
         return `${hrs > 0 ? `${hrs}:` : ''}${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
-    if (isLoading) {
+    if (isPending) {
         return (
             <PageShell
                 header={<PageHeader title="Loading..." backHref={`/programmes/${programmeId}`} showBackDefault />}

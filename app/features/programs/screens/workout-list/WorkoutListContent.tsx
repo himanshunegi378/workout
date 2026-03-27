@@ -19,9 +19,9 @@ import { WorkoutCard } from "./WorkoutCard";
  */
 export function WorkoutListContent({ programmeId }: { programmeId: string }) {
     const isRestoring = useIsRestoring();
-    const { data: programme, isLoading, isError } = useProgramme(programmeId);
+    const { data: programme, isPending, isError } = useProgramme(programmeId);
 
-    if (isRestoring || isLoading) {
+    if (isRestoring || isPending) {
         return (
             <>
                 <PageHeader title="Loading..." backHref="/" />
