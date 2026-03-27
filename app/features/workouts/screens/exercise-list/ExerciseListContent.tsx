@@ -127,49 +127,36 @@ export function ExerciseListContent({
             contentClassName="max-w-none px-0 py-0"
         >
 
-            <div className="sticky top-16 z-30 border-b border-border/60 bg-background/85 backdrop-blur-xl md:top-20">
-                <div className="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6 lg:px-8">
-                    <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
-                        <div className="grid grid-cols-2 gap-x-4 gap-y-3 md:grid-cols-4">
-                            <div className="space-y-0.5">
-                                <div className="flex items-center gap-1.5 text-foreground/70">
-                                    <TimerIcon className="h-3 w-3" />
-                                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em]">Duration</span>
-                                </div>
-                                <span className="font-display text-lg font-bold leading-none text-foreground tabular-nums">
-                                    {formatTime(secondsElapsed)}
-                                </span>
-                            </div>
-                            <div className="space-y-0.5">
-                                <div className="flex items-center gap-1.5 text-foreground/70">
-                                    <Zap className="h-3 w-3 text-accent" />
-                                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em]">Sets</span>
-                                </div>
-                                <span className="font-display text-lg font-bold leading-none text-foreground">
-                                    {totalSetsDone}
-                                </span>
-                            </div>
-                            <div className="space-y-0.5">
-                                <div className="flex items-center gap-1.5 text-foreground/70">
-                                    <Trophy className="h-3 w-3 text-warning" />
-                                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em]">Volume</span>
-                                </div>
-                                <span className="font-display text-lg font-bold leading-none text-foreground">
-                                    {currentVolume > 1000 ? `${(currentVolume / 1000).toFixed(1)}k` : currentVolume}kg
-                                </span>
-                            </div>
-                            <p className="col-span-2 text-xs text-foreground/75 md:col-span-1 md:self-end">
-                                {completedExercises}/{totalExercises} exercises complete
-                            </p>
+
+
+            <div className="sticky top-16 z-30 border-b rounded-2xl border-border/40 bg-background/95 backdrop-blur-md md:top-20">
+                <div className="mx-auto w-full max-w-6xl px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
+
+                    <div className="flex items-baseline gap-6 sm:gap-8">
+                        <span className="font-display text-3xl sm:text-4xl font-black tracking-tighter tabular-nums text-foreground">
+                            {formatTime(secondsElapsed)}
+                        </span>
+
+                        <div className="flex items-baseline gap-1.5 opacity-80">
+                            <span className="font-display text-xl font-bold tabular-nums">{totalSetsDone}</span>
+                            <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest">Sets</span>
+                        </div>
+
+                        <div className="flex items-baseline gap-1.5 opacity-80">
+                            <span className="font-display text-xl font-bold tabular-nums">
+                                {currentVolume > 1000 ? `${(currentVolume / 1000).toFixed(1)}k` : currentVolume}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest">Kg</span>
                         </div>
                     </div>
 
-                    <div className="mt-4 h-px overflow-hidden bg-border/60">
-                        <div
-                            className="h-px bg-accent transition-all duration-700 ease-out"
-                            style={{ width: `${progressPercentage}%` }}
-                        />
+                    <div className="flex flex-col items-end gap-1.5">
+                        <span className="text-[10px] font-bold text-muted-foreground tabular-nums tracking-widest">{completedExercises} OF {totalExercises}</span>
+                        <div className="w-24 h-1.5 rounded-full bg-border overflow-hidden">
+                            <div className="h-full bg-foreground transition-all duration-700 ease-out" style={{ width: `${progressPercentage}%` }} />
+                        </div>
                     </div>
+
                 </div>
             </div>
 
