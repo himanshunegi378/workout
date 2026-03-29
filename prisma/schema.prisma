@@ -63,6 +63,7 @@ model User {
   sessionExerciseLogs SessionExerciseLog[]
   exerciseLogs        ExerciseLog[]
   feedbackEntries     Feedback[]
+  activityLogs        ProgrammeActivityLog[]
 
   @@map("users")
 }
@@ -113,7 +114,26 @@ model Programme {
   // Relations
   workouts Workout[]
 
+  is_active Boolean @default(false)
+
+  activity_logs ProgrammeActivityLog[]
+
   @@map("programmes")
+}
+
+model ProgrammeActivityLog {
+  id           String    @id @default(cuid())
+  start_time   DateTime  @default(now())
+  end_time     DateTime?
+
+  programme_id String
+  user_id      String
+
+  programme Programme @relation(fields: [programme_id], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, end_time])
+  @@map("programme_activity_logs")
 }
 
 /// A named workout containing an ordered list of exercises.
