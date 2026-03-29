@@ -168,36 +168,54 @@ export async function DELETE(request: Request) {
             );
         }
 
-        // Verify ownership
-        const set = await prisma.exerciseLog.findUnique({
-            where: { id: setId },
+        // --- Transaction-based Deletion & Session Cleanup ---
+        const result = await prisma.$transaction(async (tx) => {
+            // Find the log and its parent session (Principle 1: Efficiency)
+            const set = await tx.exerciseLog.findUnique({
+                where: { id: setId },
+                include: { sessionExerciseLog: true }
+            });
+
+            if (!set) {
+                throw new Error("Set not found");
+            }
+
+            if (set.user_id !== userId) {
+                throw new Error("Unauthorized");
+            }
+
+            const sessionId = set.sessionExerciseLog?.workout_session_id;
+
+            // Delete the log. Cascading delete will remove the associated SessionExerciseLog.
+            await tx.exerciseLog.delete({
+                where: { id: setId },
+            });
+
+            // If the set was part of a session, check if it was the LAST set (Principle 9: Reliability)
+            if (sessionId) {
+                const remainingSets = await tx.sessionExerciseLog.count({
+                    where: { workout_session_id: sessionId }
+                });
+
+                if (remainingSets === 0) {
+                    // Cleanup empty session
+                    await tx.workoutSession.delete({
+                        where: { id: sessionId }
+                    });
+                    return { message: "Set deleted and empty session purged", sessionPurged: true };
+                }
+            }
+
+            return { message: "Set deleted successfully", sessionPurged: false };
         });
 
-        if (!set) {
-            return NextResponse.json(
-                { error: "Set not found" },
-                { status: 404 }
-            );
-        }
-
-        if (set.user_id !== userId) {
-            return NextResponse.json(
-                { error: "Unauthorized" },
-                { status: 403 }
-            );
-        }
-
-        // Delete the log. Cascading delete will remove the associated SessionExerciseLog.
-        await prisma.exerciseLog.delete({
-            where: { id: setId },
-        });
-
-        return NextResponse.json({ message: "Set deleted successfully" });
+        return NextResponse.json(result);
     } catch (error) {
         console.error("Failed to delete set:", error);
+        const status = error instanceof Error && (error.message === "Set not found" ? 404 : error.message === "Unauthorized" ? 403 : 500) || 500;
         return NextResponse.json(
             { error: error instanceof Error ? error.message : "Failed to delete set" },
-            { status: 500 }
+            { status }
         );
     }
 }
