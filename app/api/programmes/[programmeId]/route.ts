@@ -37,6 +37,7 @@ export async function GET(
             select: {
                 id: true,
                 name: true,
+                is_active: true,
                 workouts: {
                     orderBy: { order_index: "asc" },
                     select: {
@@ -77,5 +78,78 @@ export async function GET(
             { error: "Internal Server Error" },
             { status: 500 }
         );
+    }
+}
+export async function PATCH(
+    request: NextRequest,
+    { params }: { params: Promise<{ programmeId: string }> }
+) {
+    try {
+        const session = await auth();
+        if (!session?.user?.id) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const { programmeId } = await params;
+        const userId = session.user.id;
+        const body = await request.json();
+        const { is_active } = body;
+
+        if (typeof is_active !== "boolean") {
+            return NextResponse.json({ error: "Invalid is_active status" }, { status: 400 });
+        }
+
+        const result = await prisma.$transaction(async (tx) => {
+            // Verify ownership
+            const existing = await tx.programme.findFirst({
+                where: { id: programmeId, user_id: userId }
+            });
+
+            if (!existing) {
+                throw new Error("Programme not found");
+            }
+
+            if (is_active) {
+                // Deactivate current active programme (if any) and close its activity log
+                await tx.programme.updateMany({
+                    where: { user_id: userId, id: { not: programmeId }, is_active: true },
+                    data: { is_active: false }
+                });
+
+                await tx.programmeActivityLog.updateMany({
+                    where: { user_id: userId, end_time: null },
+                    data: { end_time: new Date() }
+                });
+
+                // Create new activity log for this programme
+                await tx.programmeActivityLog.create({
+                    data: {
+                        programme_id: programmeId,
+                        user_id: userId,
+                        start_time: new Date()
+                    }
+                });
+            } else if (existing.is_active) {
+                // Closing current activity log as we are deactivate the active programme
+                await tx.programmeActivityLog.updateMany({
+                    where: { programme_id: programmeId, user_id: userId, end_time: null },
+                    data: { end_time: new Date() }
+                });
+            }
+
+            // Update programme status
+            return tx.programme.update({
+                where: { id: programmeId },
+                data: { is_active }
+            });
+        });
+
+        return NextResponse.json(result);
+    } catch (error) {
+        console.error("[PATCH_PROGRAMME_API_ERROR]:", error);
+        if (error instanceof Error && error.message === "Programme not found") {
+            return NextResponse.json({ error: error.message }, { status: 404 });
+        }
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

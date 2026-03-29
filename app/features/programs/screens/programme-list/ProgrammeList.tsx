@@ -50,6 +50,7 @@ export function ProgrammeList() {
                         id={programme.id}
                         name={programme.name}
                         description={programme.description}
+                        isActive={programme.is_active}
                         workoutCount={programme.workouts.length}
                     />
                 </List.Item>

@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { programmeKeys } from "../query-keys";
 
-type ProgrammeDetails = {
+export type ProgrammeDetails = {
     id: string;
     name: string;
+    is_active: boolean;
     workouts: {
         id: string;
         name: string;

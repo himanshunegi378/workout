@@ -17,6 +17,7 @@ export function AddProgrammeForm() {
     const router = useRouter();
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
+    const [isActive, setIsActive] = useState(false);
     const { mutate: createProgramme, isPending, error: mutationError } = useCreateProgramme();
 
     const canSubmit = name.trim().length > 0;
@@ -29,6 +30,7 @@ export function AddProgrammeForm() {
             {
                 name: name.trim(),
                 description: description.trim() || null,
+                is_active: isActive,
             },
             {
                 onSuccess: () => {
@@ -88,6 +90,30 @@ export function AddProgrammeForm() {
                 />
             </div>
 
+            <div className="flex items-center justify-between gap-4 rounded-2xl bg-background/45 p-4 ring-1 ring-inset ring-foreground/5">
+                <div className="space-y-1">
+                    <label className="text-sm font-semibold text-foreground" htmlFor="active-toggle">
+                        Mark as Active
+                    </label>
+                    <p className="text-xs text-muted-foreground">
+                        Automatically deactivates any other active programs.
+                    </p>
+                </div>
+                <button
+                    type="button"
+                    id="active-toggle"
+                    onClick={() => setIsActive(!isActive)}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 bg-background/50 ${isActive ? "bg-accent" : "bg-muted-foreground/20"}`}
+                    role="switch"
+                    aria-checked={isActive}
+                >
+                    <span
+                        aria-hidden="true"
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${isActive ? "translate-x-5" : "translate-x-0"}`}
+                    />
+                </button>
+            </div>
+
             {mutationError && (
                 <div className="rounded-2xl bg-danger/10 px-4 py-3 text-sm text-danger animate-slide-up">
                     {mutationError instanceof Error ? mutationError.message : "Something went wrong"}
@@ -99,7 +125,7 @@ export function AddProgrammeForm() {
                     type="submit"
                     variant="primary"
                     disabled={!canSubmit || isPending}
-                    className="w-full sm:w-auto !text-background"
+                    className="w-full sm:w-auto text-background!"
                 >
                     {isPending ? "Saving…" : "Save Program"}
                 </Button>

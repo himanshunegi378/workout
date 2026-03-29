@@ -2,6 +2,7 @@ interface CreateProgramData {
     id?: string;
     name: string;
     description: string | null;
+    is_active?: boolean;
 }
 
 /**
@@ -26,6 +27,31 @@ export async function createProgram(data: CreateProgramData) {
     if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || "Failed to create programme");
+    }
+
+    return res.json();
+}
+
+export interface UpdateProgramData {
+    id: string;
+    is_active: boolean;
+}
+
+/**
+ * Persistence layer for updating an existing training programme.
+ * Supports toggling the 'is_active' status.
+ */
+export async function updateProgram(data: UpdateProgramData) {
+    const { id, ...updateData } = data;
+    const res = await fetch(`/api/programmes/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updateData),
+    });
+
+    if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to update programme");
     }
 
     return res.json();

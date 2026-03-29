@@ -13,8 +13,7 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json();
-
-        const { id, name, description } = body;
+        const { id, name, description, is_active } = body;
 
         if (!name || typeof name !== "string" || name.trim().length === 0) {
             return NextResponse.json(
@@ -36,13 +35,42 @@ export async function POST(request: Request) {
             }
         }
 
-        const programme = await prisma.programme.create({
-            data: {
-                id: id || undefined,
-                name: name.trim(),
-                description: description || null,
-                user_id: userId,
-            },
+        const programme = await prisma.$transaction(async (tx) => {
+            if (is_active) {
+                // Deactivate current active programme and close its activity log
+                await tx.programme.updateMany({
+                    where: { user_id: userId, is_active: true },
+                    data: { is_active: false },
+                });
+
+                await tx.programmeActivityLog.updateMany({
+                    where: { user_id: userId, end_time: null },
+                    data: { end_time: new Date() },
+                });
+            }
+
+            const newProgramme = await tx.programme.create({
+                data: {
+                    id: id || undefined,
+                    name: name.trim(),
+                    description: description || null,
+                    user_id: userId,
+                    is_active: !!is_active,
+                },
+            });
+
+            if (is_active) {
+                // Create new activity log for the new programme
+                await tx.programmeActivityLog.create({
+                    data: {
+                        programme_id: newProgramme.id,
+                        user_id: userId,
+                        start_time: new Date(),
+                    },
+                });
+            }
+
+            return newProgramme;
         });
 
         return NextResponse.json(programme, { status: 201 });
@@ -71,6 +99,7 @@ export async function GET() {
                 id: true,
                 name: true,
                 description: true,
+                is_active: true,
                 workouts: {
                     select: { id: true },
                 },
