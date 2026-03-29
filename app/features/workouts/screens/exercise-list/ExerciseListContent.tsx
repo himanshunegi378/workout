@@ -1,6 +1,6 @@
 "use client";
 
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { Activity, Loader2, Timer as TimerIcon, Zap, Trophy } from "lucide-react";
 import { useState, useEffect } from "react";
 import { PageShell, List } from "@/app/components/ui";
@@ -9,6 +9,7 @@ import { RestTimerHeaderActionBridge } from "@/app/features/rest-timer";
 import { ExerciseCard } from "./ui/ExerciseCard";
 import { AddExerciseTrigger } from "../../../exercises/components/AddExerciseTrigger";
 import { useWorkoutDetails, WorkoutDetailsResponse } from "../../api/query-hooks/use-workout-details";
+import { useFinishWorkout } from "../../api/mutation-hooks/use-finish-workout";
 
 type ExerciseLog = NonNullable<NonNullable<WorkoutDetailsResponse['session']>['sessionExerciseLogs'][number]['exerciseLog']>;
 
@@ -36,7 +37,9 @@ export function ExerciseListContent({
     programmeId: string;
     workoutId: string;
 }) {
+    const router = useRouter();
     const { data, isPending, isError } = useWorkoutDetails(programmeId, workoutId);
+    const { mutate: finishWorkout, isPending: isFinishing } = useFinishWorkout();
     const [secondsElapsed, setSecondsElapsed] = useState(0);
 
     // Live Timer Logic
@@ -112,6 +115,17 @@ export function ExerciseListContent({
     const completedExercises = workout.exercisesWithMetadata.filter(ewm => (logsByEwm[ewm.id]?.length || 0) >= (ewm.sets_min || 1)).length;
     const progressPercentage = totalExercises > 0 ? (completedExercises / totalExercises) * 100 : 0;
 
+    const handleFinishWorkout = () => {
+        if (!session) return;
+        if (window.confirm("Ready to finish your training session? Current volume and total duration will be logged.")) {
+            finishWorkout({ sessionId: session.id }, {
+                onSuccess: () => {
+                    router.push(`/programmes/${programmeId}`);
+                }
+            });
+        }
+    };
+
     return (
         <PageShell
             header={
@@ -120,7 +134,25 @@ export function ExerciseListContent({
                     subtitle="Live Training Session"
                     backHref={`/programmes/${programmeId}`}
                     showBackDefault
-                    action={<AddExerciseTrigger programmeId={programmeId} workoutId={workoutId} variant="icon" />}
+                    action={
+                        <div className="flex items-center gap-2">
+                            {session && (
+                                <button
+                                    onClick={handleFinishWorkout}
+                                    disabled={isFinishing}
+                                    className="flex items-center gap-2 px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent font-bold rounded-xl transition-all disabled:opacity-50"
+                                >
+                                    {isFinishing ? (
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                        <Trophy className="w-4 h-4" />
+                                    )}
+                                    <span>Finish</span>
+                                </button>
+                            )}
+                            <AddExerciseTrigger programmeId={programmeId} workoutId={workoutId} variant="icon" />
+                        </div>
+                    }
                 />
             }
             size="xl"
