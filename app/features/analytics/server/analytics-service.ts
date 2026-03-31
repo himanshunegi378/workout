@@ -130,3 +130,23 @@ export async function buildAnalyticsQuery(
         return serialized;
     });
 }
+
+export async function getHeatmapActivity(userId: string) {
+    const query = Prisma.sql`
+    SELECT 
+      session_date::date::text as date,
+      COUNT(DISTINCT exercise_id) as count
+    FROM exercise_analytics_view
+    WHERE user_id = ${userId}
+      AND session_date >= CURRENT_DATE - INTERVAL '365 days'
+    GROUP BY session_date
+    ORDER BY session_date ASC;
+  `;
+
+    const rawData = await prisma.$queryRaw<{ date: string; count: bigint }[]>(query);
+
+    return rawData.map((row) => ({
+        date: row.date,
+        count: typeof row.count === 'bigint' ? Number(row.count) : row.count
+    }));
+}
