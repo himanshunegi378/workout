@@ -9,11 +9,15 @@ export interface WorkoutOption {
     };
 }
 
-export function useWorkouts() {
+export function useWorkouts(onlyActive: boolean = true) {
     return useQuery<WorkoutOption[], Error>({
-        queryKey: queryKeys.workouts.all(),
+        queryKey: queryKeys.workouts.all(onlyActive),
         queryFn: async () => {
-            const response = await fetch("/api/workouts");
+            const url = new URL("/api/workouts", window.location.origin);
+            if (onlyActive) {
+                url.searchParams.set("active", "true");
+            }
+            const response = await fetch(url.toString());
             if (!response.ok) {
                 throw new Error("Failed to fetch workouts");
             }

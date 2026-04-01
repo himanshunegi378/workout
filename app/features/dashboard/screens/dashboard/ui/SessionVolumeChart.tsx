@@ -14,10 +14,14 @@ import {
 import { Loader2, TrendingUp, AlertTriangle, ArrowRight, Activity } from "lucide-react";
 import { useWorkouts } from "../../../api/query-hooks/use-workouts";
 import { useSessionVolume, type SessionVolumeNode } from "../../../api/query-hooks/use-session-volume";
+import { useProgrammes } from "../../../../programs/api/query-hooks/use-programmes";
 
 export function SessionVolumeChart() {
-    const { data: workouts, isLoading: loadingWorkouts } = useWorkouts();
+    const { data: workouts, isLoading: loadingWorkouts } = useWorkouts(true);
+    const { data: programmes, isLoading: loadingProgrammes } = useProgrammes();
     const [selectedWorkoutId, setSelectedWorkoutId] = useState<string>("");
+
+    const hasActiveProgramme = programmes?.some((p) => p.is_active) ?? false;
 
     const effectiveWorkoutId = selectedWorkoutId || workouts?.[0]?.id || "";
 
@@ -67,27 +71,29 @@ export function SessionVolumeChart() {
                 </div>
 
                 <div className="w-full sm:w-auto">
-                    {loadingWorkouts ? (
+                    {loadingWorkouts || loadingProgrammes ? (
                         <div className="h-10 w-full rounded-full bg-muted/40 sm:w-48" />
                     ) : (
-                        <div className="relative w-full sm:w-52">
-                            <select
-                                value={effectiveWorkoutId}
-                                onChange={handleWorkoutChange}
-                                className="w-full appearance-none rounded-full bg-background/50 px-4 py-2.5 pr-9 text-sm text-foreground transition-colors focus:outline-none focus:ring-0"
-                            >
-                                {workouts?.map((w) => (
-                                    <option key={w.id} value={w.id}>
-                                        {w.name}
-                                    </option>
-                                ))}
-                            </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground">
-                                <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
-                                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd" />
-                                </svg>
+                        hasActiveProgramme && (
+                            <div className="relative w-full sm:w-52">
+                                <select
+                                    value={effectiveWorkoutId}
+                                    onChange={handleWorkoutChange}
+                                    className="w-full appearance-none rounded-full bg-background/50 px-4 py-2.5 pr-9 text-sm text-foreground transition-colors focus:outline-none focus:ring-0"
+                                >
+                                    {workouts?.map((w) => (
+                                        <option key={w.id} value={w.id}>
+                                            {w.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground">
+                                    <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd" />
+                                    </svg>
+                                </div>
                             </div>
-                        </div>
+                        )
                     )}
                 </div>
             </div>
@@ -99,18 +105,27 @@ export function SessionVolumeChart() {
                     </div>
                 )}
 
-                {!loadingWorkouts && workouts?.length === 0 ? (
+                {!loadingWorkouts && workouts?.length === 0 && hasActiveProgramme ? (
                     <div className="flex min-h-[220px] flex-col items-center justify-center text-muted-foreground">
                         <Activity className="mb-2 h-8 w-8 opacity-20" />
                         <p className="text-sm text-foreground/75">No workout templates found.</p>
                     </div>
-                ) : chartData.length === 0 && !loadingVolume ? (
+                ) : chartData.length === 0 && !loadingVolume && hasActiveProgramme ? (
                     <div className="flex min-h-[220px] flex-col items-center justify-center text-muted-foreground">
                         <Activity className="mb-2 h-8 w-8 opacity-20" />
                         <p className="text-sm text-foreground/75">No logged sessions found for this routine.</p>
                     </div>
                 ) : (
                     <div className="w-full h-[220px] relative">
+                        {!hasActiveProgramme && !loadingProgrammes && (
+                            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-background/70 px-6 text-center backdrop-blur-sm">
+                                <Activity className="mb-2 h-8 w-8 animate-pulse text-accent" />
+                                <p className="font-display text-lg font-semibold tracking-tight text-foreground">No Active Programme</p>
+                                <p className="mt-2 max-w-55 text-sm leading-6 text-foreground/75">
+                                    Activate your training protocol in the programmes tab to see session progression.
+                                </p>
+                            </div>
+                        )}
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={chartData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.35} />

@@ -1,9 +1,0 @@
-- [ ] Discover scope
-- [ ] Define acceptance criteria
-- [ ] Map current structure
-- [ ] Expand plan into actionable subtasks
-  - [ ] [Subtask]
-  - [ ] [Subtask]
-- [ ] Execute changes
-- [ ] Verify results
-- [ ] Summarize changes, risks, and unresolved items

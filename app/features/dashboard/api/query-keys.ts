@@ -4,7 +4,7 @@ export const queryKeys = {
         fatigue: ["dashboard", "fatigue"] as const,
     },
     workouts: {
-        all: () => ["workouts"] as const,
+        all: (onlyActive: boolean = true) => ["workouts", { onlyActive }] as const,
     },
     analytics: {
         all: () => ["analytics"] as const,
