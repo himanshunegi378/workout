@@ -3,25 +3,25 @@
 import { useState } from "react";
 import { useExercises } from "@/app/features/exercises/api/query-hooks/use-exercises";
 import { ExerciseSelectDrawer } from "@/app/features/exercises/components/ExerciseSelectDrawer";
-import { StandaloneLogDrawer } from "./StandaloneLogDrawer";
+import { ExerciseQuickLogDrawer } from "./ExerciseQuickLogDrawer";
 import { QuickLogFAB } from "./QuickLogFAB";
 
 /**
  * A coordinator component that manages the "Quick Log" flow.
  * It provides a Floating Action Button (FAB) that opens an exercise selection drawer,
- * followed by a logging drawer for the selected exercise.
+ * followed by a combined quick-log and history drawer for the selected exercise.
  * 
  * @returns {JSX.Element} The rendered FAB and associated drawers.
  */
 export function QuickLogActions() {
     const { data: exercises } = useExercises();
     const [isSelectOpen, setIsSelectOpen] = useState(false);
-    const [isStandaloneOpen, setIsStandaloneOpen] = useState(false);
+    const [isQuickLogOpen, setIsQuickLogOpen] = useState(false);
     const [selectedExercise, setSelectedExercise] = useState<{ id: string; name: string } | null>(null);
 
     /**
      * Handles the selection of an exercise from the selection drawer.
-     * Sets the selected exercise state and opens the logging drawer.
+     * Sets the selected exercise state and opens the combined exercise drawer.
      * 
      * @param {string} exerciseId - The ID of the selected exercise.
      */
@@ -29,7 +29,7 @@ export function QuickLogActions() {
         const ex = exercises?.find((e: { id: string }) => e.id === exerciseId);
         if (ex) {
             setSelectedExercise({ id: ex.id, name: ex.name });
-            setIsStandaloneOpen(true);
+            setIsQuickLogOpen(true);
         }
     };
 
@@ -45,10 +45,11 @@ export function QuickLogActions() {
             />
 
             {selectedExercise && (
-                <StandaloneLogDrawer
-                    isOpen={isStandaloneOpen}
+                <ExerciseQuickLogDrawer
+                    key={selectedExercise.id}
+                    isOpen={isQuickLogOpen}
                     onClose={() => {
-                        setIsStandaloneOpen(false);
+                        setIsQuickLogOpen(false);
                         setSelectedExercise(null);
                     }}
                     exerciseId={selectedExercise.id}

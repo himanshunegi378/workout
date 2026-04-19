@@ -7,7 +7,6 @@ interface LogSetDrawerProps {
     isOpen: boolean;
     onClose: () => void;
     exerciseName: string;
-    setIndex: number;
     weight: string;
     setWeight: (w: string) => void;
     reps: string;
@@ -42,7 +41,6 @@ export function LogSetDrawer({
     isOpen,
     onClose,
     exerciseName,
-    setIndex,
     weight,
     setWeight,
     reps,

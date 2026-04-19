@@ -2,9 +2,9 @@
 
 import { Check, Trash2, Trophy } from "lucide-react";
 import { muscleColorMap } from "@/app/components/ui";
-import { ExerciseHistoryDrawer } from "@/app/features/exercises/components/ExerciseHistoryDrawer";
 import { useDeleteLogSet } from "../../../api/mutation-hooks/use-delete-log-set";
 import { useState } from "react";
+import { ExerciseQuickLogDrawer } from "./ExerciseQuickLogDrawer";
 
 /**
  * Props for the SetRow component.
@@ -105,7 +105,7 @@ interface ExerciseLogGroupProps {
 
 /**
  * A component that groups multiple sets under a single exercise heading.
- * Clicking the exercise name opens the full history drawer for that exercise.
+ * Clicking the exercise name opens the combined quick-log and history drawer for that exercise.
  * 
  * @param {ExerciseLogGroupProps} props - The exercise group data.
  * @returns {JSX.Element} The rendered exercise log group.
@@ -139,7 +139,8 @@ export function ExerciseLogGroup({ exerciseId, exerciseName, muscleGroup, sets }
                 ))}
             </div>
 
-            <ExerciseHistoryDrawer
+            <ExerciseQuickLogDrawer
+                key={exerciseId}
                 exerciseId={exerciseId}
                 exerciseName={exerciseName}
                 isOpen={isHistoryOpen}

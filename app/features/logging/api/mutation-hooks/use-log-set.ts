@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { workoutKeys } from "@/app/features/workouts/api/query-keys";
+import { workoutKeys, type WorkoutDetailsResponse } from "@/app/features/workouts";
 import { logKeys } from "../query-keys";
 import { logSet } from "../mutations";
-import { WorkoutDetailsResponse } from "@/app/features/workouts/api/query-hooks/use-workout-details";
+import { ExerciseHistoryLog } from "../query-hooks/use-exercise-history";
 
 /**
  * A mutation hook for logging a workout set.
- * It includes optimistic updates to the local cache and handles rollback on error.
+ * It includes optimistic updates to both workout details and individual exercise history.
  * 
  * @returns {import("@tanstack/react-query").UseMutationResult} A React Query mutation result object.
  */
@@ -16,10 +16,8 @@ export function useLogSet() {
     return useMutation({
         mutationFn: logSet,
         /**
-         * Optimistically updates the local workout details cache before the server mutation completes.
-         * 
-         * @param {Object} newLogData - The new set data.
-         * @returns {Promise<Object>} The previous workout details snapshot for possible rollback.
+         * Optimistically updates local caches before the server mutation completes.
+         * Supports both active workout sessions and ad-hoc quick logs.
          */
         onMutate: async (newLogData: {
             workoutId?: string;
@@ -31,78 +29,100 @@ export function useLogSet() {
             rpe?: string;
             id?: string
         }) => {
-            if (!newLogData.workoutId) return;
+            const id = newLogData.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36).substring(7));
+            const commonLogData = {
+                id,
+                weight: parseFloat(newLogData.weight) || null,
+                reps: parseInt(newLogData.reps) || 0,
+                rpe: newLogData.rpe ? parseFloat(newLogData.rpe) : null,
+                set_order_index: newLogData.setOrderIndex,
+            };
 
-            // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-            await queryClient.cancelQueries({ queryKey: workoutKeys.detail(newLogData.workoutId) });
+            // 1. Optimistic update for Active Workout Details
+            let previousWorkoutDetails;
+            if (newLogData.workoutId) {
+                await queryClient.cancelQueries({ queryKey: workoutKeys.detail(newLogData.workoutId) });
+                previousWorkoutDetails = queryClient.getQueryData<WorkoutDetailsResponse>(workoutKeys.detail(newLogData.workoutId));
 
-            // Snapshot the previous value
-            const previousWorkoutDetails = queryClient.getQueryData<WorkoutDetailsResponse>(workoutKeys.detail(newLogData.workoutId));
+                if (previousWorkoutDetails) {
+                    queryClient.setQueryData<WorkoutDetailsResponse>(workoutKeys.detail(newLogData.workoutId), (old) => {
+                        if (!old) return old;
 
-            // Optimistically update to the new value
-            if (previousWorkoutDetails) {
-                queryClient.setQueryData<WorkoutDetailsResponse>(workoutKeys.detail(newLogData.workoutId), (old) => {
-                    if (!old) return old;
+                        const sessionId = old.session?.id || 'temp-session';
+                        const newSessionLog = {
+                            id: `temp-sel-${Date.now()}`,
+                            exercise_with_metadata_id: newLogData.exerciseWithMetadataId || null,
+                            exercise_id: newLogData.exerciseId || null,
+                            exerciseLog: commonLogData,
+                        };
 
-                    // Support both new session and existing session
-                    const sessionId = old.session?.id || 'temp-session';
-                    const newExerciseLog = {
-                        id: newLogData.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36).substring(7)),
-                        weight: parseFloat(newLogData.weight) || null,
-                        reps: parseInt(newLogData.reps),
-                        rpe: newLogData.rpe ? parseFloat(newLogData.rpe) : null,
-                        set_order_index: newLogData.setOrderIndex,
-                    };
+                        const updatedSession = {
+                            ...(old.session || { id: sessionId, sessionExerciseLogs: [], start_time: null, end_time: null }),
+                            sessionExerciseLogs: [...(old.session?.sessionExerciseLogs || []), newSessionLog],
+                        };
 
-                    const newSessionLog = {
-                        id: `temp-sel-${Date.now()}`,
-                        exercise_with_metadata_id: newLogData.exerciseWithMetadataId || null,
-                        exercise_id: newLogData.exerciseId || null,
-                        exerciseLog: newExerciseLog,
-                    };
-
-                    const updatedSession = {
-                        ...(old.session || { id: sessionId, sessionExerciseLogs: [], start_time: null, end_time: null }),
-                        sessionExerciseLogs: [...(old.session?.sessionExerciseLogs || []), newSessionLog],
-                    };
-
-                    return {
-                        ...old,
-                        session: updatedSession,
-                    };
-                });
+                        return { ...old, session: updatedSession };
+                    });
+                }
             }
 
-            return { previousWorkoutDetails };
+            // 2. Optimistic update for Exercise History (Quick Logs)
+            let previousHistory;
+            if (newLogData.exerciseId) {
+                const historyKey = logKeys.history(newLogData.exerciseId);
+                await queryClient.cancelQueries({ queryKey: historyKey });
+                previousHistory = queryClient.getQueryData<ExerciseHistoryLog[]>(historyKey);
+
+                if (previousHistory) {
+                    queryClient.setQueryData<ExerciseHistoryLog[]>(historyKey, (old) => {
+                        const newHistoryLog: ExerciseHistoryLog = {
+                            ...commonLogData,
+                            workoutSession: {
+                                date: new Date().toISOString(),
+                                start_time: new Date().toISOString(),
+                            },
+                            exerciseWithMetadata: null,
+                            pr_type: null,
+                        };
+                        return [newHistoryLog, ...(old || [])];
+                    });
+                }
+            }
+
+            return { previousWorkoutDetails, previousHistory };
         },
         /**
          * Rollback to the previous cache state if the mutation fails.
          */
         onError: (_err, newLogData, context) => {
-            // Roll back to the previous value if the mutation fails
             if (newLogData.workoutId && context?.previousWorkoutDetails) {
                 queryClient.setQueryData(workoutKeys.detail(newLogData.workoutId), context.previousWorkoutDetails);
+            }
+            if (newLogData.exerciseId && context?.previousHistory) {
+                queryClient.setQueryData(logKeys.history(newLogData.exerciseId), context.previousHistory);
             }
         },
         /**
          * Invalidates relevant queries on success to keep data in sync.
          */
         onSuccess: (_, variables) => {
-            // Invalidate the workout details cache so the list of completed sets updates instantly in SetTracker
             if (variables.workoutId) {
                 queryClient.invalidateQueries({ queryKey: workoutKeys.detail(variables.workoutId) });
             }
-            // Invalidate all log-derived queries so quick logs also appear in exercise history and last-log views.
+            // Invalidate all log-derived queries including history and last log
             queryClient.invalidateQueries({ queryKey: logKeys.all });
         },
         /**
          * Always refetch after error or success to ensure synchronization.
          */
         onSettled: (_data, _error, variables) => {
-            // Always refetch after error or success to ensure we're in sync with the server
             if (variables.workoutId) {
                 queryClient.invalidateQueries({ queryKey: workoutKeys.detail(variables.workoutId) });
+            }
+            if (variables.exerciseId) {
+                queryClient.invalidateQueries({ queryKey: logKeys.history(variables.exerciseId) });
             }
         }
     });
 }
+

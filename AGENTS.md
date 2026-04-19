@@ -34,54 +34,42 @@ pnpm seed
 - `app/components/ui/`: shared UI primitives; import from `@/app/components/ui`
 - `app/features/<name>/`: feature modules with `api/`, `screens/`, `context/`, `ui/`, `types.ts`, `__tests__/`, `index.ts`, `internal.ts`
 - `app/generated/prisma/`: generated Prisma client, do not edit
-- `lib/`: shared server utilities such as `prisma.ts`, `auth-helpers.ts`, `pr-utils.ts`
+- `lib/`: shared utilities (server/client) such as `prisma.ts`, `utils.ts` (cn), `auth-helpers.ts`, `pr-utils.ts`
 - `prisma/schema.prisma`: source of truth for the data model
 - `tests/`: API, integration, and UI tests
 
 ## Feature Rules
 - Cross-feature imports must go through a feature's public `index.ts`.
+- **Deep imports into feature subfolders (e.g. `feature/api/...`) are strictly forbidden.**
 - `internal.ts` exports are for the root layout only, not sibling features.
 - Prefer feature-local hooks over `app/hooks/`.
 - Current features: programs, workouts, logging, exercises, analytics, rest-timer, personal-records, page-header, dashboard, settings.
+- **Ownership**: All set logging and exercise history logic belongs to the `logging` feature. The `workouts` feature coordinates the training session but uses `logging` for data persistence.
 
 ## Routing And Data
-- Page routes should stay thin: unwrap params and render a screen from `app/features/...`.
-- Next.js 16 page `params` are Promises; unwrap with `use(params)` or `await`.
-- Client data flow: `query-keys.ts -> query-hooks/use-*.ts -> screen`, and `mutations.ts -> mutation-hooks/use-*.ts -> screen`.
-- Query hooks are thin `useQuery` wrappers around `/api/...` endpoints.
-- Mutation functions are plain `fetch()` calls; some use client-generated IDs via `crypto.randomUUID()`.
-- TanStack Query persistence is offline-first and stored in IndexedDB for one week.
+Page routes should stay thin: unwrap params and render a screen from `app/features/...`. 
+> [!NOTE]
+> See KI **Client Data Flow & State Management** for details on unwrap patterns, TanStack Query persistence, and offline-first logic.
 
 ## API Pattern
-1. Authenticate with `getUserId()` from `@/lib/auth-helpers` or `auth()` from `@/auth`.
-2. Validate inputs inline; there is no validation library.
-3. Use `prisma` from `@/lib/prisma`.
-4. Return `NextResponse.json(...)` with correct status codes.
-5. Wrap handlers in `try/catch` and log `console.error("[ROUTE_NAME_ERROR]:", error)`.
-6. Use `prisma.$transaction()` for multi-step mutations.
-7. Some POST routes accept a client-generated `id` for idempotency.
+All API routes in `app/api/` must follow the standardized auth, validation, and transaction workflow.
+> [!NOTE]
+> See KI **API Implementation Standards** for the mandatory 8-step checklist and example pattern.
 
 ## Providers And UI
-- Root provider order: `ThemeProvider -> SessionProvider -> QueryProvider -> PageHeaderStatusProvider -> PageHeaderActionsProvider -> RestTimerProvider -> PRCelebrationProvider -> BottomDrawerProvider`.
-- All pages use `<PageShell>` for layout.
-- `<PageHeader>` supports injected actions through `PageHeaderActionsProvider`.
-- Common shared UI includes `PageShell`, `Button`, `FAB`, `BottomNav`, `Sidebar`, `List`, `NumberStepper`, `BottomDrawer`, `CardSkeleton`, `EmptyState`, `MetadataChip`, `MuscleGroupSelector`, `RPESelector`, `Portal`.
+The root layout uses a specific provider sequence to manage theme, auth, and state.
+> [!NOTE]
+> See KI **UI Component Library & Layout Shell** for the provider hierarchy and primitive component catalog.
 
 ## Data Model Notes
-- Main entities: `User -> Programme -> Workout -> ExerciseWithMetadata / WorkoutSession -> SessionExerciseLog -> ExerciseLog`, plus reusable `Exercise`.
-- `ExerciseWithMetadata.is_hidden` is a soft-delete flag; always query active assignments with `where: { is_hidden: false }`.
-- Only one `Programme.is_active` should exist per user; toggles use a transaction.
-- `ProgrammeActivityLog` tracks programme active periods.
-- `ExerciseLog.pr_type` stores detected PR types.
-- `WorkoutSession.workout_id` can be null for ad-hoc sessions.
-- `exercise_analytics_view` joins logs with programme, workout, and exercise metadata.
+ Nuances regarding soft-deletes (`is_hidden`), active programme toggles, and PR detection logic are critical for data integrity.
+> [!NOTE]
+> See KI **Core Data Schema & Behaviors** for logical behaviors not obvious from the Prisma schema.
 
 ## DB And Auth
-- Runtime DB uses `DATABASE_URL` through PgBouncer; migrations use `DIRECT_URL` through direct PostgreSQL in `prisma.config.ts`.
-- Import Prisma from `@/app/generated/prisma/client`, not `@prisma/client`.
-- `lib/prisma.ts` uses a `globalThis` guard to avoid HMR connection exhaustion.
-- NextAuth stores the user ID in `token.id` and exposes it as `session.user.id`.
-- `requireUserId()` redirects unauthenticated users; `getUserId()` returns `null` for API routes.
+NextAuth v5 and Prisma lifecycle guards are managed via centralized helpers and global singletons.
+> [!NOTE]
+> See KI **Auth Integration & DB Connection Lifecycle** for connection guards (HMR) and session token mappings.
 
 ## Styling And Testing
 - Dark mode is default; light mode overrides use `.light` with `next-themes`.
@@ -91,6 +79,10 @@ pnpm seed
 - `tests/setup.ts` mocks auth/navigation and truncates tables between integration tests.
 - `pnpm test:ui` uses jsdom and Testing Library.
 - `pnpm test:cycles` checks circular imports in `app/`.
+
+## Search and Research
+- When searching with `grep`, always exclude `.next/`, `.git/`, and `node_modules/` to avoid massive amounts of generated or binary content.
+- Use `grep -r "pattern" . --exclude-dir={.next,.git,node_modules}` or target specific source directories like `app/` and `lib/`.
 
 ## Commenting Expectations
 - Add a short jsdoc description above every new function and component.

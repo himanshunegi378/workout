@@ -26,8 +26,10 @@ export interface ExerciseHistoryLog {
 }
 
 /**
- * Fetches the historical logs for a single exercise so workout and logging UIs
- * can render a focused performance timeline.
+ * Fetches the historical logs for a single exercise.
+ * 
+ * @param {string | undefined} exerciseId - The ID of the exercise.
+ * @returns {import("@tanstack/react-query").UseQueryResult<ExerciseHistoryLog[]>} Historical logs.
  */
 export function useExerciseHistory(exerciseId: string | undefined) {
     return useQuery({
@@ -45,3 +47,32 @@ export function useExerciseHistory(exerciseId: string | undefined) {
         enabled: !!exerciseId,
     });
 }
+
+/**
+ * Groups exercise history logs by their session date for the timeline UI.
+ * 
+ * @param {ExerciseHistoryLog[]} logs - The array of historical logs.
+ * @returns {Record<string, ExerciseHistoryLog[]>} Logs grouped by formatted date string.
+ */
+export function groupLogsByDate(logs: ExerciseHistoryLog[] | undefined) {
+    if (!logs) return {};
+    
+    return logs.reduce<Record<string, ExerciseHistoryLog[]>>((acc, log) => {
+        // Guard against missing dates to avoid grouping old logs into "Today"
+        const dateStr = log.workoutSession?.date
+            ? new Date(log.workoutSession.date).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+              })
+            : "Previous Records";
+
+        if (!acc[dateStr]) {
+            acc[dateStr] = [];
+        }
+
+        acc[dateStr].push(log);
+        return acc;
+    }, {});
+}
+

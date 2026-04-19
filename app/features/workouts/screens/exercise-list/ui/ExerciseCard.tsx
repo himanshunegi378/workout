@@ -6,14 +6,16 @@ import { Repeat, Timer, Activity, MoreHorizontal, Trophy, Flame, Target } from "
 import { muscleColorMap } from "@/app/components/ui";
 import { SetTracker } from "./SetTracker";
 import { LogSetDrawer } from "./LogSetDrawer";
-import { useLogSet } from "@/app/features/logging/api/mutation-hooks/use-log-set";
-import { useUpdateLogSet } from "@/app/features/logging/api/mutation-hooks/use-update-log-set";
-import { useDeleteLogSet } from "@/app/features/logging/api/mutation-hooks/use-delete-log-set";
-import { getLastLog } from "@/app/features/logging/api/query-hooks/use-last-log";
+import { 
+    useLogSet, 
+    useUpdateLogSet, 
+    useDeleteLogSet, 
+    getLastLog, 
+    ExerciseQuickLogDrawer 
+} from "@/app/features/logging";
 import { useRestTimer } from "@/app/features/rest-timer";
 import { usePRCelebration } from "@/app/features/personal-records/PRCelebrationContext";
 import { EditExerciseMetadataDrawer } from "./EditExerciseMetadataDrawer";
-import { ExerciseHistoryDrawer } from "@/app/features/exercises/components/ExerciseHistoryDrawer";
 
 
 interface ExerciseLog {
@@ -272,7 +274,6 @@ export function ExerciseCard({
                 isOpen={isDrawerOpen}
                 onClose={() => setIsDrawerOpen(false)}
                 exerciseName={name}
-                setIndex={activeSetIndex}
                 weight={weight}
                 setWeight={setWeight}
                 reps={reps}
@@ -298,7 +299,8 @@ export function ExerciseCard({
                 onUpdate={(newEwm) => { setEwmId(newEwm.id); router.refresh(); }}
             />
 
-            <ExerciseHistoryDrawer
+            <ExerciseQuickLogDrawer
+                key={exerciseId}
                 isOpen={isHistoryDrawerOpen}
                 onClose={() => setIsHistoryDrawerOpen(false)}
                 exerciseId={exerciseId}
@@ -307,5 +309,4 @@ export function ExerciseCard({
         </>
     );
 }
-
 

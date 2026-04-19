@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useRef, useState, useEffect, useLayoutEffect } from "react";
+import React, { useMemo, useRef, useState, useLayoutEffect } from "react";
 import {
     format,
     subDays,
@@ -15,12 +15,17 @@ import { Info } from "lucide-react";
 import { Portal } from "@/app/components/ui/Portal";
 
 
+/**
+ * Displays a yearly heatmap of workout activity, visualizing exercise frequency
+ * over time. Scales based on available container width.
+ */
 export function WorkoutHeatmap() {
     const { data: activity = [], isLoading } = useHeatmapActivity();
     const [hovered, setHovered] = React.useState<{ date: Date; count: number; rect: DOMRect } | null>(null);
-    const dateString = useMemo(() => {
-        return new Date().toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
-    }, []);
+    const dateString = typeof window !== "undefined"
+        ? new Date().toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })
+        : "";
+
     const containerRef = useRef<HTMLDivElement>(null);
     const labelRef = useRef<HTMLDivElement>(null);
     const [containerWidth, setContainerWidth] = useState<number>(0);
@@ -110,7 +115,7 @@ export function WorkoutHeatmap() {
     return (
         <div className="p-6 bg-card border border-border rounded-2xl elevation-3 group transition-all duration-300 hover:shadow-accent/5">
             <div className="flex items-center justify-between mb-6">
-                <div className="space-y-0.5" suppressHydrationWarning>
+                <div className="space-y-0.5">
                     <h3 className="text-lg font-semibold tracking-tight">Consistency Heatmap</h3>
                     <p className="text-xs text-muted-foreground">{dateString}</p>
                 </div>

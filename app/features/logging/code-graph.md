@@ -9,13 +9,14 @@ graph TD
         SetRow[components/ui/SetRow.tsx]
         QuickLogActions[components/ui/QuickLogActions.tsx]
         QuickLogFAB[components/ui/QuickLogFAB.tsx]
-        StandaloneLogDrawer[components/ui/StandaloneLogDrawer.tsx]
+        ExerciseQuickLogDrawer[components/ui/ExerciseQuickLogDrawer.tsx]
     end
 
     subgraph API
         useLogSet[api/mutation-hooks/use-log-set.ts]
         useDeleteLogSet[api/mutation-hooks/use-delete-log-set.ts]
         useUpdateLogSet[api/mutation-hooks/use-update-log-set.ts]
+        useExerciseHistory[api/query-hooks/use-exercise-history.ts]
         useLastLog[api/query-hooks/use-last-log.ts]
         useSessions[api/query-hooks/use-sessions.ts]
         mutations[api/mutations.ts]
@@ -37,10 +38,11 @@ graph TD
     SetRow --> useDeleteLogSet
     
     QuickLogActions --> QuickLogFAB
-    QuickLogActions --> StandaloneLogDrawer
+    QuickLogActions --> ExerciseQuickLogDrawer
     
-    StandaloneLogDrawer --> useLogSet
-    StandaloneLogDrawer --> useLastLog
+    ExerciseQuickLogDrawer --> useExerciseHistory
+    ExerciseQuickLogDrawer --> useLogSet
+    ExerciseQuickLogDrawer --> useLastLog
 
     useLogSet --> mutations
     useDeleteLogSet --> mutations
@@ -69,4 +71,4 @@ graph TD
 - `ui/SetRow`: Detail row for a single logged set; handles set removal.
 - `ui/QuickLogActions`: Coordinator for the floating "Quick Log" action flow.
 - `ui/QuickLogFAB`: Floating visual trigger for starting a manual log entry.
-- `ui/StandaloneLogDrawer`: Input form for logging an exercise set outside of a structured workout.
+- `ui/ExerciseQuickLogDrawer`: Shared exercise detail drawer that combines quick logging with full history.
