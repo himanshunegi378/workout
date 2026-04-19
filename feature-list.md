@@ -18,3 +18,4 @@
 - [ ] Retroactive Logging: Ability to log sets/workouts to a specific past date instead of always defaulting to the latest/current session.
 - [ ] Edit Logged Sets: Provide the ability to update or delete previously recorded sets (weight, reps, RPE) directly from the exercise history.
 - [ ] Smart Exercise Ordering: Automatically sort the exercise list in the quick log by frequency or recency, moving the most used exercises to the top for quicker selection.
+- [ ] Performance Pulse Trend Lines: Add trend lines to the muscle group performance charts to visualize volume or strength progression patterns over time.
