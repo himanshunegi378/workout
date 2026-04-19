@@ -1,17 +1,15 @@
 "use client";
 
 import { notFound, useRouter } from "next/navigation";
-import { Activity, Loader2, Timer as TimerIcon, Zap, Trophy } from "lucide-react";
+import { Activity, Loader2, Trophy } from "lucide-react";
 import { useState, useEffect } from "react";
 import { PageShell, List } from "@/app/components/ui";
 import { PageHeader } from "@/app/features/page-header";
-import { RestTimerHeaderActionBridge } from "@/app/features/rest-timer";
 import { ExerciseCard } from "./ui/ExerciseCard";
 import { AddExerciseTrigger } from "../../../exercises/components/AddExerciseTrigger";
-import { useWorkoutDetails, WorkoutDetailsResponse } from "../../api/query-hooks/use-workout-details";
+import { useWorkoutDetails } from "../../api/query-hooks/use-workout-details";
 import { useFinishWorkout } from "../../api/mutation-hooks/use-finish-workout";
-
-type ExerciseLog = NonNullable<NonNullable<WorkoutDetailsResponse['session']>['sessionExerciseLogs'][number]['exerciseLog']>;
+import { calculateWorkoutProgress } from "./progress";
 
 /**
  * The primary container for the live workout execution screen.
@@ -95,25 +93,20 @@ export function ExerciseListContent({
     const { workout, session, previousLogsByExercise } = data;
 
     // Advanced Calculations
-    const logsByEwm: Record<string, ExerciseLog[]> = {};
     let currentVolume = 0;
     let totalSetsDone = 0;
 
     if (session) {
         session.sessionExerciseLogs.forEach((sel) => {
-            if (sel.exercise_with_metadata_id && sel.exerciseLog) {
-                if (!logsByEwm[sel.exercise_with_metadata_id]) logsByEwm[sel.exercise_with_metadata_id] = [];
-                logsByEwm[sel.exercise_with_metadata_id].push(sel.exerciseLog);
+            if (sel.exerciseLog) {
                 currentVolume += (sel.exerciseLog.weight || 0) * sel.exerciseLog.reps;
                 totalSetsDone++;
             }
         });
-        Object.values(logsByEwm).forEach(sets => sets.sort((a, b) => a.set_order_index - b.set_order_index));
     }
 
-    const totalExercises = workout.exercisesWithMetadata.length;
-    const completedExercises = workout.exercisesWithMetadata.filter(ewm => (logsByEwm[ewm.id]?.length || 0) >= (ewm.sets_min || 1)).length;
-    const progressPercentage = totalExercises > 0 ? (completedExercises / totalExercises) * 100 : 0;
+    const { logsByEwm, totalExercises, completedExercises, progressPercentage } =
+        calculateWorkoutProgress(workout, session);
 
     const handleFinishWorkout = () => {
         if (!session) return;

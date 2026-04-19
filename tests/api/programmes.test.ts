@@ -112,9 +112,9 @@ describe("Programmes API", () => {
     });
 
     describe("POST /api/programmes/.../exercises", () => {
-        it("should link an exercise to a workout", async () => {
+        it("should link an exercise to a workout using the visible exercise count for order", async () => {
             vi.mocked(getUserId).mockResolvedValue(userId);
-            vi.mocked(prisma.workout.findFirst).mockResolvedValue({ _count: { exercisesWithMetadata: 0 } } as any);
+            vi.mocked(prisma.workout.findFirst).mockResolvedValue({ _count: { exercisesWithMetadata: 2 } } as any);
             const mockEwm = { id: metadataId, exercise_id: "e1", workout_id: workoutId };
             vi.mocked(prisma.exerciseWithMetadata.create).mockResolvedValue(mockEwm as any);
 
@@ -128,6 +128,28 @@ describe("Programmes API", () => {
 
             expect(response.status).toBe(201);
             expect(data).toEqual(mockEwm);
+            expect(prisma.workout.findFirst).toHaveBeenCalledWith({
+                where: {
+                    id: workoutId,
+                    programme: { id: programmeId, user_id: userId },
+                },
+                include: {
+                    _count: {
+                        select: {
+                            exercisesWithMetadata: {
+                                where: { is_hidden: false },
+                            },
+                        },
+                    },
+                },
+            });
+            expect(prisma.exerciseWithMetadata.create).toHaveBeenCalledWith({
+                data: expect.objectContaining({
+                    workout_id: workoutId,
+                    exercise_id: "e1",
+                    order_index: 2,
+                }),
+            });
         });
     });
 

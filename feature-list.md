@@ -13,14 +13,5 @@
 - [ ] exercies count in workout is wrong.
 - [ ] scalable graph approach like power bi.
 - [ ] supprot fitnotes data import.
-- [x] reliable count down timer
-- [x] edit exercies in workout
-- [x] Improve the UI for add exercise in workout form
-- [x] screen for seeing log of only a single exercies accross workout
-- [x] different feedback if target rep not achieved.
-- [x] For a volume of a workout it should calculate it for on a session basis instead of day to day. so
-  we always compare same session volume with previous session volume.
-- [x] Detect perfomance degradation or bigger jump that would cause more fatigure then necessary.
-- [x] Personal Records (PRs): Auto-detect and celebrate when a user hits a new PR for weight, reps, or estimated 1RM.
-- [x] auto close timer on finish
 - [ ] Offline Mode / PWA: Aggressive caching so users can log their workout even if the gym has poor internet/cell reception. [cancelled]
+- [ ] Global Exercise Library: Provide a common, predefined list of exercises (e.g., standard barbell/dumbbell movements) accessible to all users by default.

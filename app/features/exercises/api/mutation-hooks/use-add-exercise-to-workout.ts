@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { programmeKeys } from "@/app/features/programs/api/query-keys";
 import { workoutKeys } from "@/app/features/workouts/api/query-keys";
 import { addExerciseToWorkout } from "../mutations";
 
@@ -31,6 +32,7 @@ export function useAddExerciseToWorkout() {
         onSuccess: (_, variables) => {
             // Invalidate the workout details cache so the list of exercises updates instantly
             queryClient.invalidateQueries({ queryKey: workoutKeys.detail(variables.workoutId) });
+            queryClient.invalidateQueries({ queryKey: programmeKeys.detail(variables.programmeId) });
         },
     });
 }

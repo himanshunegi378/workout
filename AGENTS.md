@@ -282,3 +282,9 @@ exercise_analytics_view (DB view joining logs with programme/workout/exercise me
 5. **Offline-first mutations** — `networkMode: 'offlineFirst'` is set globally. Mutations queue when offline and resume on reconnect.
 6. **Feature isolation** — cross-feature imports go through barrel `index.ts`. Never import from another feature's internal files directly.
 7. **`is_hidden` filtering** — always filter `ExerciseWithMetadata` by `is_hidden: false` in queries to hide soft-deleted exercise assignments.
+
+## Commenting Expectations
+
+- Add a short comment above every new function and component you introduce.
+- Add comments anywhere logic is complex or the "why" is important and not obvious from the code alone.
+- Keep comments high-signal: explain intent, constraints, edge cases, or non-obvious decisions rather than restating what the code does line by line.

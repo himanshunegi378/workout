@@ -92,6 +92,7 @@ export async function GET(
                                 exerciseLog: {
                                     select: {
                                         id: true,
+                                        exerciseId: true,
                                         weight: true,
                                         reps: true,
                                         rpe: true,
@@ -160,4 +161,3 @@ export async function GET(
         );
     }
 }
-

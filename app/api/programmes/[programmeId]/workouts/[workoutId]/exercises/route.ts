@@ -24,7 +24,13 @@ export async function POST(
                 programme: { id: programmeId, user_id: userId },
             },
             include: {
-                _count: { select: { exercisesWithMetadata: true } },
+                _count: {
+                    select: {
+                        exercisesWithMetadata: {
+                            where: { is_hidden: false },
+                        },
+                    },
+                },
             },
         });
 
@@ -97,5 +103,4 @@ export async function POST(
         );
     }
 }
-
 

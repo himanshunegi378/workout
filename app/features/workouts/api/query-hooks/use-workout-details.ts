@@ -33,6 +33,7 @@ export type WorkoutDetailsResponse = {
             exercise_id: string | null;
             exerciseLog: {
                 id: string;
+                exerciseId?: string | null;
                 weight: number | null;
                 reps: number;
                 rpe: number | null;
