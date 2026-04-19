@@ -1,290 +1,98 @@
 # AGENTS.md
+> Read this before exploring the codebase.
 
-> Orientation guide for AI coding agents. Read this first before exploring the codebase.
+## Project
+Workout Tracker is a single-user, mobile-first full-stack Next.js 16 PWA for workout logging, programmes, PRs, and analytics. It is deployed on Vercel with a Supabase PostgreSQL backend.
 
-## Project Overview
-
-**Workout Tracker** — a full-stack **Next.js 16** PWA for logging workouts, managing training programmes, tracking personal records, and viewing analytics. Single-user focus, mobile-first design, deployed on Vercel with a Supabase PostgreSQL backend.
-
-## Tech Stack
-
-| Layer         | Technology                                              |
-| ------------- | ------------------------------------------------------- |
-| Framework     | Next.js 16 (App Router, React 19, React Compiler)      |
-| Language      | TypeScript 5 (strict mode)                              |
-| Styling       | Tailwind CSS 4 (custom design tokens in `globals.css`)  |
-| Database      | PostgreSQL via Supabase                                 |
-| ORM           | Prisma 7 (`@prisma/adapter-pg` for PgBouncer pooling)  |
-| Auth          | NextAuth v5 (credentials provider, JWT sessions)        |
-| Data fetching | TanStack Query 5 (persisted to IndexedDB via idb-keyval)|
-| Icons         | lucide-react                                            |
-| Charts        | recharts                                                |
-| Testing       | Vitest 4, Testing Library, MSW                          |
-| Linting       | ESLint 9, `import/no-cycle`, React Compiler plugin      |
-| Package Mgr   | pnpm 10                                                 |
+## Stack
+- Framework: Next.js 16 App Router, React 19, React Compiler
+- Language: TypeScript 5 strict mode
+- Styling: Tailwind CSS 4 with tokens in `app/globals.css`
+- Data: PostgreSQL via Supabase, Prisma 7, `@prisma/adapter-pg`
+- Auth: NextAuth v5 credentials + JWT sessions
+- Client data: TanStack Query 5 persisted to IndexedDB via `idb-keyval`
+- UI/libs: `lucide-react`, `recharts`
+- Testing: Vitest 4, Testing Library, MSW
+- Linting/package manager: ESLint 9, `import/no-cycle`, pnpm 10
 
 ## Commands
-
 ```bash
-pnpm dev                # Start dev server
-pnpm build              # Production build
-pnpm lint               # ESLint
-pnpm test:api           # Integration tests (sequential, real DB)
-pnpm test:api:watch     # Integration tests in watch mode
-pnpm test:ui            # UI component tests (jsdom)
-pnpm test:ui:watch      # UI tests in watch mode
-pnpm test:cycles        # Detect circular imports via madge
-pnpm seed               # Seed user data (reads .env)
+pnpm dev
+pnpm build
+pnpm lint
+pnpm test:api
+pnpm test:api:watch
+pnpm test:ui
+pnpm test:ui:watch
+pnpm test:cycles
+pnpm seed
 ```
 
-## Directory Structure
+## Structure
+- Active code is in `app/` and `lib/`. Do not add new code to `src/`.
+- `app/api/`: API route handlers
+- `app/components/ui/`: shared UI primitives; import from `@/app/components/ui`
+- `app/features/<name>/`: feature modules with `api/`, `screens/`, `context/`, `ui/`, `types.ts`, `__tests__/`, `index.ts`, `internal.ts`
+- `app/generated/prisma/`: generated Prisma client, do not edit
+- `lib/`: shared server utilities such as `prisma.ts`, `auth-helpers.ts`, `pr-utils.ts`
+- `prisma/schema.prisma`: source of truth for the data model
+- `tests/`: API, integration, and UI tests
 
-```
-workout/
-├── app/                        # Next.js App Router root
-│   ├── (home)/page.tsx         # Landing / home route
-│   ├── api/                    # API route handlers (see "API Routes" below)
-│   ├── components/             # Shared UI components
-│   │   ├── providers/          # QueryProvider (TanStack Query + IndexedDB persistence)
-│   │   └── ui/                 # Primitives: Button, PageShell, List, FAB, BottomDrawer, etc.
-│   ├── features/               # Feature modules (see "Feature Module Structure" below)
-│   ├── hooks/                  # App-level hooks (currently empty, prefer feature-local hooks)
-│   ├── generated/prisma/       # Prisma generated client (do NOT edit)
-│   ├── globals.css             # Design tokens, animations, elevation system
-│   ├── layout.tsx              # Root layout with provider tree
-│   ├── dashboard/              # Dashboard page route
-│   ├── exercises/              # Exercise list + create routes
-│   ├── log/                    # Workout logging route
-│   ├── login/ & signup/        # Auth routes
-│   ├── programmes/             # Programme and workout CRUD routes
-│   └── settings/               # Settings + feedback routes
-├── lib/                        # Shared server utilities
-│   ├── prisma.ts               # Prisma client singleton (globalThis guard for HMR)
-│   ├── auth-helpers.ts         # requireUserId() / getUserId() — session extraction
-│   └── pr-utils.ts             # Personal record detection logic
-├── prisma/
-│   ├── schema.prisma           # Database schema (source of truth for data model)
-│   └── migrations/             # Prisma migration history
-├── prisma.config.ts            # Prisma CLI config (DIRECT_URL for migrations)
-├── auth.ts                     # NextAuth configuration (credentials, JWT, callbacks)
-├── scripts/                    # One-off scripts (seeding, analytics view creation, etc.)
-├── tests/
-│   ├── setup.ts                # Shared test setup (mocks auth/navigation, DB cleanup)
-│   ├── api/                    # API route unit tests
-│   ├── integration/            # Integration tests (real DB, sequential)
-│   └── ui/                     # UI component tests
-├── docs/                       # Planning docs, UI testing guide
-└── src/                        # Legacy source dir (currently empty subdirs, not in use)
-```
+## Feature Rules
+- Cross-feature imports must go through a feature's public `index.ts`.
+- `internal.ts` exports are for the root layout only, not sibling features.
+- Prefer feature-local hooks over `app/hooks/`.
+- Current features: programs, workouts, logging, exercises, analytics, rest-timer, personal-records, page-header, dashboard, settings.
 
-## Feature Module Structure
+## Routing And Data
+- Page routes should stay thin: unwrap params and render a screen from `app/features/...`.
+- Next.js 16 page `params` are Promises; unwrap with `use(params)` or `await`.
+- Client data flow: `query-keys.ts -> query-hooks/use-*.ts -> screen`, and `mutations.ts -> mutation-hooks/use-*.ts -> screen`.
+- Query hooks are thin `useQuery` wrappers around `/api/...` endpoints.
+- Mutation functions are plain `fetch()` calls; some use client-generated IDs via `crypto.randomUUID()`.
+- TanStack Query persistence is offline-first and stored in IndexedDB for one week.
 
-Each feature lives under `app/features/<name>/` and follows this internal layout:
-
-```
-app/features/<name>/
-├── api/
-│   ├── query-keys.ts           # TanStack Query key factory
-│   ├── mutations.ts            # Plain fetch-based mutation functions
-│   ├── query-hooks/            # useQuery wrapper hooks (e.g., use-programmes.ts)
-│   └── mutation-hooks/         # useMutation wrapper hooks (e.g., use-create-workout.ts)
-├── screens/                    # Screen-level components rendered by page routes
-│   ├── <screen-name>/          # One folder per screen
-│   │   ├── index.ts            # Barrel export
-│   │   └── *.tsx               # Screen + its local sub-components
-├── context/                    # React context providers (if the feature needs shared state)
-├── ui/                         # Feature-specific presentational components
-├── types.ts                    # Feature-local TypeScript types
-├── __tests__/                  # Feature-level tests
-├── index.ts                    # Public barrel export (the feature's external API)
-└── internal.ts                 # Internal barrel (exports only for root layout, not for sibling features)
-```
-
-### Current Features
-
-| Feature           | Path                          | Purpose                                     |
-| ----------------- | ----------------------------- | ------------------------------------------- |
-| programs          | `features/programs/`          | Programme & workout CRUD, workout list       |
-| workouts          | `features/workouts/`          | Workout creation, session management         |
-| logging           | `features/logging/`           | Set logging during active sessions           |
-| exercises         | `features/exercises/`         | Exercise library CRUD                        |
-| analytics         | `features/analytics/`         | Charts, heatmaps, volume tracking            |
-| rest-timer        | `features/rest-timer/`        | Countdown timer with overlay/bubble/header   |
-| personal-records  | `features/personal-records/`  | PR detection and celebration overlay          |
-| page-header       | `features/page-header/`       | Dynamic page header with injectable actions  |
-| dashboard         | `features/dashboard/`         | Home dashboard (recent sessions, stats)      |
-| settings          | `features/settings/`          | App settings, feedback submission            |
-
-## Key Architectural Patterns
-
-### Page Routes are Thin Wrappers
-
-Page files (`app/<route>/page.tsx`) are minimal — they extract params and delegate to a screen component from `features/`:
-
-```tsx
-// app/programmes/[programmeId]/page.tsx
-"use client";
-import { WorkoutListContent } from "@/app/features/programs/screens";
-
-export default function WorkoutListPage({ params }: PageProps) {
-    const { programmeId } = use(params);
-    return <WorkoutListContent programmeId={programmeId} />;
-}
-```
-
-### API Route Pattern
-
-All API routes live in `app/api/` and follow this structure:
-
-1. Authenticate via `getUserId()` from `@/lib/auth-helpers` (returns `null` → 401) or `auth()` from `@/auth` directly.
-2. Validate input manually (no validation library — just inline checks).
-3. Use `prisma` from `@/lib/prisma` for DB operations.
-4. Return `NextResponse.json(...)` with appropriate status codes.
-5. Wrap in try/catch, log errors with `console.error("[ROUTE_NAME_ERROR]:", error)`.
+## API Pattern
+1. Authenticate with `getUserId()` from `@/lib/auth-helpers` or `auth()` from `@/auth`.
+2. Validate inputs inline; there is no validation library.
+3. Use `prisma` from `@/lib/prisma`.
+4. Return `NextResponse.json(...)` with correct status codes.
+5. Wrap handlers in `try/catch` and log `console.error("[ROUTE_NAME_ERROR]:", error)`.
 6. Use `prisma.$transaction()` for multi-step mutations.
 7. Some POST routes accept a client-generated `id` for idempotency.
 
-### Data Fetching Pattern (Client)
+## Providers And UI
+- Root provider order: `ThemeProvider -> SessionProvider -> QueryProvider -> PageHeaderStatusProvider -> PageHeaderActionsProvider -> RestTimerProvider -> PRCelebrationProvider -> BottomDrawerProvider`.
+- All pages use `<PageShell>` for layout.
+- `<PageHeader>` supports injected actions through `PageHeaderActionsProvider`.
+- Common shared UI includes `PageShell`, `Button`, `FAB`, `BottomNav`, `Sidebar`, `List`, `NumberStepper`, `BottomDrawer`, `CardSkeleton`, `EmptyState`, `MetadataChip`, `MuscleGroupSelector`, `RPESelector`, `Portal`.
 
-```
-query-keys.ts  →  query-hooks/use-*.ts  →  Screen component
-mutations.ts   →  mutation-hooks/use-*.ts  →  Screen component
-```
+## Data Model Notes
+- Main entities: `User -> Programme -> Workout -> ExerciseWithMetadata / WorkoutSession -> SessionExerciseLog -> ExerciseLog`, plus reusable `Exercise`.
+- `ExerciseWithMetadata.is_hidden` is a soft-delete flag; always query active assignments with `where: { is_hidden: false }`.
+- Only one `Programme.is_active` should exist per user; toggles use a transaction.
+- `ProgrammeActivityLog` tracks programme active periods.
+- `ExerciseLog.pr_type` stores detected PR types.
+- `WorkoutSession.workout_id` can be null for ad-hoc sessions.
+- `exercise_analytics_view` joins logs with programme, workout, and exercise metadata.
 
-- **Query keys**: Factory objects (e.g., `workoutKeys.list(programmeId)`).
-- **Query hooks**: Thin `useQuery` wrappers. Fetch from `/api/...` endpoints. Type the response inline.
-- **Mutation functions**: Plain `async` functions that call `fetch()`. Client-generated IDs via `crypto.randomUUID()`.
-- **Mutation hooks**: `useMutation` wrappers that call mutation functions and invalidate related query keys on success.
+## DB And Auth
+- Runtime DB uses `DATABASE_URL` through PgBouncer; migrations use `DIRECT_URL` through direct PostgreSQL in `prisma.config.ts`.
+- Import Prisma from `@/app/generated/prisma/client`, not `@prisma/client`.
+- `lib/prisma.ts` uses a `globalThis` guard to avoid HMR connection exhaustion.
+- NextAuth stores the user ID in `token.id` and exposes it as `session.user.id`.
+- `requireUserId()` redirects unauthenticated users; `getUserId()` returns `null` for API routes.
 
-### Query Persistence
-
-TanStack Query cache is persisted to **IndexedDB** (via `idb-keyval`) with a 1-week TTL. The `QueryProvider` uses `PersistQueryClientProvider` and resumes paused mutations on rehydration. Mutations use `networkMode: 'offlineFirst'`.
-
-### Provider Tree (Root Layout)
-
-```
-ThemeProvider → SessionProvider → QueryProvider → PageHeaderStatusProvider
-  → PageHeaderActionsProvider → RestTimerProvider → PRCelebrationProvider
-    → BottomDrawerProvider → {children}
-```
-
-### Barrel Export Convention
-
-- `index.ts` — Public API of a feature. Sibling features import from here.
-- `internal.ts` — Exports that are only consumed by the root layout (e.g., context providers). Not for cross-feature imports.
-
-### Public UI Components (`app/components/ui/`)
-
-Import from `@/app/components/ui`:
-
-`PageShell`, `Button`, `FAB`, `BottomNav`, `Sidebar`, `List`, `NumberStepper`, `BottomDrawer`, `CardSkeleton`, `EmptyState`, `MetadataChip`, `MuscleGroupSelector`, `RPESelector`, `Portal`
-
-### PageShell
-
-All pages use `<PageShell>` for consistent layout. Accepts `header`, `size` (`md`/`lg`/`xl`), `spacing`, and `contentClassName`.
-
-### PageHeader
-
-The `<PageHeader>` component supports dynamically injected actions via `PageHeaderActionsProvider`. The rest-timer feature uses `<RestTimerHeaderActionBridge>` to inject a timer pill into the header.
-
-## Data Model (Key Entities)
-
-Defined in `prisma/schema.prisma`. Generated client output is at `app/generated/prisma/`.
-
-```
-User
-  └── Programme (has_many, is_active flag for current programme)
-        └── ProgrammeActivityLog (tracks active periods)
-        └── Workout (ordered by order_index)
-              └── ExerciseWithMetadata (prescribed sets/reps/tempo/rest, ordered, soft-deleted via is_hidden)
-              └── WorkoutSession (logged training sessions)
-                    └── SessionExerciseLog (junction: exercise in a session)
-                          └── ExerciseLog (individual set: weight, reps, RPE, pr_type)
-
-Exercise (reusable definitions, owned by User, has MuscleGroup enum)
-
-exercise_analytics_view (DB view joining logs with programme/workout/exercise metadata)
-```
-
-### Important data model details
-
-- `ExerciseWithMetadata.is_hidden` — soft-delete flag. Always filter with `where: { is_hidden: false }` when displaying active exercises.
-- `Programme.is_active` — only one programme per user should be active. Toggle logic uses a `$transaction` to deactivate the old one.
-- `ProgrammeActivityLog` — tracks when a programme was active (start_time/end_time). Closed when programme is deactivated.
-- `ExerciseLog.pr_type` — nullable string set by PR detection logic during set logging.
-- `WorkoutSession.workout_id` — nullable to support ad-hoc sessions.
-
-## Database Connection
-
-- **Runtime**: `DATABASE_URL` → PgBouncer pooled connection (port 6543) via `@prisma/adapter-pg`.
-- **Migrations/CLI**: `DIRECT_URL` → direct PostgreSQL (port 5432), configured in `prisma.config.ts`.
-- **Prisma client singleton** in `lib/prisma.ts` uses `globalThis` guard to prevent connection exhaustion during HMR.
-
-## Auth
-
-- NextAuth v5 beta with credentials provider (username/password, bcrypt hashing).
-- JWT sessions (30-day expiry). User ID stored in `token.id` and surfaced via `session.user.id`.
-- `lib/auth-helpers.ts` provides:
-  - `requireUserId()` — for Server Components/Actions. Redirects to `/login` if unauthenticated.
-  - `getUserId()` — for API routes. Returns `null` if unauthenticated (caller returns 401).
-
-## Styling & Design System
-
-- **Tailwind CSS 4** with custom theme tokens defined in `app/globals.css` under `@theme {}`.
-- Dark mode by default, light mode overrides under `.light` class. Toggled via `next-themes`.
-- **Fonts**: Outfit (display/headings), Plus Jakarta Sans (body).
-- **Color palette**: Accent `#be185d` (pink/rose), semantic colors for success/warning/danger/info, muscle-group-specific colors.
-- **Elevation system**: CSS classes `elevation-1` through `elevation-8` with dark/light variants (inset highlight + contact shadow + ambient shadow).
-- **Animations**: `slide-up`, `fade-in`, `press`, `check-pop`, `pulse-ring`, `pr-burst`, `pr-slide-in`.
-
-## Testing
-
-### Integration Tests (`pnpm test:api`)
-
-- Config: `vitest.integration.config.ts`
-- Run sequentially (`fileParallelism: false`) — DB is truncated between tests.
-- Setup in `tests/setup.ts`: mocks `@/auth` and `next/navigation`, truncates all tables via raw SQL before each test.
-- Tests hit real API route handlers against a test database (`.env.test`).
-
-### UI Tests (`pnpm test:ui`)
-
-- Config: `vitest.ui.config.ts` (jsdom environment)
-- Use Testing Library + vitest.
-- Mock `next/navigation` and external services.
-- Feature tests co-located in `features/<name>/__tests__/`.
-
-### Circular Import Detection
-
-- `pnpm test:cycles` runs `madge --circular` on the `app/` directory.
-- ESLint rule `import/no-cycle` is set to `"error"`.
-
-## Path Alias
-
-`@/` maps to the project root. Configured in `tsconfig.json`:
-
-```json
-{ "paths": { "@/*": ["./*"] } }
-```
-
-## Environment Variables
-
-- `DATABASE_URL` — PgBouncer pooled connection string.
-- `DIRECT_URL` — Direct PostgreSQL connection (for Prisma CLI).
-- `AUTH_SECRET` — NextAuth secret.
-- `.env.test` — Test-specific overrides.
-
-## Gotchas & Things to Know
-
-1. **Prisma client is generated to `app/generated/prisma/`** — import from `@/app/generated/prisma/client`, not from `@prisma/client` directly.
-2. **React Compiler is enabled** (`reactCompiler: true` in `next.config.ts`). Do not add manual `useMemo`/`useCallback` unless the compiler cannot optimize the case.
-3. **`src/` directory is vestigial** — all active code is in `app/` and `lib/`. Do not add new code to `src/`.
-4. **Next.js 16 params are Promises** — page props use `params: Promise<{...}>` and must be unwrapped with `use(params)` or `await params`.
-5. **Offline-first mutations** — `networkMode: 'offlineFirst'` is set globally. Mutations queue when offline and resume on reconnect.
-6. **Feature isolation** — cross-feature imports go through barrel `index.ts`. Never import from another feature's internal files directly.
-7. **`is_hidden` filtering** — always filter `ExerciseWithMetadata` by `is_hidden: false` in queries to hide soft-deleted exercise assignments.
+## Styling And Testing
+- Dark mode is default; light mode overrides use `.light` with `next-themes`.
+- Fonts are Outfit for display and Plus Jakarta Sans for body.
+- Accent color is `#be185d`; elevation and animation tokens live in `app/globals.css`.
+- `pnpm test:api` runs sequential integration tests against a real test DB using `.env.test`.
+- `tests/setup.ts` mocks auth/navigation and truncates tables between integration tests.
+- `pnpm test:ui` uses jsdom and Testing Library.
+- `pnpm test:cycles` checks circular imports in `app/`.
 
 ## Commenting Expectations
-
-- Add a short comment above every new function and component you introduce.
-- Add comments anywhere logic is complex or the "why" is important and not obvious from the code alone.
-- Keep comments high-signal: explain intent, constraints, edge cases, or non-obvious decisions rather than restating what the code does line by line.
+- Add a short jsdoc description above every new function and component.
+- Add comments where the why, constraint, or edge case is not obvious.
+- Keep comments high-signal and avoid narrating code line by line.
