@@ -152,10 +152,6 @@ export function LogContent() {
                 <List.Intro className="grid gap-5 md:flex md:flex-row md:items-end md:justify-between">
                     <List.Heading className="max-w-xl space-y-2">
                         <List.Eyebrow>Training log</List.Eyebrow>
-                        <List.Title>Keep the thread moving.</List.Title>
-                        <List.Description className="max-w-lg">
-                            A quiet view of your current streak, recent consistency, and this month&apos;s work.
-                        </List.Description>
                     </List.Heading>
 
                     <div className="grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-3">
