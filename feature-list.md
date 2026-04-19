@@ -15,3 +15,6 @@
 - [ ] supprot fitnotes data import.
 - [ ] Offline Mode / PWA: Aggressive caching so users can log their workout even if the gym has poor internet/cell reception. [cancelled]
 - [ ] Global Exercise Library: Provide a common, predefined list of exercises (e.g., standard barbell/dumbbell movements) accessible to all users by default.
+- [ ] Retroactive Logging: Ability to log sets/workouts to a specific past date instead of always defaulting to the latest/current session.
+- [ ] Edit Logged Sets: Provide the ability to update or delete previously recorded sets (weight, reps, RPE) directly from the exercise history.
+- [ ] Smart Exercise Ordering: Automatically sort the exercise list in the quick log by frequency or recency, moving the most used exercises to the top for quicker selection.

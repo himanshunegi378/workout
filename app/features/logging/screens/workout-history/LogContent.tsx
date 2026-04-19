@@ -1,14 +1,14 @@
 "use client";
 
 import { Check, Loader2, Calendar, TrendingUp, Zap } from "lucide-react";
-import { 
-    subDays, 
-    isSameDay, 
-    startOfMonth, 
-    isWithinInterval, 
-    endOfMonth, 
+import {
+    subDays,
+    isSameDay,
+    startOfMonth,
+    isWithinInterval,
+    endOfMonth,
     differenceInDays,
-    parseISO 
+    parseISO
 } from "date-fns";
 import { List } from "@/app/components/ui";
 import { SessionCard } from "./ui/SessionCard";
@@ -58,15 +58,15 @@ export function LogContent() {
 
         // 1. Consistency Ribbon (Last 7 Days)
         const last7Days = Array.from({ length: 7 }).map((_, i) => subDays(now, 6 - i));
-        const consistency = last7Days.map(day => 
+        const consistency = last7Days.map(day =>
             allSessions.some(s => s.start_time && isSameDay(parseISO(s.start_time.toString()), day))
         );
 
         // 2. Monthly Count
-        const monthlySessions = allSessions.filter(s => 
-            s.start_time && isWithinInterval(parseISO(s.start_time.toString()), { 
-                start: startOfThisMonth, 
-                end: endOfThisMonth 
+        const monthlySessions = allSessions.filter(s =>
+            s.start_time && isWithinInterval(parseISO(s.start_time.toString()), {
+                start: startOfThisMonth,
+                end: endOfThisMonth
             })
         ).length;
 
@@ -85,7 +85,7 @@ export function LogContent() {
             if (gapToToday <= 1) {
                 streak = 1;
                 for (let i = 1; i < uniqueSessionDays.length; i++) {
-                    const prevDate = parseISO(uniqueSessionDays[i-1]!);
+                    const prevDate = parseISO(uniqueSessionDays[i - 1]!);
                     const currDate = parseISO(uniqueSessionDays[i]!);
                     if (differenceInDays(prevDate, currDate) === 1) {
                         streak++;
@@ -150,9 +150,6 @@ export function LogContent() {
         <div className="flex flex-col pb-20">
             <List.Header className="mb-10 animate-slide-up pb-6">
                 <List.Intro className="grid gap-5 md:flex md:flex-row md:items-end md:justify-between">
-                    <List.Heading className="max-w-xl space-y-2">
-                        <List.Eyebrow>Training log</List.Eyebrow>
-                    </List.Heading>
 
                     <div className="grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-3">
                         <div className="min-w-0 space-y-1.5">
@@ -185,9 +182,8 @@ export function LogContent() {
                     {stats.consistency.map((active, i) => (
                         <div
                             key={i}
-                            className={`h-1.5 rounded-full transition-colors duration-500 ${
-                                active ? "bg-accent/80" : "bg-border/70"
-                            }`}
+                            className={`h-1.5 rounded-full transition-colors duration-500 ${active ? "bg-accent/80" : "bg-border/70"
+                                }`}
                         />
                     ))}
                 </div>
