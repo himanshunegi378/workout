@@ -11,7 +11,7 @@ Workout Tracker is a single-user, mobile-first full-stack Next.js 16 PWA for wor
 - Data: PostgreSQL via Supabase, Prisma 7, `@prisma/adapter-pg`
 - Auth: NextAuth v5 credentials + JWT sessions
 - Client data: TanStack Query 5 persisted to IndexedDB via `idb-keyval`
-- UI/libs: `lucide-react`, `recharts`
+- UI/libs: `lucide-react`, `recharts`, `framer-motion`
 - Testing: Vitest 4, Testing Library, MSW
 - Linting/package manager: ESLint 9, `import/no-cycle`, pnpm 10
 
@@ -75,10 +75,14 @@ NextAuth v5 and Prisma lifecycle guards are managed via centralized helpers and 
 - Dark mode is default; light mode overrides use `.light` with `next-themes`.
 - Fonts are Outfit for display and Plus Jakarta Sans for body.
 - Accent color is `#be185d`; elevation and animation tokens live in `app/globals.css`.
+- Use `framer-motion` for all UI animations, layout transitions, and interactive states. Prefer `AnimatePresence` for exit animations.
 - `pnpm test:api` runs sequential integration tests against a real test DB using `.env.test`.
 - `tests/setup.ts` mocks auth/navigation and truncates tables between integration tests.
 - `pnpm test:ui` uses jsdom and Testing Library.
 - `pnpm test:cycles` checks circular imports in `app/`.
+
+## Review Standards
+All code reviews must evaluate changes against the [Code Review Pattern](docs/patterns/code-review.md)
 
 ## Search and Research
 - When searching with `grep`, always exclude `.next/`, `.git/`, and `node_modules/` to avoid massive amounts of generated or binary content.

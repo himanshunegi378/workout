@@ -68,18 +68,6 @@ export function WorkoutListContent({ programmeId }: { programmeId: string }) {
 
             <main className="mx-auto w-full max-w-6xl px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
                 <List.Root>
-                    <List.Header>
-                        <List.Intro className="gap-2 md:items-end">
-                            <List.Heading>
-                                <List.Eyebrow className="tracking-[0.22em]">Workouts</List.Eyebrow>
-                                <List.Title className="md:text-2xl">Training days</List.Title>
-                            </List.Heading>
-                            <List.Description className="max-w-xl text-muted-foreground/90">
-                                A quiet view of the program structure, with each workout kept as a single open row.
-                            </List.Description>
-                        </List.Intro>
-                    </List.Header>
-
                     {programme.workouts.length === 0 ? (
                         <List.Empty
                             icon={Dumbbell}
