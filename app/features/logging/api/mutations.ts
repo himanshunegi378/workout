@@ -11,6 +11,7 @@ interface LogSetData {
     weight: string;
     reps: string;
     rpe?: string;
+    date?: string;
 }
 
 /**

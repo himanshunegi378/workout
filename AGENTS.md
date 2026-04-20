@@ -82,7 +82,7 @@ NextAuth v5 and Prisma lifecycle guards are managed via centralized helpers and 
 - `pnpm test:cycles` checks circular imports in `app/`.
 
 ## Review Standards
-All code reviews must evaluate changes against the [Code Review Pattern](docs/patterns/code-review.md)
+All code reviews must evaluate changes against the [Code Review Pattern](docs/patterns/code-review.md). Always Use when reviewing the code
 
 ## Search and Research
 - When searching with `grep`, always exclude `.next/`, `.git/`, and `node_modules/` to avoid massive amounts of generated or binary content.

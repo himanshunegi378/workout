@@ -3,6 +3,14 @@ import prisma from "@/lib/prisma";
 import { getUserId } from "@/lib/auth-helpers";
 import { detectPR } from "@/lib/pr-utils";
 
+/**
+ * Logs a new workout set.
+ * Handles both planned sets (linked to a workout session) and ad-hoc sets.
+ * Performs PR detection and ensures session existence on the target date.
+ * 
+ * @param {Request} request - The standard Next.js request object containing LogSetData.
+ * @returns {Promise<NextResponse>} A JSON response with the created exercise log and PR status.
+ */
 export async function POST(request: Request) {
     try {
         const userId = await getUserId();
@@ -20,6 +28,7 @@ export async function POST(request: Request) {
             weight,
             reps,
             rpe,
+            date, // Optional: log to a specific historical date
         } = body;
 
         if (setOrderIndex === undefined || !reps) {
@@ -45,30 +54,42 @@ export async function POST(request: Request) {
             }
         }
 
-        // Get today's start and end to find or create a daily session
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
+        // Use provided date or default to today
+        const targetDate = date ? new Date(date) : new Date();
+        const startOfDay = new Date(targetDate);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(startOfDay);
+        endOfDay.setDate(endOfDay.getDate() + 1);
 
-        let session = await prisma.workoutSession.findFirst({
-            where: {
-                user_id: userId,
-                workout_id: workoutId || null,
-                date: {
-                    gte: today,
-                    lt: tomorrow,
+        // Find or create a session for the target date
+        let session;
+        if (workoutId) {
+            // Specific workout session lookup
+            session = await prisma.workoutSession.findFirst({
+                where: {
+                    user_id: userId,
+                    workout_id: workoutId,
+                    date: { gte: startOfDay, lt: endOfDay },
                 },
-            },
-        });
+            });
+        } else {
+            // Ad-hoc log: try to find ANY existing session on that day to merge into
+            session = await prisma.workoutSession.findFirst({
+                where: {
+                    user_id: userId,
+                    date: { gte: startOfDay, lt: endOfDay },
+                },
+                orderBy: { workout_id: { sort: 'desc', nulls: 'last' } } // Prefer sessions with a workout_id
+            });
+        }
 
         if (!session) {
             session = await prisma.workoutSession.create({
                 data: {
                     user_id: userId,
                     workout_id: workoutId || null,
-                    start_time: new Date(),
-                    date: new Date(),
+                    start_time: targetDate,
+                    date: targetDate,
                 },
             });
         }
@@ -151,6 +172,13 @@ export async function POST(request: Request) {
     }
 }
 
+/**
+ * Deletes a previously logged workout set.
+ * If the deleted set was the last in its session, the session is also purged.
+ * 
+ * @param {Request} request - The standard Next.js request object containing setId in searchParams.
+ * @returns {Promise<NextResponse>} A JSON response confirming deletion.
+ */
 export async function DELETE(request: Request) {
     try {
         const userId = await getUserId();
@@ -220,6 +248,12 @@ export async function DELETE(request: Request) {
     }
 }
 
+/**
+ * Updates an existing workout set's performance data (weight, reps, RPE).
+ * 
+ * @param {Request} request - The standard Next.js request object containing setId and updated values.
+ * @returns {Promise<NextResponse>} A JSON response with the updated exercise log.
+ */
 export async function PATCH(request: Request) {
     try {
         const userId = await getUserId();

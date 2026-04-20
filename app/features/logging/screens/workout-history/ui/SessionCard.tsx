@@ -10,9 +10,9 @@ interface SessionCardProps {
     /** The name of the workout programme or group. */
     groupName: string;
     /** The start time of the session. */
-    startTime: Date | null;
+    startTime: Date | string | null;
     /** The end time of the session. */
-    endTime: Date | null;
+    endTime: Date | string | null;
     /** A collection of exercise logs grouped by exercise. */
     exerciseGroups: {
         exercise: { id: string; name: string; muscle_group: string };
@@ -83,6 +83,7 @@ export function SessionCard({
                         exerciseName={exercise.name}
                         muscleGroup={exercise.muscle_group}
                         sets={sets}
+                        sessionDate={startTime instanceof Date ? startTime.toISOString() : startTime || undefined}
                     />
                 ))}
             </div>
@@ -94,11 +95,11 @@ export function SessionCard({
  * Formats the duration between two dates into a user-friendly string.
  * E.g., "1h 20m" or "45m".
  * 
- * @param {Date} start - The starting time.
- * @param {Date} end - The ending time.
+ * @param {Date | string} start - The starting time.
+ * @param {Date | string} end - The ending time.
  * @returns {string} The formatted duration string.
  */
-function formatDuration(start: Date, end: Date) {
+function formatDuration(start: Date | string, end: Date | string) {
     const diff = new Date(end).getTime() - new Date(start).getTime();
     const mins = Math.round(diff / 60_000);
     if (mins < 60) return `${mins}m`;

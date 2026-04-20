@@ -192,7 +192,7 @@ export function LogContent() {
             {/* Timeline View */}
             <div className="space-y-12 relative">
                 {/* Vertical Timeline Thread */}
-                <div className="absolute left-[17px] top-4 bottom-4 w-px bg-gradient-to-b from-accent/40 via-border to-transparent hidden md:block" />
+                <div className="absolute left-4.25 top-4 bottom-4 w-px bg-linear-to-b from-accent/40 via-border to-transparent hidden md:block" />
 
                 {grouped.map(({ label, sessions: daySessions }, gi) => (
                     <section
@@ -225,7 +225,10 @@ export function LogContent() {
                                     if (!groupsMap.has(exercise.id)) {
                                         groupsMap.set(exercise.id, { exercise, sets: [] });
                                     }
-                                    groupsMap.get(exercise.id)!.sets.push(sel.exerciseLog);
+                                    groupsMap.get(exercise.id)!.sets.push({
+                                        ...sel.exerciseLog,
+                                        isAdHoc: sel.exercise_with_metadata_id === null
+                                    });
                                 }
 
                                 const exerciseGroups = Array.from(groupsMap.values()).map(group => ({

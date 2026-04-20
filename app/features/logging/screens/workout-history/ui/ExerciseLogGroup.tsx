@@ -1,10 +1,11 @@
 "use client";
 
-import { Check, Trash2, Trophy } from "lucide-react";
+import { Check, Trash2 } from "lucide-react";
 import { muscleColorMap } from "@/app/components/ui";
 import { useDeleteLogSet } from "../../../api/mutation-hooks/use-delete-log-set";
 import { useState } from "react";
 import { ExerciseQuickLogDrawer } from "./ExerciseQuickLogDrawer";
+import { SetLogItem } from "../../../ui/SetLogItem";
 
 /**
  * Props for the SetRow component.
@@ -22,6 +23,8 @@ interface SetRowProps {
     rpe: number | null;
     /** Indicates if this set is a personal record (PR). */
     prType?: string | null;
+    /** Indicates if this set was logged ad-hoc (not part of the program). */
+    isAdHoc?: boolean;
 }
 
 /**
@@ -31,7 +34,7 @@ interface SetRowProps {
  * @param {SetRowProps} props - The set data.
  * @returns {JSX.Element} The rendered set row.
  */
-export function SetRow({ id, index, weight, reps, rpe, prType }: SetRowProps) {
+export function SetRow({ id, index, weight, reps, rpe, prType, isAdHoc }: SetRowProps) {
     const { mutate: deleteSet, isPending } = useDeleteLogSet();
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -46,31 +49,16 @@ export function SetRow({ id, index, weight, reps, rpe, prType }: SetRowProps) {
 
     return (
         <div className={`flex items-center gap-3 group py-2 transition-opacity ${isDeleting || isPending ? "opacity-50 pointer-events-none" : ""}`}>
-            <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold
-                ${prType
-                    ? "bg-accent/15 text-foreground"
-                    : "bg-accent/10 text-foreground/90"
-                }`}
-            >
-                {prType ? (
-                    <Trophy className="w-3.5 h-3.5 stroke-[2.5]" />
-                ) : (
-                    index
-                )}
-            </span>
-            <div className="flex min-w-0 flex-1 items-center gap-2 text-sm">
-                <span className="font-display font-semibold text-foreground">
-                    {weight ? `${weight}kg` : "BW"}
-                </span>
-                <span className="text-foreground/60">×</span>
-                <span className="font-display font-semibold text-foreground">
-                    {reps}
-                </span>
-                {rpe && (
-                    <span className="rounded-full bg-background/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/90">
-                        @{rpe}
-                    </span>
-                )}
+            <div className="flex-1">
+                <SetLogItem
+                    variant="list"
+                    index={index}
+                    weight={weight}
+                    reps={reps}
+                    rpe={rpe}
+                    prType={prType}
+                    isAdHoc={isAdHoc}
+                />
             </div>
 
             <div className="flex items-center gap-2">
@@ -100,7 +88,9 @@ interface ExerciseLogGroupProps {
     /** The primary muscle group targeted by the exercise. */
     muscleGroup: string;
     /** An array of sets logged for this exercise in the current session. */
-    sets: { id: string; weight: number | null; reps: number; rpe: number | null; pr_type?: string | null }[];
+    sets: { id: string; weight: number | null; reps: number; rpe: number | null; pr_type?: string | null; isAdHoc?: boolean }[];
+    /** The date of the session this exercise belongs to. */
+    sessionDate?: string;
 }
 
 /**
@@ -110,7 +100,7 @@ interface ExerciseLogGroupProps {
  * @param {ExerciseLogGroupProps} props - The exercise group data.
  * @returns {JSX.Element} The rendered exercise log group.
  */
-export function ExerciseLogGroup({ exerciseId, exerciseName, muscleGroup, sets }: ExerciseLogGroupProps) {
+export function ExerciseLogGroup({ exerciseId, exerciseName, muscleGroup, sets, sessionDate }: ExerciseLogGroupProps) {
     const colorClass = muscleColorMap[muscleGroup] ?? "bg-accent";
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
@@ -135,6 +125,7 @@ export function ExerciseLogGroup({ exerciseId, exerciseName, muscleGroup, sets }
                         reps={log.reps}
                         rpe={log.rpe}
                         prType={log.pr_type}
+                        isAdHoc={log.isAdHoc}
                     />
                 ))}
             </div>
@@ -145,6 +136,7 @@ export function ExerciseLogGroup({ exerciseId, exerciseName, muscleGroup, sets }
                 exerciseName={exerciseName}
                 isOpen={isHistoryOpen}
                 onClose={() => setIsHistoryOpen(false)}
+                initialDate={sessionDate}
             />
         </div>
     );

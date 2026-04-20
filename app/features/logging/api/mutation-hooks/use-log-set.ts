@@ -27,6 +27,7 @@ export function useLogSet() {
             weight: string;
             reps: string;
             rpe?: string;
+            date?: string;
             id?: string
         }) => {
             const id = newLogData.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36).substring(7));
@@ -78,8 +79,8 @@ export function useLogSet() {
                         const newHistoryLog: ExerciseHistoryLog = {
                             ...commonLogData,
                             workoutSession: {
-                                date: new Date().toISOString(),
-                                start_time: new Date().toISOString(),
+                                date: newLogData.date || new Date().toISOString(),
+                                start_time: newLogData.date || new Date().toISOString(),
                             },
                             exerciseWithMetadata: null,
                             pr_type: null,
