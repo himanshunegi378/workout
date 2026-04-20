@@ -33,7 +33,6 @@ interface LastLog {
 
 interface QuickLogFormProps {
     /** The most recent log used to prefill the form. */
-
     lastLog?: LastLog | null;
     /** Whether the mutation is currently running. */
     isPending: boolean;
@@ -58,7 +57,7 @@ export function ExerciseQuickLogDrawer({
     const { mutate: logSet, isPending } = useLogSet();
     const { data: lastLog } = useLastLog(exerciseId, isOpen);
 
-    const { data: logs, isLoading, isError } = useExerciseHistory(isOpen ? exerciseId : undefined);
+    const { data: logs, isLoading, isError, refetch } = useExerciseHistory(isOpen ? exerciseId : undefined);
     const groupedLogs = groupLogsByDate(logs);
 
     /**
@@ -128,32 +127,16 @@ export function ExerciseQuickLogDrawer({
 
                 {/* Tab Switcher */}
                 <div className="flex h-11 items-center gap-1 self-start rounded-2xl bg-muted/30 p-1 mb-6">
-                    <button
-                        onClick={() => setActiveTab("day")}
-                        className={`relative flex h-full items-center px-4 text-xs font-bold uppercase tracking-wider transition-colors ${activeTab === "day" ? "text-foreground" : "text-muted-foreground hover:text-foreground/80"}`}
-                    >
-                        {activeTab === "day" && (
-                            <motion.div
-                                layoutId="active-tab"
-                                className="absolute inset-0 rounded-xl bg-card shadow-sm"
-                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                            />
-                        )}
-                        <span className="relative z-10">This Day</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("history")}
-                        className={`relative flex h-full items-center px-4 text-xs font-bold uppercase tracking-wider transition-colors ${activeTab === "history" ? "text-foreground" : "text-muted-foreground hover:text-foreground/80"}`}
-                    >
-                        {activeTab === "history" && (
-                            <motion.div
-                                layoutId="active-tab"
-                                className="absolute inset-0 rounded-xl bg-card shadow-sm"
-                                transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                            />
-                        )}
-                        <span className="relative z-10">All History</span>
-                    </button>
+                        <TabButton
+                            active={activeTab === "day"}
+                            onClick={() => setActiveTab("day")}
+                            label="This Day"
+                        />
+                        <TabButton
+                            active={activeTab === "history"}
+                            onClick={() => setActiveTab("history")}
+                            label="All History"
+                        />
                 </div>
 
                 {/* Main scrollable section with Tab Content */}
@@ -172,6 +155,8 @@ export function ExerciseQuickLogDrawer({
                                     <div className="py-12">
                                         <LoadingSpinner size={6} label="Searching logs..." />
                                     </div>
+                                ) : isError ? (
+                                    <ErrorState onRetry={() => refetch()} />
                                 ) : filteredDayLogs.length > 0 ? (
                                     <div className="space-y-1">
                                         {filteredDayLogs.map((log) => (
@@ -188,9 +173,7 @@ export function ExerciseQuickLogDrawer({
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="rounded-3xl border border-dashed border-border/50 px-4 py-12 text-center">
-                                        <p className="text-sm text-muted-foreground">No sets logged for this exercise on this day.</p>
-                                    </div>
+                                    <EmptyState message="No sets logged for this exercise on this day." />
                                 )}
                             </motion.div>
                         ) : (
@@ -206,8 +189,10 @@ export function ExerciseQuickLogDrawer({
                                     <div className="py-12">
                                         <LoadingSpinner size={6} label="Loading history..." />
                                     </div>
+                                ) : isError ? (
+                                    <ErrorState onRetry={() => refetch()} />
                                 ) : groupedLogs && Object.keys(groupedLogs).length > 0 ? (
-                                    Object.entries(groupedLogs).map(([dateStr, sessionLogs], index) => (
+                                    Object.entries(groupedLogs).map(([dateStr, sessionLogs]) => (
                                         <div key={dateStr} className="space-y-3">
                                             <div className="flex items-center gap-2">
                                                 <div className="h-1.5 w-1.5 rounded-full bg-accent" />
@@ -232,9 +217,7 @@ export function ExerciseQuickLogDrawer({
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="rounded-3xl border border-dashed border-border/50 px-4 py-12 text-center">
-                                        <p className="text-sm text-muted-foreground">No history found for this exercise.</p>
-                                    </div>
+                                    <EmptyState message="No history found for this exercise." />
                                 )}
                             </motion.div>
                         )}
@@ -331,5 +314,52 @@ function QuickLogForm({ lastLog, isPending, onSubmit }: QuickLogFormProps) {
         </div>
     );
 }
+
+/**
+ * Renders a consistent empty state with a centered message.
+ */
+function EmptyState({ message }: { message: string }) {
+    return (
+        <div className="rounded-3xl border border-dashed border-border/50 px-4 py-12 text-center">
+            <p className="text-sm text-muted-foreground">{message}</p>
+        </div>
+    );
+}
+
+/**
+ * Renders an error state with a retry option.
+ */
+function ErrorState({ onRetry }: { onRetry: () => void }) {
+    return (
+        <div className="rounded-3xl border border-border/50 bg-destructive/5 px-4 py-10 text-center">
+            <p className="mb-4 text-sm font-medium text-destructive">Failed to load history</p>
+            <Button variant="secondary" onClick={onRetry} className="h-9 px-6 text-xs">
+                Retry Connection
+            </Button>
+        </div>
+    );
+}
+
+/**
+ * Shared tab button with animation logic.
+ */
+function TabButton({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+    return (
+        <button
+            onClick={onClick}
+            className={`relative flex h-full items-center px-4 text-xs font-bold uppercase tracking-wider transition-colors ${active ? "text-foreground" : "text-muted-foreground hover:text-foreground/80"}`}
+        >
+            {active && (
+                <motion.div
+                    layoutId="active-tab"
+                    className="absolute inset-0 rounded-xl bg-card shadow-sm"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+            )}
+            <span className="relative z-10">{label}</span>
+        </button>
+    );
+}
+
 
 
