@@ -19,3 +19,5 @@
 - [ ] Edit Logged Sets: Provide the ability to update or delete previously recorded sets (weight, reps, RPE) directly from the exercise history.
 - [ ] Smart Exercise Ordering: Automatically sort the exercise list in the quick log by frequency or recency, moving the most used exercises to the top for quicker selection.
 - [ ] Performance Pulse Trend Lines: Add trend lines to the muscle group performance charts to visualize volume or strength progression patterns over time.
+- [ ] API: Get logs for a specific day and exercise for the 'This Day' section in the Quick Log Drawer.
+- [ ] API: Enhance `/api/exercises/${exerciseId}/logs` to return the full history for a particular exercise and replace client-side filtering in the Quick Log Drawer.

@@ -9,7 +9,7 @@ Run all: `pnpm test:api`
 |---|---|---|---|
 | ✅ | `exercises.integration.test.ts` | `/api/exercises` | GET, POST |
 | ✅ | `exercises-subroutes.integration.test.ts` | `/api/exercises/[id]/last-log` | GET |
-| ✅ | `exercises-subroutes.integration.test.ts` | `/api/exercises/[id]/logs` | GET |
+| ✅ | `exercises-subroutes.integration.test.ts` | `/api/exercises/logs?exerciseId=...` | GET |
 | ✅ | `auth-signup.integration.test.ts` | `/api/auth/signup` | POST |
 | ✅ | `log-sessions-volume.integration.test.ts` | `/api/log/sessions` | GET |
 | ✅ | `log-set.integration.test.ts` | `/api/log/set` | POST |

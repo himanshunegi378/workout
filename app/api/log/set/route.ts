@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
         const body = await request.json();
         const {
-            id, // Client-generated ID for idempotency/offline sync
+            id,
             workoutId,
             exerciseWithMetadataId,
             exerciseId,
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
             );
         }
 
-        // --- Idempotency Check ---
+        // Client-generated IDs make retried/offline sync writes idempotent.
         if (id) {
             const existingLog = await prisma.exerciseLog.findUnique({
                 where: { id: id },
@@ -49,22 +49,19 @@ export async function POST(request: Request) {
                 if (existingLog.user_id !== userId) {
                     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
                 }
-                // Already exists, return successful 200 (idempotent)
+                // Treat a retried offline mutation as success instead of a duplicate failure.
                 return NextResponse.json({ ...existingLog, pr: existingLog.pr_type }, { status: 200 });
             }
         }
 
-        // Use provided date or default to today
         const targetDate = date ? new Date(date) : new Date();
         const startOfDay = new Date(targetDate);
         startOfDay.setHours(0, 0, 0, 0);
         const endOfDay = new Date(startOfDay);
         endOfDay.setDate(endOfDay.getDate() + 1);
 
-        // Find or create a session for the target date
         let session;
         if (workoutId) {
-            // Specific workout session lookup
             session = await prisma.workoutSession.findFirst({
                 where: {
                     user_id: userId,
@@ -73,7 +70,7 @@ export async function POST(request: Request) {
                 },
             });
         } else {
-            // Ad-hoc log: try to find ANY existing session on that day to merge into
+            // Ad-hoc sets share the day's session so history stays grouped by training day.
             session = await prisma.workoutSession.findFirst({
                 where: {
                     user_id: userId,
@@ -95,17 +92,18 @@ export async function POST(request: Request) {
         }
         const sessionId = session.id;
 
-        // Log the set and create its unique SessionExerciseLog in a transaction
+        // Keep the set and its session link atomic; history queries rely on both records existing.
         const exerciseLog = await prisma.$transaction(async (tx) => {
             const el = await tx.exerciseLog.create({
                 data: {
-                    id: id || undefined, // Use provided ID or let Prisma generate one
+                    id: id || undefined,
                     user_id: userId,
                     exerciseId: exerciseId || null,
                     set_order_index: setOrderIndex,
                     weight: weight ? parseFloat(weight) : null,
                     reps: parseInt(reps),
                     rpe: rpe ? parseFloat(rpe) : null,
+                    date: targetDate,
                     pr_type: null, // Initial, will update below
                 },
             });
@@ -196,9 +194,7 @@ export async function DELETE(request: Request) {
             );
         }
 
-        // --- Transaction-based Deletion & Session Cleanup ---
         const result = await prisma.$transaction(async (tx) => {
-            // Find the log and its parent session (Principle 1: Efficiency)
             const set = await tx.exerciseLog.findUnique({
                 where: { id: setId },
                 include: { sessionExerciseLog: true }
@@ -214,19 +210,16 @@ export async function DELETE(request: Request) {
 
             const sessionId = set.sessionExerciseLog?.workout_session_id;
 
-            // Delete the log. Cascading delete will remove the associated SessionExerciseLog.
             await tx.exerciseLog.delete({
                 where: { id: setId },
             });
 
-            // If the set was part of a session, check if it was the LAST set (Principle 9: Reliability)
             if (sessionId) {
                 const remainingSets = await tx.sessionExerciseLog.count({
                     where: { workout_session_id: sessionId }
                 });
 
                 if (remainingSets === 0) {
-                    // Cleanup empty session
                     await tx.workoutSession.delete({
                         where: { id: sessionId }
                     });

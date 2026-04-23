@@ -2,7 +2,7 @@
 import { expect, it, describe, vi } from "vitest";
 import { GET as getExercises, POST as createExercise } from "@/app/api/exercises/route";
 import { GET as getLastLog } from "@/app/api/exercises/[exerciseId]/last-log/route";
-import { GET as getLogs } from "@/app/api/exercises/[exerciseId]/logs/route";
+import { GET as getLogs } from "@/app/api/exercises/logs/route";
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 import { createMockRequest } from "@/tests/helpers/request-utils";
@@ -97,18 +97,31 @@ describe("Exercises API", () => {
         });
     });
 
-    describe("GET /api/exercises/[exerciseId]/logs", () => {
+    describe("GET /api/exercises/logs", () => {
         it("should return all logs for the exercise", async () => {
             vi.mocked(auth).mockResolvedValue({ user: { id: userId }, expires: "" });
-            const mockLogs = [{ id: "l1", reps: 10 }, { id: "l2", reps: 12 }];
+            const mockLogs = [
+                { id: "l1", exerciseId, weight: 20, reps: 10, rpe: null, set_order_index: 0, pr_type: null, sessionExerciseLog: null },
+                { id: "l2", exerciseId, weight: 25, reps: 12, rpe: 8, set_order_index: 1, pr_type: "reps", sessionExerciseLog: null },
+            ];
             vi.mocked(prisma.exerciseLog.findMany).mockResolvedValue(mockLogs as any);
 
-            const request = createMockRequest(`http://localhost:3000/api/exercises/${exerciseId}/logs`) as NextRequest;
-            const response = await getLogs(request, { params: Promise.resolve({ exerciseId }) });
+            const request = createMockRequest(`http://localhost:3000/api/exercises/logs?exerciseId=${exerciseId}`) as NextRequest;
+            const response = await getLogs(request);
             const data = await response.json();
 
             expect(response.status).toBe(200);
-            expect(data).toEqual(mockLogs);
+            expect(data).toMatchObject([
+                { id: "l1", exerciseId, reps: 10, exerciseWithMetadata: null },
+                { id: "l2", exerciseId, reps: 12, exerciseWithMetadata: null },
+            ]);
+            expect(prisma.exerciseLog.findMany).toHaveBeenCalledWith(expect.objectContaining({
+                where: expect.objectContaining({
+                    OR: expect.arrayContaining([
+                        { exerciseId: { in: [exerciseId] } },
+                    ]),
+                }),
+            }));
         });
     });
 });

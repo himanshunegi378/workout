@@ -17,6 +17,19 @@ import { QuickLogActions } from "./ui/QuickLogActions";
 import type { SessionWithLogs } from "../../types";
 
 /**
+ * Represents the set shape used by the workout history timeline.
+ */
+type TimelineExerciseSet = {
+    id: string;
+    weight: number | null;
+    reps: number;
+    rpe: number | null;
+    set_order_index: number;
+    pr_type?: string | null;
+    isAdHoc?: boolean;
+};
+
+/**
  * The primary container for the training journey timeline and analytics dashboard.
  * 
  * Context:
@@ -215,7 +228,7 @@ export function LogContent() {
                             {daySessions.map((session) => {
                                 const groupsMap = new Map<string, {
                                     exercise: { id: string; name: string; muscle_group: string };
-                                    sets: { id: string; weight: number | null; reps: number; rpe: number | null; set_order_index: number }[];
+                                    sets: TimelineExerciseSet[];
                                 }>();
 
                                 for (const sel of session.sessionExerciseLogs) {

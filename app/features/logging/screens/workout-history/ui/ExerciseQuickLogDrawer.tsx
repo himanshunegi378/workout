@@ -6,7 +6,7 @@ import { CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
 import { BottomDrawer, Button, NumberStepper, RPESelector, LoadingSpinner } from "@/app/components/ui";
 import { usePRCelebration } from "@/app/features/personal-records/PRCelebrationContext";
 import { useLogSet } from "../../../api/mutation-hooks/use-log-set";
-import { groupLogsByDate, useExerciseHistory } from "../../../api/query-hooks/use-exercise-history";
+import { groupLogsByDate, useExerciseHistory, formatLogDate } from "../../../api/query-hooks/use-exercise-history";
 import { useLastLog } from "../../../api/query-hooks/use-last-log";
 import type { PRType } from "@/lib/pr-utils";
 import { SetLogItem } from "../../../ui/SetLogItem";
@@ -65,26 +65,22 @@ export function ExerciseQuickLogDrawer({
      */
     const filteredDayLogs = useMemo(() => {
         if (!logs || !initialDate) return [];
-        const targetDateStr = new Date(initialDate).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-        });
+        const targetDateStr = formatLogDate(initialDate);
         return logs.filter(log => {
             if (!log.workoutSession?.date) return false;
-            const d = new Date(log.workoutSession.date).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-            });
-            return d === targetDateStr;
+            return formatLogDate(log.workoutSession.date) === targetDateStr;
         });
     }, [logs, initialDate]);
 
     /**
      * Calculates the next set sequence index based on the targeted date's logs.
+     * Uses 0-based indexing to match the standard workout session behavior.
      */
-    const getNextSetIndex = () => filteredDayLogs.length + 1;
+    const getNextSetIndex = () => {
+        if (filteredDayLogs.length === 0) return 0;
+        const maxIndex = Math.max(...filteredDayLogs.map(l => l.set_order_index));
+        return maxIndex + 1;
+    };
 
     /**
      * Logs an ad-hoc set and triggers success feedback.
@@ -159,11 +155,11 @@ export function ExerciseQuickLogDrawer({
                                     <ErrorState onRetry={() => refetch()} />
                                 ) : filteredDayLogs.length > 0 ? (
                                     <div className="space-y-1">
-                                        {filteredDayLogs.map((log) => (
+                                        {filteredDayLogs.map((log, i) => (
                                             <SetLogItem
                                                 key={log.id}
                                                 variant="featured"
-                                                index={log.set_order_index}
+                                                index={i + 1}
                                                 weight={log.weight}
                                                 reps={log.reps}
                                                 rpe={log.rpe}
@@ -201,11 +197,11 @@ export function ExerciseQuickLogDrawer({
                                                 </h3>
                                             </div>
                                             <div className="space-y-1">
-                                                {sessionLogs.map((log) => (
+                                                {sessionLogs.map((log, i) => (
                                                     <SetLogItem
                                                         key={log.id}
                                                         variant="compact"
-                                                        index={log.set_order_index}
+                                                        index={i + 1}
                                                         weight={log.weight}
                                                         reps={log.reps}
                                                         rpe={log.rpe}

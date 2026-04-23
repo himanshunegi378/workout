@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { GET as getLastLog } from "@/app/api/exercises/[exerciseId]/last-log/route";
-import { GET as getLogs } from "@/app/api/exercises/[exerciseId]/logs/route";
+import { GET as getLogs } from "@/app/api/exercises/logs/route";
 import prisma from "@/lib/prisma";
 import { authenticateAs, unauthenticate } from "@/tests/helpers/auth-utils";
 import { createMockRequest, makeParams } from "@/tests/helpers/request-utils";
@@ -14,6 +14,15 @@ import { NextRequest } from "next/server";
 
 function makeGetRequest(path: string) {
     return createMockRequest(`http://localhost:3000${path}`) as NextRequest;
+}
+
+/**
+ * Build the logs endpoint request with one or more exerciseId query params.
+ */
+function makeLogsRequest(...exerciseIds: string[]) {
+    const searchParams = new URLSearchParams();
+    exerciseIds.forEach((exerciseId) => searchParams.append("exerciseId", exerciseId));
+    return makeGetRequest(`/api/exercises/logs?${searchParams.toString()}`);
 }
 
 /**
@@ -169,14 +178,14 @@ describe("Exercise Sub-routes — Integration", () => {
     });
 
     // -----------------------------------------------------------------------
-    // GET /api/exercises/[exerciseId]/logs
+    // GET /api/exercises/logs
     // -----------------------------------------------------------------------
 
-    describe("GET /api/exercises/[exerciseId]/logs", () => {
+    describe("GET /api/exercises/logs", () => {
         it("should return 401 when not authenticated", async () => {
             unauthenticate();
-            const request = makeGetRequest("/api/exercises/any-id/logs");
-            const response = await getLogs(request, makeParams({ exerciseId: "any-id" }));
+            const request = makeGetRequest("/api/exercises/logs?exerciseId=any-id");
+            const response = await getLogs(request);
             expect(response.status).toBe(401);
         });
 
@@ -185,8 +194,8 @@ describe("Exercise Sub-routes — Integration", () => {
                 data: { name: "Plank", muscle_group: MuscleGroup.Abs, user_id: userId },
             });
 
-            const request = makeGetRequest(`/api/exercises/${exercise.id}/logs`);
-            const response = await getLogs(request, makeParams({ exerciseId: exercise.id }));
+            const request = makeLogsRequest(exercise.id);
+            const response = await getLogs(request);
             const data = await response.json();
 
             expect(response.status).toBe(200);
@@ -199,8 +208,8 @@ describe("Exercise Sub-routes — Integration", () => {
             });
             await seedAdHocLog(userId, exercise.id, { reps: 10, weight: 20, date: new Date() });
 
-            const request = makeGetRequest(`/api/exercises/${exercise.id}/logs`);
-            const response = await getLogs(request, makeParams({ exerciseId: exercise.id }));
+            const request = makeLogsRequest(exercise.id);
+            const response = await getLogs(request);
             const data = await response.json();
 
             expect(response.status).toBe(200);
@@ -211,8 +220,8 @@ describe("Exercise Sub-routes — Integration", () => {
         it("should return logs linked via ExerciseWithMetadata", async () => {
             const { exerciseId } = await seedFullChain(userId, "Romanian Deadlift");
 
-            const request = makeGetRequest(`/api/exercises/${exerciseId}/logs`);
-            const response = await getLogs(request, makeParams({ exerciseId: exerciseId }));
+            const request = makeLogsRequest(exerciseId);
+            const response = await getLogs(request);
             const data = await response.json();
 
             expect(response.status).toBe(200);
@@ -239,8 +248,8 @@ describe("Exercise Sub-routes — Integration", () => {
                 },
             });
 
-            const request = makeGetRequest(`/api/exercises/${exercise.id}/logs`);
-            const response = await getLogs(request, makeParams({ exerciseId: exercise.id }));
+            const request = makeLogsRequest(exercise.id);
+            const response = await getLogs(request);
             const data = await response.json();
 
             expect(response.status).toBe(200);
@@ -250,8 +259,8 @@ describe("Exercise Sub-routes — Integration", () => {
         it("should include nested sessionExerciseLog with workoutSession date and exerciseWithMetadata", async () => {
             const { exerciseId } = await seedFullChain(userId, "Hip Thrust");
 
-            const request = makeGetRequest(`/api/exercises/${exerciseId}/logs`);
-            const response = await getLogs(request, makeParams({ exerciseId }));
+            const request = makeLogsRequest(exerciseId);
+            const response = await getLogs(request);
             const data = await response.json();
 
             expect(response.status).toBe(200);
@@ -276,8 +285,8 @@ describe("Exercise Sub-routes — Integration", () => {
             });
             await seedAdHocLog(userId, exercise.id);
 
-            const request = makeGetRequest(`/api/exercises/${exercise.id}/logs`);
-            const response = await getLogs(request, makeParams({ exerciseId: exercise.id }));
+            const request = makeLogsRequest(exercise.id);
+            const response = await getLogs(request);
             const data = await response.json();
 
             expect(response.status).toBe(200);
@@ -298,8 +307,8 @@ describe("Exercise Sub-routes — Integration", () => {
             // Newer log
             await seedAdHocLog(userId, exercise.id, { reps: 8, weight: 75, date: date2 });
 
-            const request = makeGetRequest(`/api/exercises/${exercise.id}/logs`);
-            const response = await getLogs(request, makeParams({ exerciseId: exercise.id }));
+            const request = makeLogsRequest(exercise.id);
+            const response = await getLogs(request);
             const data = await response.json();
 
             expect(response.status).toBe(200);
@@ -308,6 +317,27 @@ describe("Exercise Sub-routes — Integration", () => {
             // distinguish them — but they should both be returned
             expect(data.map((d: { reps: number }) => d.reps)).toContain(5);
             expect(data.map((d: { reps: number }) => d.reps)).toContain(8);
+        });
+
+        it("should return logs for repeated exerciseId query params", async () => {
+            const first = await prisma.exercise.create({
+                data: { name: "Cable Fly", muscle_group: MuscleGroup.Chest, user_id: userId },
+            });
+            const second = await prisma.exercise.create({
+                data: { name: "Lat Raise", muscle_group: MuscleGroup.Shoulders, user_id: userId },
+            });
+
+            await seedAdHocLog(userId, first.id, { reps: 10, weight: 15, date: new Date() });
+            await seedAdHocLog(userId, second.id, { reps: 12, weight: 10, date: new Date() });
+
+            const request = makeLogsRequest(first.id, second.id);
+            const response = await getLogs(request);
+            const data = await response.json();
+
+            expect(response.status).toBe(200);
+            expect(data).toHaveLength(2);
+            expect(data.map((d: { reps: number }) => d.reps)).toEqual(expect.arrayContaining([10, 12]));
+            expect(data.map((d: { exerciseId: string }) => d.exerciseId)).toEqual(expect.arrayContaining([first.id, second.id]));
         });
     });
 });

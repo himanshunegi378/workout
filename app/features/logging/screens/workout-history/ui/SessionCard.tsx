@@ -2,6 +2,19 @@ import { Dumbbell, Activity, Target } from "lucide-react";
 import { ExerciseLogGroup } from "./ExerciseLogGroup";
 
 /**
+ * Represents the set shape rendered within each exercise group on a session card.
+ */
+type SessionCardExerciseSet = {
+    id: string;
+    weight: number | null;
+    rpe: number | null;
+    reps: number;
+    set_order_index: number;
+    pr_type?: string | null;
+    isAdHoc?: boolean;
+};
+
+/**
  * Props for the SessionCard component.
  */
 interface SessionCardProps {
@@ -16,7 +29,7 @@ interface SessionCardProps {
     /** A collection of exercise logs grouped by exercise. */
     exerciseGroups: {
         exercise: { id: string; name: string; muscle_group: string };
-        sets: { id: string; weight: number | null; rpe: number | null; reps: number }[];
+        sets: SessionCardExerciseSet[];
     }[];
 }
 

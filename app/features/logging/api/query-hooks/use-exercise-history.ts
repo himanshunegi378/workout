@@ -5,6 +5,7 @@ import { logKeys } from "../query-keys";
 
 export interface ExerciseHistoryLog {
     id: string;
+    exerciseId: string | null;
     weight: number | null;
     reps: number;
     rpe: number | null;
@@ -26,45 +27,61 @@ export interface ExerciseHistoryLog {
 }
 
 /**
- * Fetches the historical logs for a single exercise.
- * 
- * @param {string | undefined} exerciseId - The ID of the exercise.
- * @returns {import("@tanstack/react-query").UseQueryResult<ExerciseHistoryLog[]>} Historical logs.
+ * Fetches planned and ad-hoc set history for one or more exercises.
+ * Uses normalized exercise IDs to maintain stable React Query cache entries.
  */
-export function useExerciseHistory(exerciseId: string | undefined) {
-    return useQuery({
-        queryKey: logKeys.history(exerciseId),
-        queryFn: async () => {
-            if (!exerciseId) throw new Error("Exercise ID is required");
+export function useExerciseHistory(exerciseId: string | string[] | undefined) {
+    const exerciseIds = normalizeExerciseIds(exerciseId);
 
-            const res = await fetch(`/api/exercises/${exerciseId}/logs`);
+    return useQuery({
+        queryKey: logKeys.history(exerciseIds),
+        queryFn: async () => {
+            if (exerciseIds.length === 0) throw new Error("Exercise ID is required");
+
+            const searchParams = new URLSearchParams();
+            exerciseIds.forEach((id) => searchParams.append("exerciseId", id));
+
+            const res = await fetch(`/api/exercises/logs?${searchParams.toString()}`);
             if (!res.ok) {
                 throw new Error("Failed to fetch exercise history");
             }
 
             return res.json() as Promise<ExerciseHistoryLog[]>;
         },
-        enabled: !!exerciseId,
+        enabled: exerciseIds.length > 0,
     });
 }
 
 /**
+ * Standardizes date formatting for log grouping and filtering.
+ */
+export function formatLogDate(date: string | Date) {
+    return new Date(date).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+    });
+}
+
+/**
+ * Normalizes optional single-value and array query inputs for stable cache keys.
+ */
+function normalizeExerciseIds(exerciseId: string | string[] | undefined) {
+    return [...new Set((Array.isArray(exerciseId) ? exerciseId : [exerciseId])
+        .filter((id): id is string => Boolean(id)))]
+        .sort();
+}
+
+/**
  * Groups exercise history logs by their session date for the timeline UI.
- * 
- * @param {ExerciseHistoryLog[]} logs - The array of historical logs.
- * @returns {Record<string, ExerciseHistoryLog[]>} Logs grouped by formatted date string.
  */
 export function groupLogsByDate(logs: ExerciseHistoryLog[] | undefined) {
     if (!logs) return {};
-    
+
     return logs.reduce<Record<string, ExerciseHistoryLog[]>>((acc, log) => {
-        // Guard against missing dates to avoid grouping old logs into "Today"
+        // Legacy or partially synced logs may be missing their session date.
         const dateStr = log.workoutSession?.date
-            ? new Date(log.workoutSession.date).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-              })
+            ? formatLogDate(log.workoutSession.date)
             : "Previous Records";
 
         if (!acc[dateStr]) {
@@ -75,4 +92,3 @@ export function groupLogsByDate(logs: ExerciseHistoryLog[] | undefined) {
         return acc;
     }, {});
 }
-

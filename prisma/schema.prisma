@@ -236,8 +236,8 @@ model ExerciseLog {
   @@map("exercise_logs")
 }
 
-/// A junction model representing a single exercise being performed within a session.
-/// Acts as a parent/container for all sets (ExerciseLog) of that exercise.
+/// Links one logged set to its workout session and optional programme metadata.
+/// The one-to-one ExerciseLog relation preserves the planned-vs-ad-hoc source of each set.
 model SessionExerciseLog {
   id    String  @id @default(cuid())
   notes String?

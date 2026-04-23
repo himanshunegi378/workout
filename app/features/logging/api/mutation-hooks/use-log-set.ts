@@ -78,6 +78,7 @@ export function useLogSet() {
                     queryClient.setQueryData<ExerciseHistoryLog[]>(historyKey, (old) => {
                         const newHistoryLog: ExerciseHistoryLog = {
                             ...commonLogData,
+                            exerciseId: newLogData.exerciseId ?? null,
                             workoutSession: {
                                 date: newLogData.date || new Date().toISOString(),
                                 start_time: newLogData.date || new Date().toISOString(),
@@ -126,4 +127,3 @@ export function useLogSet() {
         }
     });
 }
-
