@@ -44,8 +44,7 @@ export async function GET(request: NextRequest) {
             },
             orderBy: [
                 { sessionExerciseLog: { workoutSession: { date: "desc" } } },
-                { date: "desc" },
-                { set_order_index: "asc" },
+                { date: "asc" },
             ],
             select: {
                 id: true,
@@ -137,34 +136,34 @@ function getExerciseIds(searchParams: URLSearchParams) {
 /**
  * Parses optional ISO date bounds used to limit the returned exercise history.
  */
-function getDateRange(searchParams: URLSearchParams) {
+function getDateRange(searchParams: URLSearchParams): { from: Date | null; to: Date | null } | { error: string } {
     const from = parseIsoDate(searchParams.get("from"), "from");
-    if ("error" in from) return from;
+    if ("error" in from) return { error: from.error };
 
     const to = parseIsoDate(searchParams.get("to"), "to");
-    if ("error" in to) return to;
+    if ("error" in to) return { error: to.error };
 
     if (from.value && to.value && from.value > to.value) {
-        return { error: "`from` must be before or equal to `to`" } as const;
+        return { error: "`from` must be before or equal to `to`" };
     }
 
-    return { from: from.value, to: to.value } as const;
+    return { from: from.value, to: to.value };
 }
 
 /**
  * Validates an ISO date or timestamp query param and normalizes it to Date.
  */
-function parseIsoDate(value: string | null, paramName: "from" | "to") {
+function parseIsoDate(value: string | null, paramName: "from" | "to"): { value: Date | null } | { error: string } {
     if (!value) {
-        return { value: null } as const;
+        return { value: null };
     }
 
     const parsed = new Date(value);
     if (Number.isNaN(parsed.getTime())) {
-        return { error: `Invalid \`${paramName}\` query parameter` } as const;
+        return { error: `Invalid \`${paramName}\` query parameter` };
     }
 
-    return { value: parsed } as const;
+    return { value: parsed };
 }
 
 /**
