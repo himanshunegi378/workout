@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
 import { BottomDrawer, Button, NumberStepper, RPESelector, LoadingSpinner } from "@/app/components/ui";
 import { usePRCelebration } from "@/app/features/personal-records/PRCelebrationContext";
 import { useLogSet } from "../../../api/mutation-hooks/use-log-set";
-import { groupLogsByDate, useExerciseHistory, formatLogDate } from "../../../api/query-hooks/use-exercise-history";
+import { groupLogsByDate, useExerciseHistory } from "../../../api/query-hooks/use-exercise-history";
 import { useLastLog } from "../../../api/query-hooks/use-last-log";
 import type { PRType } from "@/lib/pr-utils";
 import { SetLogItem } from "../../../ui/SetLogItem";
@@ -56,29 +56,29 @@ export function ExerciseQuickLogDrawer({
     const [activeTab, setActiveTab] = useState<"day" | "history">("day");
     const { mutate: logSet, isPending } = useLogSet();
     const { data: lastLog } = useLastLog(exerciseId, isOpen);
+    const dayRange = getDayRange(initialDate);
 
-    const { data: logs, isLoading, isError, refetch } = useExerciseHistory(isOpen ? exerciseId : undefined);
+    const {
+        data: dayLogs,
+        isLoading: isDayLoading,
+        isError: isDayError,
+        refetch: refetchDayLogs,
+    } = useExerciseHistory(isOpen ? exerciseId : undefined, dayRange);
+    const {
+        data: logs,
+        isLoading: isHistoryLoading,
+        isError: isHistoryError,
+        refetch: refetchHistory,
+    } = useExerciseHistory(isOpen ? exerciseId : undefined);
     const groupedLogs = groupLogsByDate(logs);
-
-    /**
-     * Filters the full history to only include sets from the specific date instance clicked.
-     */
-    const filteredDayLogs = useMemo(() => {
-        if (!logs || !initialDate) return [];
-        const targetDateStr = formatLogDate(initialDate);
-        return logs.filter(log => {
-            if (!log.workoutSession?.date) return false;
-            return formatLogDate(log.workoutSession.date) === targetDateStr;
-        });
-    }, [logs, initialDate]);
 
     /**
      * Calculates the next set sequence index based on the targeted date's logs.
      * Uses 0-based indexing to match the standard workout session behavior.
      */
     const getNextSetIndex = () => {
-        if (filteredDayLogs.length === 0) return 0;
-        const maxIndex = Math.max(...filteredDayLogs.map(l => l.set_order_index));
+        if (!dayLogs || dayLogs.length === 0) return 0;
+        const maxIndex = Math.max(...dayLogs.map(l => l.set_order_index));
         return maxIndex + 1;
     };
 
@@ -147,15 +147,15 @@ export function ExerciseQuickLogDrawer({
                                 transition={{ duration: 0.2 }}
                                 className="space-y-4"
                             >
-                                {isLoading ? (
+                                {isDayLoading ? (
                                     <div className="py-12">
                                         <LoadingSpinner size={6} label="Searching logs..." />
                                     </div>
-                                ) : isError ? (
-                                    <ErrorState onRetry={() => refetch()} />
-                                ) : filteredDayLogs.length > 0 ? (
+                                ) : isDayError ? (
+                                    <ErrorState onRetry={() => refetchDayLogs()} />
+                                ) : dayLogs && dayLogs.length > 0 ? (
                                     <div className="space-y-1">
-                                        {filteredDayLogs.map((log, i) => (
+                                        {dayLogs.map((log, i) => (
                                             <SetLogItem
                                                 key={log.id}
                                                 variant="featured"
@@ -181,12 +181,12 @@ export function ExerciseQuickLogDrawer({
                                 transition={{ duration: 0.2 }}
                                 className="space-y-6"
                             >
-                                {isLoading ? (
+                                {isHistoryLoading ? (
                                     <div className="py-12">
                                         <LoadingSpinner size={6} label="Loading history..." />
                                     </div>
-                                ) : isError ? (
-                                    <ErrorState onRetry={() => refetch()} />
+                                ) : isHistoryError ? (
+                                    <ErrorState onRetry={() => refetchHistory()} />
                                 ) : groupedLogs && Object.keys(groupedLogs).length > 0 ? (
                                     Object.entries(groupedLogs).map(([dateStr, sessionLogs]) => (
                                         <div key={dateStr} className="space-y-3">
@@ -248,6 +248,31 @@ export function ExerciseQuickLogDrawer({
             </div>
         </BottomDrawer>
     );
+}
+
+/**
+ * Converts a selected log date into inclusive local-day ISO bounds.
+ */
+function getDayRange(initialDate?: string) {
+    if (!initialDate) {
+        return undefined;
+    }
+
+    const date = new Date(initialDate);
+    if (Number.isNaN(date.getTime())) {
+        return undefined;
+    }
+
+    const from = new Date(date);
+    from.setHours(0, 0, 0, 0);
+
+    const to = new Date(date);
+    to.setHours(23, 59, 59, 999);
+
+    return {
+        from: from.toISOString(),
+        to: to.toISOString(),
+    };
 }
 
 /**
@@ -356,6 +381,5 @@ function TabButton({ active, onClick, label }: { active: boolean; onClick: () =>
         </button>
     );
 }
-
 
 

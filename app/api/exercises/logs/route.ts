@@ -13,6 +13,11 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
+        const dateRange = getDateRange(request.nextUrl.searchParams);
+        if ("error" in dateRange) {
+            return NextResponse.json({ error: dateRange.error }, { status: 400 });
+        }
+
         const exerciseIds = getExerciseIds(request.nextUrl.searchParams);
         if (exerciseIds.length === 0) {
             return NextResponse.json({ error: "Missing exerciseId query parameter" }, { status: 400 });
@@ -21,19 +26,25 @@ export async function GET(request: NextRequest) {
         const logs = await prisma.exerciseLog.findMany({
             where: {
                 user_id: session.user.id,
-                OR: [
-                    { exerciseId: { in: exerciseIds } },
+                AND: [
                     {
-                        sessionExerciseLog: {
-                            exerciseWithMetadata: {
-                                exercise_id: { in: exerciseIds }
+                        OR: [
+                            { exerciseId: { in: exerciseIds } },
+                            {
+                                sessionExerciseLog: {
+                                    exerciseWithMetadata: {
+                                        exercise_id: { in: exerciseIds }
+                                    }
+                                }
                             }
-                        }
-                    }
+                        ],
+                    },
+                    ...getDateFilterClauses(dateRange),
                 ],
             },
             orderBy: [
                 { sessionExerciseLog: { workoutSession: { date: "desc" } } },
+                { date: "desc" },
                 { set_order_index: "asc" },
             ],
             select: {
@@ -121,4 +132,78 @@ function getExerciseIds(searchParams: URLSearchParams) {
         .map((value) => value.trim())
         .filter(Boolean))]
         .sort();
+}
+
+/**
+ * Parses optional ISO date bounds used to limit the returned exercise history.
+ */
+function getDateRange(searchParams: URLSearchParams) {
+    const from = parseIsoDate(searchParams.get("from"), "from");
+    if ("error" in from) return from;
+
+    const to = parseIsoDate(searchParams.get("to"), "to");
+    if ("error" in to) return to;
+
+    if (from.value && to.value && from.value > to.value) {
+        return { error: "`from` must be before or equal to `to`" } as const;
+    }
+
+    return { from: from.value, to: to.value } as const;
+}
+
+/**
+ * Validates an ISO date or timestamp query param and normalizes it to Date.
+ */
+function parseIsoDate(value: string | null, paramName: "from" | "to") {
+    if (!value) {
+        return { value: null } as const;
+    }
+
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) {
+        return { error: `Invalid \`${paramName}\` query parameter` } as const;
+    }
+
+    return { value: parsed } as const;
+}
+
+/**
+ * Builds date filters for both workout-linked logs and direct ad-hoc logs.
+ */
+function getDateFilterClauses(dateRange: { from: Date | null; to: Date | null }) {
+    if (!dateRange.from && !dateRange.to) {
+        return [];
+    }
+
+    const sessionDate = {
+        ...(dateRange.from ? { gte: dateRange.from } : {}),
+        ...(dateRange.to ? { lte: dateRange.to } : {}),
+    };
+
+    const adHocDate = {
+        ...(dateRange.from ? { gte: dateRange.from } : {}),
+        ...(dateRange.to ? { lte: dateRange.to } : {}),
+    };
+
+    return [
+        {
+            OR: [
+                {
+                    sessionExerciseLog: {
+                        is: {
+                            workoutSession: {
+                                date: sessionDate,
+                            },
+                        },
+                    },
+                },
+                {
+                    AND: [
+                        { sessionExerciseLog: { is: null } },
+                        { date: adHocDate },
+                    ],
+                },
+            ],
+        },
+    ];
 }

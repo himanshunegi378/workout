@@ -8,6 +8,16 @@ function normalizeHistoryIds(exerciseId?: string | string[]) {
 }
 
 /**
+ * Keeps date-range history keys stable across equivalent inputs.
+ */
+function normalizeHistoryRange(range?: { from?: string; to?: string }) {
+    return {
+        from: range?.from ?? null,
+        to: range?.to ?? null,
+    };
+}
+
+/**
  * Query key factory for logging-related queries.
  * Provides a centralized and consistent way to manage query keys for React Query.
  */
@@ -20,8 +30,9 @@ export const logKeys = {
     list: (filters: string) => [...logKeys.lists(), { filters }] as const,
     /** Key for session-based log queries. */
     sessions: () => [...logKeys.all, "sessions"] as const,
-    /** Key for exercise history queries, optionally filtered by exercise IDs. */
-    history: (exerciseId?: string | string[]) => [...logKeys.all, "history", normalizeHistoryIds(exerciseId)] as const,
+    /** Key for exercise history queries, optionally filtered by exercise IDs and date range. */
+    history: (exerciseId?: string | string[], range?: { from?: string; to?: string }) =>
+        [...logKeys.all, "history", normalizeHistoryIds(exerciseId), normalizeHistoryRange(range)] as const,
     /** Key for the most recent log of a specific exercise. */
     lastLog: (exerciseId?: string) => [...logKeys.all, "last-log", exerciseId].filter(Boolean),
 };

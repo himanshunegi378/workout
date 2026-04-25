@@ -26,20 +26,30 @@ export interface ExerciseHistoryLog {
     } | null;
 }
 
+export interface ExerciseHistoryRange {
+    from?: string;
+    to?: string;
+}
+
 /**
  * Fetches planned and ad-hoc set history for one or more exercises.
  * Uses normalized exercise IDs to maintain stable React Query cache entries.
  */
-export function useExerciseHistory(exerciseId: string | string[] | undefined) {
+export function useExerciseHistory(
+    exerciseId: string | string[] | undefined,
+    range?: ExerciseHistoryRange,
+) {
     const exerciseIds = normalizeExerciseIds(exerciseId);
 
     return useQuery({
-        queryKey: logKeys.history(exerciseIds),
+        queryKey: logKeys.history(exerciseIds, range),
         queryFn: async () => {
             if (exerciseIds.length === 0) throw new Error("Exercise ID is required");
 
             const searchParams = new URLSearchParams();
             exerciseIds.forEach((id) => searchParams.append("exerciseId", id));
+            if (range?.from) searchParams.set("from", range.from);
+            if (range?.to) searchParams.set("to", range.to);
 
             const res = await fetch(`/api/exercises/logs?${searchParams.toString()}`);
             if (!res.ok) {
@@ -71,6 +81,7 @@ function normalizeExerciseIds(exerciseId: string | string[] | undefined) {
         .filter((id): id is string => Boolean(id)))]
         .sort();
 }
+
 
 /**
  * Groups exercise history logs by their session date for the timeline UI.
