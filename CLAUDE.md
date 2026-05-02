@@ -1,17 +1,3 @@
-- **Domain over Code Principle**: Never sacrifice domain intent for technical elegance. Before proposing any logic change, you must first describe the real-world scenario it supports. If the change makes a natural human process (like tracking a workout) feel robotic or counter-intuitive, it is a technical failure.
-- Workout Tracker is a single-user, mobile-first Next.js 16 App Router PWA for workout logging, programmes, PRs, and analytics on Vercel + Supabase PostgreSQL.
-- Stack: React 19, TypeScript strict, Tailwind CSS 4 tokens in `app/globals.css`, Prisma 7, NextAuth v5 JWT sessions, TanStack Query persisted to IndexedDB, Vitest, Testing Library, MSW, pnpm 10.
-- Active code belongs in `app/` and `lib/`; never add new code to `src/`, and never edit `app/generated/prisma/`.
-- Feature code lives in `app/features/<name>/`; cross-feature imports must go through the feature `index.ts`, and deep imports into feature subfolders are forbidden.
-- `internal.ts` exports are only for the root layout, not sibling features; prefer feature-local hooks over `app/hooks/`.
-- Ownership rule: all set logging and exercise history logic belongs to `logging`; `workouts` coordinates sessions but uses `logging` for persistence.
-- Keep page routes thin: unwrap params and render feature screens; API routes must follow the standard auth, validation, and transaction workflow.
-- Respect data integrity rules around soft deletes (`is_hidden`), active programme toggles, PR detection, centralized NextAuth helpers, and Prisma lifecycle guards.
-- UI defaults: dark mode, `.light` overrides, Outfit display font, Plus Jakarta Sans body font, accent `#be185d`, shared primitives from `@/app/components/ui`, and `framer-motion` for UI animations.
-- Use `pnpm lint`, `pnpm test:api`, `pnpm test:ui`, and `pnpm test:cycles` as relevant; 
-- When review code, always follow `docs/patterns/code-review.md`
-- New functions/components need short JSDoc plus high-signal comments only.
-
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
