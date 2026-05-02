@@ -41,6 +41,7 @@ export const AGGREGATION_MAP: Record<AnalyticsAggregation, string> = {
 
 export const ANALYTICS_FILTER_FIELDS = [
     ...ANALYTICS_DIMENSIONS,
+    "weight",
     "is_ad_hoc_exercise",
 ] as const;
 

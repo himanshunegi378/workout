@@ -2,6 +2,7 @@ import { MuscleGroup } from "@/app/generated/prisma/client";
 
 export type TrendStatus = 'up' | 'down' | 'same';
 export type PerformanceStatus = "increase" | "decrease" | "stable";
+export type MuscleChartMetric = "volume" | "avgLoad";
 
 export type ExercisePerformanceData = {
     name: string;
@@ -17,10 +18,13 @@ export type ExercisePerformanceData = {
     trendDetail: string;
 };
 
-export type HistoricalVolumeData = {
+export type HistoricalMuscleMetricData = {
     weekStart: string;
     label: string;
     volume: number;
+    avgLoad: number | null;
+    volumeTrend: number;
+    avgLoadTrend: number | null;
 };
 
 export type MusclePerformanceData = {
@@ -36,5 +40,5 @@ export type MusclePerformanceData = {
     performance: PerformanceStatus;
     trendDetail: string;
     exercises: ExercisePerformanceData[];
-    historicalVolume?: HistoricalVolumeData[];
+    historicalVolume?: HistoricalMuscleMetricData[];
 };
