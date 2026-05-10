@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { programmeKeys } from "../query-keys";
-import { createProgram } from "../mutations";
+import { createProgramme } from "../mutations";
 
 /**
  * A custom mutation hook for creating a new training programme.
@@ -19,7 +19,7 @@ export function useCreateProgramme() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: createProgram,
+        mutationFn: createProgramme,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: programmeKeys.lists() });
         },

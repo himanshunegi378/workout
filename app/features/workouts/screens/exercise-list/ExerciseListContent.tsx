@@ -3,13 +3,13 @@
 import { notFound, useRouter } from "next/navigation";
 import { Activity, Loader2, Trophy } from "lucide-react";
 import { useState, useEffect } from "react";
-import { PageShell, List } from "@/app/components/ui";
+import { PageShell, List, ConfirmDrawer } from "@/app/components/ui";
 import { PageHeader } from "@/app/features/page-header";
 import { ExerciseCard } from "./ui/ExerciseCard";
-import { AddExerciseTrigger } from "../../../exercises/components/AddExerciseTrigger";
+import { AddExerciseTrigger } from "@/app/features/exercises";
 import { useWorkoutDetails } from "../../api/query-hooks/use-workout-details";
 import { useFinishWorkout } from "../../api/mutation-hooks/use-finish-workout";
-import { calculateWorkoutProgress } from "./progress";
+import { useWorkoutSession } from "../../hooks/use-workout-session";
 
 /**
  * The primary container for the live workout execution screen.
@@ -38,26 +38,8 @@ export function ExerciseListContent({
     const router = useRouter();
     const { data, isPending, isError } = useWorkoutDetails(programmeId, workoutId);
     const { mutate: finishWorkout, isPending: isFinishing } = useFinishWorkout();
-    const [secondsElapsed, setSecondsElapsed] = useState(0);
-
-    // Live Timer Logic
-    useEffect(() => {
-        if (!data?.session?.start_time) return;
-        const start = new Date(data.session.start_time).getTime();
-
-        const interval = setInterval(() => {
-            setSecondsElapsed(Math.floor((Date.now() - start) / 1000));
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, [data?.session?.start_time]);
-
-    const formatTime = (totalSeconds: number) => {
-        const hrs = Math.floor(totalSeconds / 3600);
-        const mins = Math.floor((totalSeconds % 3600) / 60);
-        const secs = totalSeconds % 60;
-        return `${hrs > 0 ? `${hrs}:` : ''}${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    };
+    const { displayTime, metrics, session, workout, previousLogsByExercise } = useWorkoutSession(data);
+    const [isFinishConfirmOpen, setIsFinishConfirmOpen] = useState(false);
 
     if (isPending) {
         return (
@@ -74,7 +56,7 @@ export function ExerciseListContent({
         );
     }
 
-    if (isError || !data) {
+    if (isError || !data || !workout || !metrics) {
         if (isError) return (
             <PageShell
                 header={<PageHeader title="Workout Session" backHref={`/programmes/${programmeId}`} showBackDefault />}
@@ -90,33 +72,18 @@ export function ExerciseListContent({
         notFound();
     }
 
-    const { workout, session, previousLogsByExercise } = data;
-
-    // Advanced Calculations
-    let currentVolume = 0;
-    let totalSetsDone = 0;
-
-    if (session) {
-        session.sessionExerciseLogs.forEach((sel) => {
-            if (sel.exerciseLog) {
-                currentVolume += (sel.exerciseLog.weight || 0) * sel.exerciseLog.reps;
-                totalSetsDone++;
-            }
-        });
-    }
-
-    const { logsByEwm, totalExercises, completedExercises, progressPercentage } =
-        calculateWorkoutProgress(workout, session);
-
     const handleFinishWorkout = () => {
         if (!session) return;
-        if (window.confirm("Ready to finish your training session? Current volume and total duration will be logged.")) {
-            finishWorkout({ sessionId: session.id }, {
-                onSuccess: () => {
-                    router.push(`/programmes/${programmeId}`);
-                }
-            });
-        }
+        setIsFinishConfirmOpen(true);
+    };
+
+    const confirmFinishWorkout = () => {
+        if (!session) return;
+        finishWorkout({ sessionId: session.id }, {
+            onSuccess: () => {
+                router.push(`/programmes/${programmeId}`);
+            }
+        });
     };
 
     return (
@@ -159,26 +126,26 @@ export function ExerciseListContent({
 
                     <div className="flex items-baseline gap-6 sm:gap-8">
                         <span className="font-display text-3xl sm:text-4xl font-black tracking-tighter tabular-nums text-foreground">
-                            {formatTime(secondsElapsed)}
+                            {displayTime}
                         </span>
 
                         <div className="flex items-baseline gap-1.5 opacity-80">
-                            <span className="font-display text-xl font-bold tabular-nums">{totalSetsDone}</span>
+                            <span className="font-display text-xl font-bold tabular-nums">{metrics.totalSetsDone}</span>
                             <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest">Sets</span>
                         </div>
 
                         <div className="flex items-baseline gap-1.5 opacity-80">
                             <span className="font-display text-xl font-bold tabular-nums">
-                                {currentVolume > 1000 ? `${(currentVolume / 1000).toFixed(1)}k` : currentVolume}
+                                {metrics.totalVolume > 1000 ? `${(metrics.totalVolume / 1000).toFixed(1)}k` : metrics.totalVolume}
                             </span>
                             <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest">Kg</span>
                         </div>
                     </div>
 
                     <div className="flex flex-col items-end gap-1.5">
-                        <span className="text-[10px] font-bold text-muted-foreground tabular-nums tracking-widest">{completedExercises} OF {totalExercises}</span>
+                        <span className="text-[10px] font-bold text-muted-foreground tabular-nums tracking-widest">{metrics.completedExercises} OF {metrics.totalExercises}</span>
                         <div className="w-24 h-1.5 rounded-full bg-border overflow-hidden">
-                            <div className="h-full bg-foreground transition-all duration-700 ease-out" style={{ width: `${progressPercentage}%` }} />
+                            <div className="h-full bg-foreground transition-all duration-700 ease-out" style={{ width: `${metrics.progressPercentage}%` }} />
                         </div>
                     </div>
 
@@ -196,7 +163,7 @@ export function ExerciseListContent({
                 ) : (
                     <List.Content layout="grid" columns={2} gap="lg" className="lg:gap-5">
                         {workout.exercisesWithMetadata.filter((ewm) => !ewm.is_hidden).map((ewm, i) => {
-                            const exerciseLogs = logsByEwm[ewm.id] || [];
+                            const exerciseLogs = metrics.logsByEwm[ewm.id] || [];
                             const isDone = exerciseLogs.length >= (ewm.sets_min || 1);
 
                             return (
@@ -221,7 +188,7 @@ export function ExerciseListContent({
                                         restMax={ewm.rest_max ?? 0}
                                         tempo={ewm.tempo ?? ""}
                                         initialLogs={exerciseLogs}
-                                        previousLogs={previousLogsByExercise[ewm.exercise_id] || []}
+                                        previousLogs={previousLogsByExercise?.[ewm.exercise_id] || []}
                                     />
                                 </List.Item>
                             );
@@ -229,6 +196,16 @@ export function ExerciseListContent({
                     </List.Content>
                 )}
             </div>
+
+            <ConfirmDrawer
+                isOpen={isFinishConfirmOpen}
+                onClose={() => setIsFinishConfirmOpen(false)}
+                onConfirm={confirmFinishWorkout}
+                title="Finish Workout?"
+                description="Ready to finish your training session? Current volume and total duration will be logged."
+                confirmText="Finish Training"
+                variant="primary"
+            />
         </PageShell>
     );
 }

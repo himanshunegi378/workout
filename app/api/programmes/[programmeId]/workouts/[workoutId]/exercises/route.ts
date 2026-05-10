@@ -76,7 +76,33 @@ export async function POST(
             );
         }
 
-        const orderIndex = workout._count.exercisesWithMetadata;
+        const exercise = await prisma.exercise.findFirst({
+            where: {
+                id: exercise_id,
+                OR: [
+                    { user_id: userId },
+                    { is_global: true },
+                ],
+            },
+            select: { id: true },
+        });
+
+        if (!exercise) {
+            return NextResponse.json(
+                { error: "Exercise not found" },
+                { status: 404 }
+            );
+        }
+
+        // --- Calculate Order Index ---
+        // We use _aggregate to find the current max order_index to avoid duplicates
+        // if exercises have been hidden (soft-deleted).
+        const aggregate = await prisma.exerciseWithMetadata.aggregate({
+            where: { workout_id: workoutId },
+            _max: { order_index: true },
+        });
+
+        const orderIndex = (aggregate._max.order_index ?? -1) + 1;
 
         const ewm = await prisma.exerciseWithMetadata.create({
             data: {
@@ -103,4 +129,3 @@ export async function POST(
         );
     }
 }
-

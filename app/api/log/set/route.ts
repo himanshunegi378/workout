@@ -54,6 +54,26 @@ export async function POST(request: Request) {
             }
         }
 
+        if (exerciseId) {
+            const exercise = await prisma.exercise.findFirst({
+                where: {
+                    id: exerciseId,
+                    OR: [
+                        { user_id: userId },
+                        { is_global: true },
+                    ],
+                },
+                select: { id: true },
+            });
+
+            if (!exercise) {
+                return NextResponse.json(
+                    { error: "Exercise not found" },
+                    { status: 404 }
+                );
+            }
+        }
+
         const targetDate = date ? new Date(date) : new Date();
         const startOfDay = new Date(targetDate);
         startOfDay.setHours(0, 0, 0, 0);

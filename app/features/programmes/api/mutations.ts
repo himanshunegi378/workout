@@ -12,10 +12,10 @@ interface CreateProgramData {
  * Performs the low-level fetch request to the POST /api/programmes endpoint. 
  * Includes basic error parsing to extract backend validation errors.
  */
-export async function createProgram(data: CreateProgramData) {
+export async function createProgramme(data: CreateProgramData) {
     const payload = {
         ...data,
-        id: data.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36).substring(7))
+        id: data.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : undefined)
     };
 
     const res = await fetch("/api/programmes", {
@@ -41,7 +41,7 @@ export interface UpdateProgramData {
  * Persistence layer for updating an existing training programme.
  * Supports toggling the 'is_active' status.
  */
-export async function updateProgram(data: UpdateProgramData) {
+export async function updateProgramme(data: UpdateProgramData) {
     const { id, ...updateData } = data;
     const res = await fetch(`/api/programmes/${id}`, {
         method: "PATCH",

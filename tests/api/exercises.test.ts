@@ -23,8 +23,8 @@ describe("Exercises API", () => {
         it("should return exercises for the user", async () => {
             vi.mocked(auth).mockResolvedValue({ user: { id: userId }, expires: "" });
             const mockExercises = [
-                { id: "1", name: "Pushups", muscle_group: "Chest" },
-                { id: "2", name: "Pullups", muscle_group: "Back" },
+                { id: "1", name: "Pushups", description: null, muscle_group: "Chest" },
+                { id: "2", name: "Pullups", description: null, muscle_group: "Back" },
             ];
             vi.mocked(prisma.exercise.findMany).mockResolvedValue(mockExercises as any);
 
@@ -32,8 +32,18 @@ describe("Exercises API", () => {
             const data = await response.json();
 
             expect(response.status).toBe(200);
-            expect(data).toEqual(mockExercises);
-            expect(prisma.exercise.findMany).toHaveBeenCalled();
+            expect(data).toEqual([
+                { id: "1", name: "Pushups", description: null, muscle_group: "Chest" },
+                { id: "2", name: "Pullups", description: null, muscle_group: "Back" },
+            ]);
+            expect(prisma.exercise.findMany).toHaveBeenCalledWith(expect.objectContaining({
+                select: {
+                    id: true,
+                    name: true,
+                    description: true,
+                    muscle_group: true,
+                },
+            }));
         });
     });
 

@@ -4,27 +4,15 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Repeat, Timer, Activity, MoreHorizontal, Trophy, Flame, Target } from "lucide-react";
 import { muscleColorMap } from "@/app/components/ui";
-import { SetTracker } from "./SetTracker";
-import { LogSetDrawer } from "./LogSetDrawer";
 import { 
-    useLogSet, 
-    useUpdateLogSet, 
-    useDeleteLogSet, 
-    getLastLog, 
-    ExerciseQuickLogDrawer 
+    ExerciseQuickLogDrawer,
+    SetTracker,
+    LogSetDrawer
 } from "@/app/features/logging";
-import { useRestTimer } from "@/app/features/rest-timer";
-import { usePRCelebration } from "@/app/features/personal-records/PRCelebrationContext";
+import { ConfirmDrawer } from "@/app/components/ui";
 import { EditExerciseMetadataDrawer } from "./EditExerciseMetadataDrawer";
-
-
-interface ExerciseLog {
-    id: string;
-    weight: number | null;
-    reps: number;
-    set_order_index: number;
-    rpe: number | null;
-}
+import { ExerciseLog } from "../../../types";
+import { useExerciseLogging } from "../../../hooks/use-exercise-logging";
 
 interface ExerciseCardProps {
     workoutId: string;
@@ -41,7 +29,7 @@ interface ExerciseCardProps {
     restMax: number;
     tempo: string;
     initialLogs?: ExerciseLog[];
-    previousLogs?: { id: string; weight: number | null; reps: number; set_order_index: number }[];
+    previousLogs?: ExerciseLog[];
 }
 
 /**
@@ -84,112 +72,41 @@ export function ExerciseCard({
     const router = useRouter();
     const [ewmId, setEwmId] = useState(_ewmId);
 
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
     const [isHistoryDrawerOpen, setIsHistoryDrawerOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
-    const [activeSetIndex, setActiveSetIndex] = useState(0);
-    const [weight, setWeight] = useState("");
-    const [reps, setReps] = useState("");
-    const [rpe, setRpe] = useState<number | null>(null);
-    const [previousLog, setPreviousLog] = useState<{ weight: number | null; reps: number } | null>(null);
+    const {
+        logs,
+        weight,
+        setWeight,
+        reps,
+        setReps,
+        rpe,
+        setRpe,
+        previousLog,
+        isDrawerOpen,
+        openDrawer,
+        closeDrawer,
+        saveSet,
+        deleteSet,
+        isSaving,
+        isDeleting,
+        currentLog,
+    } = useExerciseLogging({
+        workoutId,
+        exerciseId,
+        exerciseName: name,
+        initialLogs,
+        restMin,
+    });
 
-    const { startTimer } = useRestTimer();
-    const { celebrate } = usePRCelebration();
-
-    const [logs, setLogs] = useState<ExerciseLog[]>(initialLogs);
-
-    useEffect(() => {
-        setLogs(initialLogs);
-    }, [initialLogs]);
-
-    const { mutate: logSetMutation, isPending: isSaving } = useLogSet();
-    const { mutate: updateSetMutation, isPending: isUpdating } = useUpdateLogSet();
-    const { mutate: deleteSetMutation, isPending: isDeleting } = useDeleteLogSet();
-
-    const currentLog = logs.find((l) => l.set_order_index === activeSetIndex);
     const isCompleted = logs.length >= setsMin && logs.length > 0;
     const isPerfect = logs.length >= setsMax;
 
-    const handleSetClick = async (setIndex: number) => {
-        setActiveSetIndex(setIndex);
-        const log = logs.find((l) => l.set_order_index === setIndex);
-
-        let initialWeight = "";
-        let initialReps = "";
-
-        if (log) {
-            initialWeight = log.weight?.toString() || "";
-            initialReps = log.reps.toString();
-            setRpe(log.rpe);
-        } else {
-            const previousSetLog = logs
-                .filter((l) => l.set_order_index < setIndex)
-                .sort((a, b) => b.set_order_index - a.set_order_index)[0];
-
-            if (previousSetLog) {
-                initialWeight = previousSetLog.weight?.toString() || "";
-                initialReps = previousSetLog.reps.toString();
-                setRpe(previousSetLog.rpe);
-            } else {
-                setRpe(null);
-            }
-        }
-
-        setWeight(initialWeight);
-        setReps(initialReps);
-        setIsDrawerOpen(true);
-
-        try {
-            const data = await getLastLog(exerciseId);
-            setPreviousLog(data);
-            if (!log && !initialWeight && !initialReps && data) {
-                setWeight(data.weight?.toString() || "");
-                setReps(data.reps.toString());
-            }
-        } catch {
-            setPreviousLog(null);
-        }
-    };
-
-    const handleSaveSet = () => {
-        if (!reps) return;
-        const optimisticId = crypto.randomUUID();
-        const newLogEntry: ExerciseLog = {
-            id: currentLog?.id || optimisticId,
-            weight: parseFloat(weight) || null,
-            reps: parseInt(reps),
-            rpe: rpe,
-            set_order_index: activeSetIndex,
-        };
-
-        if (currentLog) {
-            setLogs((prev) => prev.map((l) => (l.id === currentLog.id ? newLogEntry : l)));
-            setIsDrawerOpen(false);
-            updateSetMutation({ setId: currentLog.id, weight, reps, rpe: rpe?.toString() });
-        } else {
-            setLogs((prev) => [...prev, newLogEntry]);
-            setIsDrawerOpen(false);
-            startTimer(restMin, { closeOnFinish: true });
-            logSetMutation(
-                { id: optimisticId, workoutId, exerciseWithMetadataId: ewmId, exerciseId, setOrderIndex: activeSetIndex, weight, reps, rpe: rpe?.toString() },
-                { onSuccess: (newLog) => { if (newLog.pr) celebrate(newLog.pr, name); } }
-            );
-        }
-    };
-
-    const handleDeleteSet = () => {
-        if (!currentLog) return;
-        if (window.confirm("Remove this set?")) {
-            deleteSetMutation(currentLog.id, {
-                onSuccess: () => {
-                    setLogs((prev) => prev.filter((l) => l.id !== currentLog.id));
-                    setIsDrawerOpen(false);
-                },
-            });
-        }
-    };
+    const handleSaveSet = () => saveSet(ewmId);
+    const handleDeleteSet = () => setIsDeleteConfirmOpen(true);
 
     return (
         <>
@@ -264,7 +181,7 @@ export function ExerciseCard({
                         setsMax={setsMax}
                         logs={logs.map(l => ({ set_order_index: l.set_order_index, reps: l.reps, rpe: l.rpe }))}
                         targetReps={repsMin}
-                        onSetClick={handleSetClick}
+                        onSetClick={openDrawer}
                         previousLogs={previousLogs}
                     />
                 </div>
@@ -272,7 +189,7 @@ export function ExerciseCard({
 
             <LogSetDrawer
                 isOpen={isDrawerOpen}
-                onClose={() => setIsDrawerOpen(false)}
+                onClose={closeDrawer}
                 exerciseName={name}
                 weight={weight}
                 setWeight={setWeight}
@@ -282,7 +199,7 @@ export function ExerciseCard({
                 setRpe={setRpe}
                 onSave={handleSaveSet}
                 onDelete={handleDeleteSet}
-                isSaving={isSaving || isUpdating}
+                isSaving={isSaving}
                 isDeleting={isDeleting}
                 isEdit={!!currentLog}
                 previousLog={previousLog}
@@ -305,6 +222,16 @@ export function ExerciseCard({
                 onClose={() => setIsHistoryDrawerOpen(false)}
                 exerciseId={exerciseId}
                 exerciseName={name}
+            />
+
+            <ConfirmDrawer
+                isOpen={isDeleteConfirmOpen}
+                onClose={() => setIsDeleteConfirmOpen(false)}
+                onConfirm={deleteSet}
+                title="Remove Set?"
+                description="Are you sure you want to remove this set from your log? This action cannot be undone."
+                confirmText="Remove Set"
+                variant="destructive"
             />
         </>
     );

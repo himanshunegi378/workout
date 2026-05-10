@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { PageShell, CardSkeletonList } from "@/app/components/ui";
 import { PageHeader } from "@/app/features/page-header";
-import { ProgrammeList } from "@/app/features/programs/screens";
+import { ProgrammeList } from "@/app/features/programmes/screens";
 
 export default function HomePage() {
     return (

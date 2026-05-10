@@ -5,6 +5,8 @@
 
 // UI Components
 export { ExerciseQuickLogDrawer } from "./screens/workout-history/ui/ExerciseQuickLogDrawer";
+export { LogSetDrawer } from "./ui/LogSetDrawer";
+export { SetTracker } from "./ui/SetTracker";
 
 // Hooks
 export { useLogSet } from "./api/mutation-hooks/use-log-set";

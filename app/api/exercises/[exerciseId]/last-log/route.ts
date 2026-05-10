@@ -14,9 +14,15 @@ export async function GET(
 
         const { exerciseId } = await params;
 
-        // Verify the exercise belongs to the user
+        // Global exercises are shared library entries, but logs stay user-owned.
         const exercise = await prisma.exercise.findFirst({
-            where: { id: exerciseId, user_id: userId },
+            where: {
+                id: exerciseId,
+                OR: [
+                    { user_id: userId },
+                    { is_global: true },
+                ],
+            },
         });
 
         if (!exercise) {

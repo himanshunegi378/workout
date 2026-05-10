@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { programmeKeys } from "@/app/features/programs/api/query-keys";
+import { programmeKeys } from "@/app/features/programmes/api/query-keys";
 import { editExerciseMetadata, EditExerciseMetadataData } from "../mutations";
 import { workoutKeys } from "@/app/features/workouts/api/query-keys";
 

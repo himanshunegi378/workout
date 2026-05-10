@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { PropsWithChildren } from "react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { programmeKeys } from "@/app/features/programs/api/query-keys";
+import { programmeKeys } from "@/app/features/programmes/api/query-keys";
 import { workoutKeys } from "@/app/features/workouts/api/query-keys";
 import { useAddExerciseToWorkout } from "../api/mutation-hooks/use-add-exercise-to-workout";
 import { useEditExerciseMetadata } from "../api/mutation-hooks/use-edit-exercise-metadata";

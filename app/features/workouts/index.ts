@@ -7,4 +7,4 @@
 export { workoutKeys } from "./api/query-keys";
 
 // Types
-export type { WorkoutDetailsResponse } from "./api/query-hooks/use-workout-details";
+export type { WorkoutDetailsResponse, ExerciseLog } from "./types";

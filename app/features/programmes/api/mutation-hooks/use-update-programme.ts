@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { programmeKeys } from "../query-keys";
-import { updateProgram, UpdateProgramData } from "../mutations";
+import { updateProgramme, UpdateProgramData } from "../mutations";
 import { ProgrammeSummary } from "../query-hooks/use-programmes";
 import { ProgrammeDetails } from "../query-hooks/use-programme";
 
@@ -19,7 +19,7 @@ export function useUpdateProgramme() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: updateProgram,
+        mutationFn: updateProgramme,
         onMutate: async (newProgramme: UpdateProgramData) => {
             // Cancel outgoing refetches so they don't overwrite our optimistic update
             await queryClient.cancelQueries({ queryKey: programmeKeys.lists() });

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { calculateWorkoutProgress } from "../screens/exercise-list/progress";
-import { WorkoutDetailsResponse } from "../api/query-hooks/use-workout-details";
+import { WorkoutDetailsResponse } from "../types";
 
 describe("calculateWorkoutProgress", () => {
     it("counts ad-hoc exercises in live progress without duplicating multiple sets", () => {

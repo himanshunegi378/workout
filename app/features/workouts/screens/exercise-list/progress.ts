@@ -1,4 +1,4 @@
-import { WorkoutDetailsResponse } from "../../api/query-hooks/use-workout-details";
+import { WorkoutDetailsResponse } from "../../types";
 
 type WorkoutDetails = WorkoutDetailsResponse["workout"];
 type WorkoutSession = WorkoutDetailsResponse["session"];
@@ -64,10 +64,23 @@ export function calculateWorkoutProgress(workout: WorkoutDetails, session: Worko
     const completedExercises = prescribedCompletedExercises + completedAdHocExercises.size;
     const progressPercentage = totalExercises > 0 ? (completedExercises / totalExercises) * 100 : 0;
 
+    // Volume and Sets
+    let totalVolume = 0;
+    let totalSetsDone = 0;
+
+    session?.sessionExerciseLogs.forEach((sel) => {
+        if (sel.exerciseLog) {
+            totalVolume += (sel.exerciseLog.weight || 0) * sel.exerciseLog.reps;
+            totalSetsDone++;
+        }
+    });
+
     return {
         logsByEwm,
         totalExercises,
         completedExercises,
         progressPercentage,
+        totalVolume,
+        totalSetsDone,
     };
 }

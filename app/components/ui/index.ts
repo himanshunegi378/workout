@@ -15,4 +15,5 @@ export { NumberStepper } from "./NumberStepper";
 export { BottomDrawer } from "./BottomDrawer";
 export { BottomDrawerProvider } from "./BottomDrawerContext";
 export { RPESelector } from "./RPESelector";
+export { ConfirmDrawer } from "./ConfirmDrawer";
 export { LoadingSpinner } from "./LoadingSpinner";

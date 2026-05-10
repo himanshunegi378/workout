@@ -71,6 +71,35 @@ describe("Log/Set API — Integration", () => {
             expect(data.id).toBeDefined();
         });
 
+        it("should create an ad-hoc log for an explicitly-created global exercise", async () => {
+            const globalExercise = await prisma.exercise.create({
+                data: { name: "Lat Pulldown", muscle_group: MuscleGroup.Back, is_global: true },
+            });
+            const req = jsonReq("http://localhost:3000/api/log/set", "POST", {
+                setOrderIndex: 0, reps: 10, weight: "60", exerciseId: globalExercise.id,
+            });
+
+            const response = await POST(req);
+            const data = await response.json();
+
+            expect(response.status).toBe(201);
+            expect(data).toMatchObject({ reps: 10, weight: 60, exerciseId: globalExercise.id });
+        });
+
+        it("should reject an ad-hoc log for another user's custom exercise", async () => {
+            const otherUser = await seedUser({ username: "other_logset_user", password_hash: "hash" });
+            const otherExercise = await prisma.exercise.create({
+                data: { name: "Private Row", muscle_group: MuscleGroup.Back, user_id: otherUser.id },
+            });
+            const req = jsonReq("http://localhost:3000/api/log/set", "POST", {
+                setOrderIndex: 0, reps: 10, exerciseId: otherExercise.id,
+            });
+
+            const response = await POST(req);
+
+            expect(response.status).toBe(404);
+        });
+
         it("should auto-create a WorkoutSession for today if none exists", async () => {
             const beforeCount = await prisma.workoutSession.count({ where: { user_id: userId } });
 

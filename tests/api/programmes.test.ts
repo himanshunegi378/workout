@@ -115,6 +115,7 @@ describe("Programmes API", () => {
         it("should link an exercise to a workout using the visible exercise count for order", async () => {
             vi.mocked(getUserId).mockResolvedValue(userId);
             vi.mocked(prisma.workout.findFirst).mockResolvedValue({ _count: { exercisesWithMetadata: 2 } } as any);
+            vi.mocked(prisma.exercise.findFirst).mockResolvedValue({ id: "e1" } as any);
             const mockEwm = { id: metadataId, exercise_id: "e1", workout_id: workoutId };
             vi.mocked(prisma.exerciseWithMetadata.create).mockResolvedValue(mockEwm as any);
 

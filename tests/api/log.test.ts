@@ -24,6 +24,9 @@ vi.mock("@/lib/prisma", () => ({
             findFirst: vi.fn(),
             create: vi.fn(),
         },
+        exercise: {
+            findFirst: vi.fn(),
+        },
         sessionExerciseLog: {
             findFirst: vi.fn(),
             create: vi.fn(),
@@ -64,6 +67,7 @@ describe("Log API", () => {
     describe("POST /api/log/set", () => {
         it("should log a set, creating session and SEL if needed", async () => {
             vi.mocked(getUserId).mockResolvedValue(userId);
+            vi.mocked(prisma.exercise.findFirst).mockResolvedValue({ id: "e1" } as any);
             vi.mocked(prisma.workoutSession.findFirst).mockResolvedValue(null);
             vi.mocked(prisma.workoutSession.create).mockResolvedValue({ id: sessionId } as any);
             vi.mocked(prisma.sessionExerciseLog.findFirst).mockResolvedValue(null);

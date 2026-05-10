@@ -30,7 +30,7 @@ export async function POST(request: Request) {
                 where: { id }
             });
             if (existing) {
-                if (existing.user_id !== userId) {
+                if (existing.is_global || existing.user_id !== userId) {
                     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
                 }
                 return NextResponse.json(existing, { status: 200 });
@@ -51,6 +51,7 @@ export async function POST(request: Request) {
                 description: description || null,
                 muscle_group,
                 user_id: userId,
+                is_global: false,
             },
         });
 
@@ -78,7 +79,7 @@ export async function GET() {
             where: {
                 OR: [
                     { user_id: userId },
-                    { user_id: "system" } // Handle global exercises if any
+                    { is_global: true },
                 ]
             },
             orderBy: [{ muscle_group: "asc" }, { name: "asc" }],

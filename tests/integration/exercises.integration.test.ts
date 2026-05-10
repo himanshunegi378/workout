@@ -142,15 +142,12 @@ describe("Exercises API — Integration", () => {
             expect(data).toEqual([]);
         });
 
-        it("should return user's own exercises (and any with user_id='system')", async () => {
-            // The route queries: OR [{ user_id: userId }, { user_id: "system" }]
-            // The string "system" is a reserved literal, not a real DB user (FK constraint
-            // prevents seeding a User row with id="system"). So we only verify the
-            // user-owned path here.
+        it("should return user's own exercises and explicitly-created global exercises", async () => {
             await prisma.exercise.createMany({
                 data: [
                     { name: "Pushup", muscle_group: "Chest", user_id: userId },
                     { name: "Pullup", muscle_group: "Back", user_id: userId },
+                    { name: "Bench Press", muscle_group: "Chest", is_global: true },
                 ],
             });
 
@@ -158,10 +155,29 @@ describe("Exercises API — Integration", () => {
             const data = await response.json();
 
             expect(response.status).toBe(200);
-            expect(data).toHaveLength(2);
+            expect(data).toHaveLength(3);
             expect(data.map((e: { name: string }) => e.name)).toEqual(
-                expect.arrayContaining(["Pullup", "Pushup"]),
+                expect.arrayContaining(["Bench Press", "Pullup", "Pushup"]),
             );
+        });
+
+        it("should return global and user exercises with the same movement identity as separate records", async () => {
+            const globalExercise = await prisma.exercise.create({
+                data: { name: "Bench Press", muscle_group: "Chest", is_global: true },
+            });
+            const userExercise = await prisma.exercise.create({
+                data: { name: "Bench Press", muscle_group: "Chest", user_id: userId },
+            });
+
+            const response = await GET();
+            const data = await response.json();
+
+            expect(response.status).toBe(200);
+            expect(data).toHaveLength(2);
+            expect(data.map((e: { id: string }) => e.id)).toEqual(
+                expect.arrayContaining([globalExercise.id, userExercise.id]),
+            );
+            expect(data.every((e: { name: string; muscle_group: string }) => e.name === "Bench Press" && e.muscle_group === "Chest")).toBe(true);
         });
 
         it("should return only exercises belonging to the authenticated user", async () => {
@@ -244,6 +260,7 @@ describe("Exercises API — Integration", () => {
                 ["description", "id", "muscle_group", "name"].sort()
             );
             expect(exercise.user_id).toBeUndefined();
+            expect(exercise.is_global).toBeUndefined();
         });
 
         it("should return 401 when not authenticated", async () => {

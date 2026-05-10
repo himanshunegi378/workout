@@ -14,7 +14,7 @@ import {
 import { Loader2, TrendingUp, AlertTriangle, ArrowRight, Activity } from "lucide-react";
 import { useWorkouts } from "../../../api/query-hooks/use-workouts";
 import { useSessionVolume, type SessionVolumeNode } from "../../../api/query-hooks/use-session-volume";
-import { useProgrammes } from "../../../../programs/api/query-hooks/use-programmes";
+import { useProgrammes } from "@/app/features/programmes/api/query-hooks/use-programmes";
 
 export function SessionVolumeChart() {
     const { data: workouts, isLoading: loadingWorkouts } = useWorkouts(true);
@@ -151,7 +151,7 @@ export function SessionVolumeChart() {
                                                     <p className="mb-1 font-semibold text-foreground">{data.date.split("T")[0]}</p>
                                                     <div className="mb-2 flex items-center justify-between gap-4">
                                                         <span className="text-foreground/75">Volume</span>
-                                                        <span className="font-bold">{Math.round(data.volume).toLocaleString()} lbs</span>
+                                                        <span className="font-bold">{Math.round(data.volume).toLocaleString()} kg</span>
                                                     </div>
 
                                                     {data.status !== "neutral" && (

@@ -124,6 +124,20 @@ describe("Exercise Sub-routes — Integration", () => {
             expect(data).toBeNull();
         });
 
+        it("should allow global exercises and return the user's latest log", async () => {
+            const exercise = await prisma.exercise.create({
+                data: { name: "Bench Press", muscle_group: MuscleGroup.Chest, is_global: true },
+            });
+            await seedAdHocLog(userId, exercise.id, { reps: 6, weight: 100, date: new Date() });
+
+            const request = makeGetRequest(`/api/exercises/${exercise.id}/last-log`);
+            const response = await getLastLog(request, makeParams({ exerciseId: exercise.id }));
+            const data = await response.json();
+
+            expect(response.status).toBe(200);
+            expect(data).toMatchObject({ weight: 100, reps: 6 });
+        });
+
         it("should return weight and reps from the latest ad-hoc log", async () => {
             const exercise = await prisma.exercise.create({
                 data: { name: "Bench Press", muscle_group: MuscleGroup.Chest, user_id: userId },
@@ -215,6 +229,21 @@ describe("Exercise Sub-routes — Integration", () => {
             expect(response.status).toBe(200);
             expect(data).toHaveLength(1);
             expect(data[0]).toMatchObject({ reps: 10, weight: 20 });
+        });
+
+        it("should return the user's logs for a global exercise", async () => {
+            const exercise = await prisma.exercise.create({
+                data: { name: "Lat Pulldown", muscle_group: MuscleGroup.Back, is_global: true },
+            });
+            await seedAdHocLog(userId, exercise.id, { reps: 12, weight: 55, date: new Date() });
+
+            const request = makeLogsRequest(exercise.id);
+            const response = await getLogs(request);
+            const data = await response.json();
+
+            expect(response.status).toBe(200);
+            expect(data).toHaveLength(1);
+            expect(data[0]).toMatchObject({ reps: 12, weight: 55 });
         });
 
         it("should return logs linked via ExerciseWithMetadata", async () => {

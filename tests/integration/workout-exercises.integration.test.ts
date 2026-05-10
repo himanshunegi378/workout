@@ -131,6 +131,37 @@ describe("POST exercise to workout — Integration", () => {
         expect(data.order_index).toBe(1); // 2nd exercise
         expect(data.exercise_id).toBe(newEx.id);
     });
+
+    it("should allow explicitly-created global exercises to be added to a workout", async () => {
+        const { programme, workout } = await seedProgramChain(userId);
+        const globalExercise = await prisma.exercise.create({
+            data: { name: "Back Squat", muscle_group: MuscleGroup.Legs, is_global: true },
+        });
+        const req = jsonReq("http://localhost:3000/api", "POST", {
+            exercise_id: globalExercise.id, ...EWM_DEFAULTS,
+        });
+
+        const response = await addExercise(req, makeParams({ programmeId: programme.id, workoutId: workout.id }));
+        const data = await response.json();
+
+        expect(response.status).toBe(201);
+        expect(data.exercise_id).toBe(globalExercise.id);
+    });
+
+    it("should reject exercises that are neither user-owned nor global", async () => {
+        const { programme, workout } = await seedProgramChain(userId);
+        const otherUser = await seedUser({ username: "other_addex_user", password_hash: "hash" });
+        const otherExercise = await prisma.exercise.create({
+            data: { name: "Private Curl", muscle_group: MuscleGroup.Biceps, user_id: otherUser.id },
+        });
+        const req = jsonReq("http://localhost:3000/api", "POST", {
+            exercise_id: otherExercise.id, ...EWM_DEFAULTS,
+        });
+
+        const response = await addExercise(req, makeParams({ programmeId: programme.id, workoutId: workout.id }));
+
+        expect(response.status).toBe(404);
+    });
 });
 
 // ---------------------------------------------------------------------------
@@ -211,11 +242,12 @@ describe("GET /api/workouts — Integration", () => {
 
     it("should return 401 when not authenticated", async () => {
         unauthenticate();
-        expect((await getWorkouts()).status).toBe(401);
+        const req = createMockRequest("http://localhost:3000/api/workouts") as NextRequest;
+        expect((await getWorkouts(req)).status).toBe(401);
     });
 
     it("should return empty array when no workouts", async () => {
-        const response = await getWorkouts();
+        const response = await getWorkouts(createMockRequest("http://localhost:3000/api/workouts") as NextRequest);
         expect(response.status).toBe(200);
         expect(await response.json()).toEqual([]);
     });
@@ -223,7 +255,7 @@ describe("GET /api/workouts — Integration", () => {
     it("should return user's workouts with programme name", async () => {
         await seedProgramChain(userId);
 
-        const response = await getWorkouts();
+        const response = await getWorkouts(createMockRequest("http://localhost:3000/api/workouts") as NextRequest);
         const data = await response.json();
 
         expect(response.status).toBe(200);
@@ -236,7 +268,7 @@ describe("GET /api/workouts — Integration", () => {
         const other = await prisma.user.create({ data: { username: "wo_other", password_hash: "h" } });
         await seedProgramChain(other.id);
 
-        const response = await getWorkouts();
+        const response = await getWorkouts(createMockRequest("http://localhost:3000/api/workouts") as NextRequest);
         expect(await response.json()).toHaveLength(0);
     });
 });

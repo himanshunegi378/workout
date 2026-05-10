@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { workoutKeys } from "../query-keys";
-import { programmeKeys } from "@/app/features/programs/api/query-keys";
+import { programmeKeys } from "@/app/features/programmes/api/query-keys";
 import { createWorkout } from "../mutations";
 
 export function useCreateWorkout() {

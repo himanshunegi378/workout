@@ -89,15 +89,18 @@ model Exercise {
   name         String
   description  String?
   muscle_group MuscleGroup
+  is_global    Boolean     @default(false)
 
   // Owner
-  user_id String
-  user    User   @relation(fields: [user_id], references: [id])
+  user_id String?
+  user    User?   @relation(fields: [user_id], references: [id])
 
   // Relations
   exercisesWithMetadata ExerciseWithMetadata[]
   exerciseLogs          ExerciseLog[]
 
+  @@index([is_global])
+  @@index([user_id])
   @@map("exercises")
 }
 

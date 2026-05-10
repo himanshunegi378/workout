@@ -15,7 +15,7 @@ interface CreateExerciseData {
 export async function createExercise(data: CreateExerciseData) {
     const payload = {
         ...data,
-        id: data.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36).substring(7))
+        id: data.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : undefined)
     };
 
     const res = await fetch("/api/exercises", {
@@ -54,7 +54,7 @@ interface AddExerciseToWorkoutData {
 export async function addExerciseToWorkout(programmeId: string, workoutId: string, data: AddExerciseToWorkoutData) {
     const payload = {
         ...data,
-        id: data.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36).substring(7))
+        id: data.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : undefined)
     };
 
     const res = await fetch(`/api/programmes/${programmeId}/workouts/${workoutId}/exercises`, {
