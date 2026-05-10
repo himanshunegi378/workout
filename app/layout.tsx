@@ -7,8 +7,8 @@ import { RestTimerFloatingBubble, RestTimerHeaderActionBridge, RestTimerOverlay,
 import { BottomDrawerProvider, Sidebar, BottomNav } from "@/app/components/ui";
 import { PageHeaderStatusProvider } from "@/app/features/page-header";
 
-import { PRCelebrationProvider } from "@/app/features/personal-records/PRCelebrationContext";
-import { PRCelebrationOverlay } from "@/app/features/personal-records/PRCelebrationOverlay";
+import { PRCelebrationProvider } from "@/app/features/personal-records/hooks/PRCelebrationContext";
+import { PRCelebrationOverlay } from "@/app/features/personal-records/ui/PRCelebrationOverlay";
 import "./globals.css";
 import { PageHeaderActionsProvider } from "./features/page-header/internal";
 

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ExerciseListClient } from "@/app/features/exercises/components/ExerciseListClient";
+import { ExerciseListClient } from "@/app/features/exercises/screens/exercise-list/ui/ExerciseListClient";
 
 // Mock next/link to render as a plain anchor
 vi.mock("next/link", () => ({

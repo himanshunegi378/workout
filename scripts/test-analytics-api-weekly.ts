@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { buildAnalyticsQuery } from "../app/features/analytics/server/analytics-service";
-import type { AnalyticsQueryPayload } from "../app/features/analytics/server/analytics-validation";
+import { buildAnalyticsQuery } from "../app/features/analytics/api/analytics-service";
+import type { AnalyticsQueryPayload } from "../app/features/analytics/api/analytics-validation";
 
 async function runTestAvgWeight() {
     const userId = "cmlykppdq000017tqixix1fnk"; // known valid user id from previous db response

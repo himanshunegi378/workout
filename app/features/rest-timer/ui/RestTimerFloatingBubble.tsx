@@ -2,8 +2,8 @@
 
 import { Portal } from "@/app/components/ui";
 import { usePageHeaderStatus } from "@/app/features/page-header";
-import { useRestTimer } from "../context/RestTimerContext";
-import { formatTime } from "../lib/formatTime";
+import { useRestTimer } from "../hooks/RestTimerContext";
+import { formatTime } from "../api/formatTime";
 
 /**
  * Prevents overlapping UI elements by only rendering as a fallback when the page

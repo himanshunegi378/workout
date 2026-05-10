@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useExercises } from "@/app/features/exercises/api/query-hooks/use-exercises";
-import { ExerciseSelectDrawer } from "@/app/features/exercises/components/ExerciseSelectDrawer";
+import { ExerciseSelectDrawer } from "@/app/features/exercises/ui/ExerciseSelectDrawer";
 import { ExerciseQuickLogDrawer } from "./ExerciseQuickLogDrawer";
 import { QuickLogFAB } from "./QuickLogFAB";
 

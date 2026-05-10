@@ -2,8 +2,8 @@
 
 import { Minimize2, Minus, Pause, Play, Plus } from "lucide-react";
 import { Button, Portal } from "@/app/components/ui";
-import { useRestTimer } from "../context/RestTimerContext";
-import { formatTime } from "../lib/formatTime";
+import { useRestTimer } from "../hooks/RestTimerContext";
+import { formatTime } from "../api/formatTime";
 
 /**
  * Provides a modal-like experience for managing the rest period to ensure the

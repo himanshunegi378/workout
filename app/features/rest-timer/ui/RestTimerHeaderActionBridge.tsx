@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePageHeaderActions } from "@/app/features/page-header";
-import { useRestTimer } from "../context/RestTimerContext";
+import { useRestTimer } from "../hooks/RestTimerContext";
 import { RestTimerHeaderValue } from "./RestTimerHeaderValue";
 
 /**

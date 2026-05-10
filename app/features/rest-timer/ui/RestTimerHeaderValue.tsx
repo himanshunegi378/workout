@@ -1,7 +1,7 @@
 "use client";
 
-import { useRestTimer } from "../context/RestTimerContext";
-import { formatTime } from "../lib/formatTime";
+import { useRestTimer } from "../hooks/RestTimerContext";
+import { formatTime } from "../api/formatTime";
 
 export function RestTimerHeaderValue() {
     const { isActive, timeLeft, openTimer } = useRestTimer();

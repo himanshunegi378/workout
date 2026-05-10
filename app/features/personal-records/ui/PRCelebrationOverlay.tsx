@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { Portal } from "@/app/components/ui/Portal";
-import { usePRCelebration } from "./PRCelebrationContext";
+import { usePRCelebration } from "../hooks/PRCelebrationContext";
 import type { PRType } from "@/lib/pr-utils";
 
 // ── PR config ───────────────────────────────────────────────────────────────

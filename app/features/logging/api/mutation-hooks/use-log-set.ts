@@ -30,7 +30,7 @@ export function useLogSet() {
             date?: string;
             id?: string
         }) => {
-            const id = newLogData.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : undefined);
+            const id = newLogData.id || crypto.randomUUID();
             const commonLogData = {
                 id,
                 weight: parseFloat(newLogData.weight) || null,
