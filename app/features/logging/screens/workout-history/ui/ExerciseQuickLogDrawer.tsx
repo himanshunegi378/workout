@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
-import { BottomDrawer, Button, NumberStepper, RPESelector, LoadingSpinner } from "@/app/components/ui";
+import { ClipboardList, History, CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
+import { BottomDrawer, Button, NumberStepper, RPESelector, LoadingSpinner, EmptyState } from "@/app/components/ui";
 import { usePRCelebration } from "@/app/features/personal-records/hooks/PRCelebrationContext";
 import { useLogSet } from "../../../api/mutation-hooks/use-log-set";
 import { groupLogsByDate, useExerciseHistory } from "../../../api/query-hooks/use-exercise-history";
@@ -169,7 +169,12 @@ export function ExerciseQuickLogDrawer({
                                         ))}
                                     </div>
                                 ) : (
-                                    <EmptyState message="No sets logged for this exercise on this day." />
+                                    <EmptyState
+                                        icon={ClipboardList}
+                                        title="No Today's Logs"
+                                        description="You haven't logged any sets for this exercise today."
+                                        variant="compact"
+                                    />
                                 )}
                             </motion.div>
                         ) : (
@@ -213,7 +218,12 @@ export function ExerciseQuickLogDrawer({
                                         </div>
                                     ))
                                 ) : (
-                                    <EmptyState message="No history found for this exercise." />
+                                    <EmptyState
+                                        icon={History}
+                                        title="No History"
+                                        description="No historical data found for this exercise."
+                                        variant="compact"
+                                    />
                                 )}
                             </motion.div>
                         )}
@@ -339,13 +349,6 @@ function QuickLogForm({ lastLog, isPending, onSubmit }: QuickLogFormProps) {
 /**
  * Renders a consistent empty state with a centered message.
  */
-function EmptyState({ message }: { message: string }) {
-    return (
-        <div className="rounded-3xl border border-dashed border-border/50 px-4 py-12 text-center">
-            <p className="text-sm text-muted-foreground">{message}</p>
-        </div>
-    );
-}
 
 /**
  * Renders an error state with a retry option.

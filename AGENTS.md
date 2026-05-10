@@ -1,3 +1,4 @@
+- **Plan First Principle**: Always create a clear, structured implementation plan BEFORE executing complex tasks, refactors, or multi-step fixes. Do not go "rambo" on the codebase.
 - **Domain over Code Principle**: Never sacrifice domain intent for technical elegance. Before proposing any logic change, you must first describe the real-world scenario it supports. If the change makes a natural human process (like tracking a workout) feel robotic or counter-intuitive, it is a technical failure.
 - Workout Tracker is a single-user, mobile-first Next.js 16 App Router PWA for workout logging, programmes, PRs, and analytics on Vercel + Supabase PostgreSQL.
 - Stack: React 19, TypeScript strict, Tailwind CSS 4 tokens in `app/globals.css`, Prisma 7, NextAuth v5 JWT sessions, TanStack Query persisted to IndexedDB, Vitest, Testing Library, MSW, pnpm 10.
