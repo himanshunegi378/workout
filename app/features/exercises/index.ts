@@ -4,7 +4,7 @@
  */
 
 // Components
-export { AddExerciseTrigger } from "./components/AddExerciseTrigger";
+export { AddExerciseTrigger } from "./ui/AddExerciseTrigger";
 
 // API
 // export { useExercises } from "./api/query-hooks/use-exercises";

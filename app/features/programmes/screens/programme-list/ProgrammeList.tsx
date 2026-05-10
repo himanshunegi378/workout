@@ -1,7 +1,7 @@
 "use client";
 
 import { Dumbbell, Loader2 } from "lucide-react";
-import { ProgrammeCard } from "./ProgrammeCard";
+import { ProgrammeCard } from "../../ui/ProgrammeCard";
 import { useProgrammes } from "../../api/query-hooks/use-programmes";
 import { List } from "@/app/components/ui";
 

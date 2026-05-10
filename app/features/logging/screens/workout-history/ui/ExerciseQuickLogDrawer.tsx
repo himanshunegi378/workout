@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
 import { BottomDrawer, Button, NumberStepper, RPESelector, LoadingSpinner } from "@/app/components/ui";
-import { usePRCelebration } from "@/app/features/personal-records/PRCelebrationContext";
+import { usePRCelebration } from "@/app/features/personal-records/hooks/PRCelebrationContext";
 import { useLogSet } from "../../../api/mutation-hooks/use-log-set";
 import { groupLogsByDate, useExerciseHistory } from "../../../api/query-hooks/use-exercise-history";
 import { useLastLog } from "../../../api/query-hooks/use-last-log";

@@ -8,7 +8,7 @@ import {
     getLastLog 
 } from "@/app/features/logging";
 import { useRestTimer } from "@/app/features/rest-timer";
-import { usePRCelebration } from "@/app/features/personal-records/PRCelebrationContext";
+import { usePRCelebration } from "@/app/features/personal-records/hooks/PRCelebrationContext";
 import { ExerciseLog } from "../types";
 
 interface UseExerciseLoggingProps {

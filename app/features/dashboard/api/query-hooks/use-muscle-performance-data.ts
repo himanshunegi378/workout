@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { MuscleGroup } from "@/app/generated/prisma/client";
-import type { AnalyticsQueryPayload } from "@/app/features/analytics/server/analytics-validation";
+import type { AnalyticsQueryPayload } from "@/app/features/analytics/api/analytics-validation";
 import { MusclePerformanceData, ExercisePerformanceData } from "../../types";
 
 export function useMusclePerformanceData() {

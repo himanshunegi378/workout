@@ -1,4 +1,4 @@
-// app/features/analytics/server/analytics-service.ts
+// app/features/analytics/api/analytics-service.ts
 import { Prisma } from "@/app/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import type { AnalyticsQueryPayload } from "./analytics-validation";

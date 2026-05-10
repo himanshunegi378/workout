@@ -1,6 +1,6 @@
 import { getUserId } from "@/lib/auth-helpers";
 import { NextResponse } from "next/server";
-import { getHeatmapActivity } from "@/app/features/analytics/server/analytics-service";
+import { getHeatmapActivity } from "@/app/features/analytics/api/analytics-service";
 
 export async function GET() {
     try {

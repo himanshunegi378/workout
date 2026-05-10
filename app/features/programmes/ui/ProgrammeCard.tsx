@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ChevronRight, Dumbbell, Star } from "lucide-react";
-import { useUpdateProgramme } from "../../api/mutation-hooks/use-update-programme";
+import { useUpdateProgramme } from "../api/mutation-hooks/use-update-programme";
 
 interface ProgrammeCardProps {
     id: string;

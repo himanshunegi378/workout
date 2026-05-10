@@ -1,7 +1,7 @@
 import { getUserId } from "@/lib/auth-helpers";
 import { NextResponse } from "next/server";
-import { buildAnalyticsQuery } from "@/app/features/analytics/server/analytics-service";
-import { AnalyticsQueryPayloadSchema } from "@/app/features/analytics/server/analytics-validation";
+import { buildAnalyticsQuery } from "@/app/features/analytics/api/analytics-service";
+import { AnalyticsQueryPayloadSchema } from "@/app/features/analytics/api/analytics-validation";
 
 export async function POST(request: Request) {
     try {

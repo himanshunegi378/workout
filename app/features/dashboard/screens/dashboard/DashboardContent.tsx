@@ -4,7 +4,7 @@ import { PageHeader } from "@/app/features/page-header";
 import { MuscleOutputTable } from "./ui/MuscleOutputTable";
 import { FatigueTrendLine } from "./ui/FatigueTrendLine";
 import { SessionVolumeChart } from "./ui/SessionVolumeChart";
-import { WorkoutHeatmap } from "@/app/features/analytics/components/WorkoutHeatmap";
+import { WorkoutHeatmap } from "@/app/features/analytics/ui/WorkoutHeatmap";
 
 export function DashboardContent() {
     return (

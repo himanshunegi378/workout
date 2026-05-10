@@ -5,7 +5,7 @@ import { ChevronDown, Save } from "lucide-react";
 import { Button, NumberStepper, muscleColorMap, BottomDrawer } from "@/app/components/ui";
 import { useExercises } from "@/app/features/exercises/api/query-hooks/use-exercises";
 import { useEditExerciseMetadata } from "@/app/features/exercises/api/mutation-hooks/use-edit-exercise-metadata";
-import { ExerciseSelectDrawer } from "@/app/features/exercises/components/ExerciseSelectDrawer";
+import { ExerciseSelectDrawer } from "@/app/features/exercises/ui/ExerciseSelectDrawer";
 
 interface EditExerciseMetadataDrawerProps {
     isOpen: boolean;
