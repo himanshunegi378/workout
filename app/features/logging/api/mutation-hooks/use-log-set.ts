@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { workoutKeys, type WorkoutDetailsResponse } from "@/app/features/workouts";
+import { workoutKeys } from "@/app/features/workouts/api/query-keys";
+import type { WorkoutDetailsResponse, ExerciseLog } from "@/app/features/workouts/types";
 import { logKeys } from "../query-keys";
 import { logSet } from "../mutations";
 import { ExerciseHistoryLog } from "../query-hooks/use-exercise-history";
@@ -31,12 +32,16 @@ export function useLogSet() {
             id?: string
         }) => {
             const id = newLogData.id || crypto.randomUUID();
-            const commonLogData = {
+            const commonLogData: ExerciseLog = {
                 id,
                 weight: parseFloat(newLogData.weight) || null,
                 reps: parseInt(newLogData.reps) || 0,
                 rpe: newLogData.rpe ? parseFloat(newLogData.rpe) : null,
                 set_order_index: newLogData.setOrderIndex,
+                user_id: "temp-user",
+                date: new Date(),
+                pr_type: null,
+                exerciseId: newLogData.exerciseId || null,
             };
 
             // 1. Optimistic update for Active Workout Details

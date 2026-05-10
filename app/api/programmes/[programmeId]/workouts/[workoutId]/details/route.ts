@@ -67,6 +67,9 @@ export async function GET(
                                         rpe: true,
                                         set_order_index: true,
                                         date: true,
+                                        user_id: true,
+                                        pr_type: true,
+                                        exerciseId: true,
                                         sessionExerciseLog: {
                                             select: { workout_session_id: true }
                                         }
@@ -97,6 +100,9 @@ export async function GET(
                                         reps: true,
                                         rpe: true,
                                         set_order_index: true,
+                                        user_id: true,
+                                        date: true,
+                                        pr_type: true,
                                     },
                                 },
                             },

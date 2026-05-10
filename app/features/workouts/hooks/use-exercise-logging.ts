@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { 
     useLogSet, 
     useUpdateLogSet, 
@@ -9,12 +9,11 @@ import {
 } from "@/app/features/logging";
 import { useRestTimer } from "@/app/features/rest-timer";
 import { usePRCelebration } from "@/app/features/personal-records/hooks/PRCelebrationContext";
-import { ExerciseLog } from "../types";
+import { ExerciseLog, Exercise } from "../types";
 
 interface UseExerciseLoggingProps {
     workoutId: string;
-    exerciseId: string;
-    exerciseName: string;
+    exercise: Exercise;
     initialLogs: ExerciseLog[];
     restMin: number;
 }
@@ -29,8 +28,7 @@ interface UseExerciseLoggingProps {
  */
 export function useExerciseLogging({
     workoutId,
-    exerciseId,
-    exerciseName,
+    exercise,
     initialLogs,
     restMin,
 }: UseExerciseLoggingProps) {
@@ -80,7 +78,7 @@ export function useExerciseLogging({
         setIsDrawerOpen(true);
 
         try {
-            const data = await getLastLog(exerciseId);
+            const data = await getLastLog(exercise.id);
             setPreviousLog(data);
             if (!log && !initialWeight && !initialReps && data) {
                 setWeight(data.weight?.toString() || "");
@@ -108,7 +106,7 @@ export function useExerciseLogging({
                     id: optimisticId, 
                     workoutId, 
                     exerciseWithMetadataId, 
-                    exerciseId, 
+                    exerciseId: exercise.id, 
                     setOrderIndex: activeSetIndex, 
                     weight, 
                     reps, 
@@ -116,7 +114,7 @@ export function useExerciseLogging({
                 },
                 { 
                     onSuccess: (newLog) => { 
-                        if (newLog.pr) celebrate(newLog.pr, exerciseName); 
+                        if (newLog.pr) celebrate(newLog.pr, exercise.name); 
                     } 
                 }
             );

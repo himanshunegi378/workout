@@ -6,6 +6,8 @@ import { ExerciseSelectDrawer } from "@/app/features/exercises/ui/ExerciseSelect
 import { ExerciseQuickLogDrawer } from "./ExerciseQuickLogDrawer";
 import { QuickLogFAB } from "./QuickLogFAB";
 
+import { Exercise } from "@/app/features/workouts/types";
+
 /**
  * A coordinator component that manages the "Quick Log" flow.
  * It provides a Floating Action Button (FAB) that opens an exercise selection drawer,
@@ -17,7 +19,7 @@ export function QuickLogActions() {
     const { data: exercises } = useExercises();
     const [isSelectOpen, setIsSelectOpen] = useState(false);
     const [isQuickLogOpen, setIsQuickLogOpen] = useState(false);
-    const [selectedExercise, setSelectedExercise] = useState<{ id: string; name: string } | null>(null);
+    const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
 
     /**
      * Handles the selection of an exercise from the selection drawer.
@@ -28,7 +30,7 @@ export function QuickLogActions() {
     const handleExerciseSelect = (exerciseId: string) => {
         const ex = exercises?.find((e: { id: string }) => e.id === exerciseId);
         if (ex) {
-            setSelectedExercise({ id: ex.id, name: ex.name });
+            setSelectedExercise(ex as Exercise);
             setIsQuickLogOpen(true);
         }
     };
@@ -52,8 +54,7 @@ export function QuickLogActions() {
                         setIsQuickLogOpen(false);
                         setSelectedExercise(null);
                     }}
-                    exerciseId={selectedExercise.id}
-                    exerciseName={selectedExercise.name}
+                    exercise={selectedExercise}
                 />
             )}
         </>

@@ -14,20 +14,7 @@ import { List } from "@/app/components/ui";
 import { SessionCard } from "./ui/SessionCard";
 import { useInfiniteSessions } from "../../api/query-hooks/use-sessions";
 import { QuickLogActions } from "./ui/QuickLogActions";
-import type { SessionWithLogs } from "../../types";
-
-/**
- * Represents the set shape used by the workout history timeline.
- */
-type TimelineExerciseSet = {
-    id: string;
-    weight: number | null;
-    reps: number;
-    rpe: number | null;
-    set_order_index: number;
-    pr_type?: string | null;
-    isAdHoc?: boolean;
-};
+import type { SessionWithLogs, ExerciseLog, Exercise } from "../../types";
 
 /**
  * The primary container for the training journey timeline and analytics dashboard.
@@ -227,8 +214,8 @@ export function LogContent() {
                         <div className="grid grid-cols-1 gap-6 md:ml-12">
                             {daySessions.map((session) => {
                                 const groupsMap = new Map<string, {
-                                    exercise: { id: string; name: string; muscle_group: string };
-                                    sets: TimelineExerciseSet[];
+                                    exercise: Exercise;
+                                    sets: (ExerciseLog & { isAdHoc?: boolean })[];
                                 }>();
 
                                 for (const sel of session.sessionExerciseLogs) {

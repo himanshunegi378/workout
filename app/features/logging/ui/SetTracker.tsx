@@ -1,13 +1,26 @@
 "use client";
 
+import { ExerciseLog } from "../types";
 
-interface SetTrackerProps {
+/**
+ * Protocol configuration for the set tracker.
+ * Encapsulates the prescriptive targets for the exercise.
+ */
+interface TrackerProtocol {
     setsMin: number;
     setsMax: number;
-    logs: { set_order_index: number; reps: number; rpe: number | null }[];
     targetReps: number;
+}
+
+interface SetTrackerProps {
+    /** The prescriptive targets for this exercise. */
+    protocol: TrackerProtocol;
+    /** The actual logs completed in the current session. */
+    logs: Partial<ExerciseLog>[];
+    /** Callback triggered when a set bubble is tapped. */
     onSetClick: (setIndex: number) => void;
-    previousLogs?: { id: string; weight: number | null; reps: number; set_order_index: number }[];
+    /** Historical performance for comparison (Beat Previous). */
+    previousLogs?: Partial<ExerciseLog>[];
 }
 
 /**
@@ -26,7 +39,13 @@ interface SetTrackerProps {
  * - Multi-state Feedback: Changes colors and labels based on set completion status, 
  *   missed targets (e.g., rep goal not met), and RPE ratings.
  */
-export function SetTracker({ setsMin, setsMax, logs, targetReps, onSetClick, previousLogs = [] }: SetTrackerProps) {
+export function SetTracker({ 
+    protocol, 
+    logs, 
+    onSetClick, 
+    previousLogs = [] 
+}: SetTrackerProps) {
+    const { setsMin, setsMax, targetReps } = protocol;
     const totalCircles = setsMax;
 
     return (
@@ -35,7 +54,7 @@ export function SetTracker({ setsMin, setsMax, logs, targetReps, onSetClick, pre
                 const isOptional = i >= setsMin;
                 const log = logs.find((l) => l.set_order_index === i);
                 const isCompleted = !!log;
-                const missedTarget = isCompleted && log.reps < targetReps;
+                const missedTarget = isCompleted && (log.reps ?? 0) < targetReps;
 
                 const prevLog = previousLogs.find((l) => l.set_order_index === i);
 

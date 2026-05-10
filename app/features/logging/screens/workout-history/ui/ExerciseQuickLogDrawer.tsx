@@ -10,16 +10,15 @@ import { groupLogsByDate, useExerciseHistory } from "../../../api/query-hooks/us
 import { useLastLog } from "../../../api/query-hooks/use-last-log";
 import type { PRType } from "@/lib/pr-utils";
 import { SetLogItem } from "../../../ui/SetLogItem";
+import { Exercise } from "@/app/features/workouts/types";
 
 interface ExerciseQuickLogDrawerProps {
     /** Whether the drawer is currently open. */
     isOpen: boolean;
     /** Callback that closes the drawer. */
     onClose: () => void;
-    /** Unique identifier for the selected exercise. */
-    exerciseId: string;
-    /** Display name for the selected exercise. */
-    exerciseName: string;
+    /** The domain object representing the selected exercise. */
+    exercise: Exercise;
     /** Optional starting date for logging (ISO string). Defaults to today if not provided. */
     initialDate?: string;
 }
@@ -46,8 +45,7 @@ interface QuickLogFormProps {
 export function ExerciseQuickLogDrawer({
     isOpen,
     onClose,
-    exerciseId,
-    exerciseName,
+    exercise,
     initialDate,
 }: ExerciseQuickLogDrawerProps) {
     const { celebrate } = usePRCelebration();
@@ -55,7 +53,7 @@ export function ExerciseQuickLogDrawer({
     const [isExpanded, setIsExpanded] = useState(true);
     const [activeTab, setActiveTab] = useState<"day" | "history">("day");
     const { mutate: logSet, isPending } = useLogSet();
-    const { data: lastLog } = useLastLog(exerciseId, isOpen);
+    const { data: lastLog } = useLastLog(exercise.id, isOpen);
     const dayRange = getDayRange(initialDate);
 
     const {
@@ -63,13 +61,13 @@ export function ExerciseQuickLogDrawer({
         isLoading: isDayLoading,
         isError: isDayError,
         refetch: refetchDayLogs,
-    } = useExerciseHistory(isOpen ? exerciseId : undefined, dayRange);
+    } = useExerciseHistory(isOpen ? exercise.id : undefined, dayRange);
     const {
         data: logs,
         isLoading: isHistoryLoading,
         isError: isHistoryError,
         refetch: refetchHistory,
-    } = useExerciseHistory(isOpen ? exerciseId : undefined);
+    } = useExerciseHistory(isOpen ? exercise.id : undefined);
     const groupedLogs = groupLogsByDate(logs);
 
     /**
@@ -92,7 +90,7 @@ export function ExerciseQuickLogDrawer({
 
         logSet(
             {
-                exerciseId,
+                exerciseId: exercise.id,
                 setOrderIndex,
                 weight: weight || "0",
                 reps,
@@ -104,7 +102,7 @@ export function ExerciseQuickLogDrawer({
                     setShowSuccess(true);
                     setTimeout(() => setShowSuccess(false), 3000);
                     if (newLog.pr) {
-                        celebrate(newLog.pr, exerciseName);
+                        celebrate(newLog.pr, exercise.name);
                     }
                 },
             }
@@ -112,7 +110,7 @@ export function ExerciseQuickLogDrawer({
     };
 
     return (
-        <BottomDrawer isOpen={isOpen} onClose={onClose} title={exerciseName} height="85vh">
+        <BottomDrawer isOpen={isOpen} onClose={onClose} title={exercise.name} height="85vh">
             <div className="flex h-full min-h-0 flex-col relative overflow-hidden">
                 {showSuccess && (
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-accent px-4 py-2 rounded-full text-white text-sm font-bold shadow-lg animate-in fade-in slide-in-from-top-4 duration-300 z-50">
@@ -155,15 +153,11 @@ export function ExerciseQuickLogDrawer({
                                     <ErrorState onRetry={() => refetchDayLogs()} />
                                 ) : dayLogs && dayLogs.length > 0 ? (
                                     <div className="space-y-1">
-                                        {dayLogs.map((log, i) => (
+                                        {dayLogs.map((log) => (
                                             <SetLogItem
                                                 key={log.id}
                                                 variant="featured"
-                                                index={i + 1}
-                                                weight={log.weight}
-                                                reps={log.reps}
-                                                rpe={log.rpe}
-                                                prType={log.pr_type}
+                                                log={log}
                                                 isAdHoc={!log.exerciseWithMetadata}
                                             />
                                         ))}
@@ -202,15 +196,11 @@ export function ExerciseQuickLogDrawer({
                                                 </h3>
                                             </div>
                                             <div className="space-y-1">
-                                                {sessionLogs.map((log, i) => (
+                                                {sessionLogs.map((log) => (
                                                     <SetLogItem
                                                         key={log.id}
                                                         variant="compact"
-                                                        index={i + 1}
-                                                        weight={log.weight}
-                                                        reps={log.reps}
-                                                        rpe={log.rpe}
-                                                        prType={log.pr_type}
+                                                        log={log}
                                                         isAdHoc={!log.exerciseWithMetadata}
                                                     />
                                                 ))}
@@ -247,7 +237,7 @@ export function ExerciseQuickLogDrawer({
                     {isExpanded && (
                         <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                             <QuickLogForm
-                                key={`${exerciseId}-${lastLog?.id || (lastLog === null ? "none" : "loading")}`}
+                                key={`${exercise.id}-${lastLog?.id || (lastLog === null ? "none" : "loading")}`}
                                 lastLog={lastLog}
                                 isPending={isPending}
                                 onSubmit={handleSubmit}
@@ -347,10 +337,6 @@ function QuickLogForm({ lastLog, isPending, onSubmit }: QuickLogFormProps) {
 }
 
 /**
- * Renders a consistent empty state with a centered message.
- */
-
-/**
  * Renders an error state with a retry option.
  */
 function ErrorState({ onRetry }: { onRetry: () => void }) {
@@ -384,5 +370,3 @@ function TabButton({ active, onClick, label }: { active: boolean; onClick: () =>
         </button>
     );
 }
-
-

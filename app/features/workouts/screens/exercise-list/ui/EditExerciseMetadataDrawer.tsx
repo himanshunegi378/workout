@@ -6,24 +6,15 @@ import { Button, NumberStepper, muscleColorMap, BottomDrawer } from "@/app/compo
 import { useExercises } from "@/app/features/exercises/api/query-hooks/use-exercises";
 import { useEditExerciseMetadata } from "@/app/features/exercises/api/mutation-hooks/use-edit-exercise-metadata";
 import { ExerciseSelectDrawer } from "@/app/features/exercises/ui/ExerciseSelectDrawer";
+import { ExerciseWithMetadata } from "../../../types";
 
 interface EditExerciseMetadataDrawerProps {
     isOpen: boolean;
     onClose: () => void;
     programmeId: string;
     workoutId: string;
-    metadataId: string;
-    exerciseName: string;
-    initialData: {
-        exerciseId: string;
-        setsMin: number;
-        setsMax: number;
-        repsMin: number;
-        repsMax: number;
-        restMin: number;
-        restMax: number;
-        tempo: string;
-    };
+    /** The domain object representing the exercise and its current protocol. */
+    ewm: ExerciseWithMetadata;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onUpdate?: (newEwm: any) => void;
 }
@@ -31,56 +22,40 @@ interface EditExerciseMetadataDrawerProps {
 /**
  * A specialized drawer for modifying the parameters (sets, reps, rest, tempo) 
  * of an exercise already present in a workout.
- * 
- * Context:
- * Users often need to adjust their training plan mid-session or between sessions 
- * (e.g., increasing the rep target). This drawer provides an isolated space to 
- * make those adjustments without navigating away from the workout screen.
- * 
- * Why:
- * - Granular Control: Allows precise tuning of training intensity (reps/sets) 
- *   and density (rest periods).
- * - Real-time Application: Using the `useEditExerciseMetadata` mutation, 
- *   it ensures that any changes to the prescriptive data are instantly persisted 
- *   and reflected in the current training session view.
- * - UX Speed: Reuses components like `NumberStepper` and `ExerciseSelectDrawer` 
- *   to ensure a familiar and efficient editing experience.
  */
 export function EditExerciseMetadataDrawer({
     isOpen,
     onClose,
     programmeId,
     workoutId,
-    metadataId,
-    exerciseName,
-    initialData,
+    ewm,
     onUpdate,
 }: EditExerciseMetadataDrawerProps) {
-    const [exerciseId, setExerciseId] = useState(initialData.exerciseId);
+    const [exerciseId, setExerciseId] = useState(ewm.exercise_id);
     const [isSelectDrawerOpen, setIsSelectDrawerOpen] = useState(false);
-    const [sets, setSets] = useState(initialData.setsMin);
-    const [reps, setReps] = useState(initialData.repsMin);
-    const [rest, setRest] = useState(initialData.restMin);
-    const [tempo, setTempo] = useState(initialData.tempo);
+    const [sets, setSets] = useState(ewm.sets_min ?? 0);
+    const [reps, setReps] = useState(ewm.reps_min ?? 0);
+    const [rest, setRest] = useState(ewm.rest_min ?? 0);
+    const [tempo, setTempo] = useState(ewm.tempo ?? "");
 
     const { data: exercises = [] } = useExercises();
     const selectedExercise = exercises.find((ex: { id: string; name: string; muscle_group: string }) => ex.id === exerciseId);
     const { mutate: editMetadata, isPending } = useEditExerciseMetadata({
         programmeId,
         workoutId,
-        metadataId,
+        metadataId: ewm.id,
     });
 
     useEffect(() => {
         if (isOpen) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
-            setExerciseId(initialData.exerciseId);
-            setSets(initialData.setsMin);
-            setReps(initialData.repsMin);
-            setRest(initialData.restMin);
-            setTempo(initialData.tempo);
+            setExerciseId(ewm.exercise_id);
+            setSets(ewm.sets_min ?? 0);
+            setReps(ewm.reps_min ?? 0);
+            setRest(ewm.rest_min ?? 0);
+            setTempo(ewm.tempo ?? "");
         }
-    }, [isOpen, initialData]);
+    }, [isOpen, ewm]);
 
     const handleSave = () => {
         editMetadata(
@@ -105,7 +80,7 @@ export function EditExerciseMetadataDrawer({
 
     return (
         <>
-            <BottomDrawer isOpen={isOpen} onClose={onClose} title={`Edit ${exerciseName}`}>
+            <BottomDrawer isOpen={isOpen} onClose={onClose} title={`Edit ${ewm.exercise.name}`}>
                 <div className="max-h-[70vh] space-y-6 overflow-y-auto pb-2 no-scrollbar">
                     <div className="space-y-1.5">
                         <label className="text-sm font-medium text-foreground">Exercise</label>

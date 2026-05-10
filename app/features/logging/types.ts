@@ -1,26 +1,34 @@
+import { 
+    ExerciseLog as PrismaExerciseLog,
+    Exercise as PrismaExercise,
+} from "@/app/generated/prisma";
+
+/**
+ * Represents a raw exercise log entry.
+ */
+export type ExerciseLog = PrismaExerciseLog;
+
+/**
+ * Simplified exercise definition derived from Prisma for UI relations.
+ */
+export type Exercise = Pick<PrismaExercise, "id" | "name" | "muscle_group">;
+
 /**
  * Represents a simplified session exercise log with its relations.
- * This is used for displaying logs in a session context.
  */
 export interface SessionExerciseLogWithRelations {
     id: string;
     exercise_with_metadata_id: string | null;
-    exerciseLog: {
-        id: string;
-        weight: number | null;
-        reps: number;
-        rpe: number | null;
-        set_order_index: number;
-        pr_type?: string | null;
-        exercise: { id: string; name: string; muscle_group: string } | null;
+    exerciseLog: ExerciseLog & {
+        exercise: Exercise | null;
     } | null;
     exerciseWithMetadata: {
-        exercise: { id: string; name: string; muscle_group: string };
+        exercise: Exercise;
     } | null;
 }
 
 /**
- * Represents a workout session including its associated workout metadata and exercise logs.
+ * Represents a workout session View Model as returned by the API.
  */
 export interface SessionWithLogs {
     id: string;

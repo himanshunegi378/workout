@@ -2,18 +2,13 @@
 
 import React from "react";
 import { Trophy, Zap } from "lucide-react";
+import { ExerciseLog } from "../types";
 
 interface SetLogItemProps {
-    /** The chronological order of the set. */
+    /** The chronological order of the set. Optional if using log.set_order_index. */
     index?: number;
-    /** The weight lifted. */
-    weight: number | null;
-    /** The number of repetitions. */
-    reps: number;
-    /** Rate of Perceived Exertion (intensity). */
-    rpe?: number | null;
-    /** Type of personal record (PR), if any. */
-    prType?: string | null;
+    /** The domain object representing the logged set. */
+    log: Partial<ExerciseLog> & { reps: number }; // reps is required for rendering
     /** Whether the set was logged ad-hoc (not part of a program). */
     isAdHoc?: boolean;
     /** Visual variant of the item. */
@@ -26,20 +21,21 @@ interface SetLogItemProps {
  */
 export function SetLogItem({
     index,
-    weight,
-    reps,
-    rpe,
-    prType,
+    log,
     isAdHoc,
     variant = "compact",
 }: SetLogItemProps) {
+    const { weight, reps, rpe, pr_type, set_order_index } = log;
+    const displayIndex = index ?? (set_order_index !== undefined ? set_order_index + 1 : 0);
+    const prType = pr_type;
+
     if (variant === "featured") {
         return (
             <div className="grid gap-2 rounded-2xl bg-background/30 px-3 py-3 text-base sm:flex sm:items-center sm:justify-between border border-border/5">
                 <div className="flex min-w-0 items-center gap-3">
                     <div className="relative">
                         <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${prType ? "bg-accent/20 text-accent" : "bg-muted text-muted-foreground"}`}>
-                            {prType ? <Trophy className="h-4 w-4 stroke-[2.5]" /> : index}
+                            {prType ? <Trophy className="h-4 w-4 stroke-[2.5]" /> : displayIndex}
                         </span>
                         {isAdHoc && (
                             <div className="absolute -right-0.5 -top-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-warning border border-background shadow-xs">
@@ -79,7 +75,7 @@ export function SetLogItem({
                         {prType ? (
                             <Trophy className="w-3.5 h-3.5 stroke-[2.5]" />
                         ) : (
-                            index
+                            displayIndex
                         )}
                     </span>
                     {isAdHoc && (
@@ -110,7 +106,7 @@ export function SetLogItem({
     return (
         <div className="flex items-center justify-between rounded-xl bg-background/20 px-3 py-2 text-sm">
             <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-foreground/40 w-4">{index}</span>
+                <span className="text-xs font-medium text-foreground/40 w-4">{displayIndex}</span>
                 <span className="font-bold text-foreground">{weight ? `${weight}kg` : "BW"}</span>
                 <span className="text-foreground/40">×</span>
                 <span className="font-bold text-accent">{reps}</span>

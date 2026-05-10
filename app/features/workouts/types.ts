@@ -1,36 +1,38 @@
+import { 
+    ExerciseLog as PrismaExerciseLog,
+    Exercise as PrismaExercise,
+    ExerciseWithMetadata as PrismaEWM
+} from "@/app/generated/prisma";
+
 /**
  * Shared types for the workouts feature.
+ * Derived from Prisma to ensure synchronization while remaining 
+ * flexible for partial API relations.
  */
 
-export interface ExerciseLog {
-    id: string;
-    weight: number | null;
-    reps: number;
-    set_order_index: number;
-    rpe: number | null;
-}
+export type ExerciseLog = PrismaExerciseLog;
 
+/**
+ * A simplified exercise definition for UI relations.
+ */
+export type Exercise = Pick<PrismaExercise, "id" | "name" | "muscle_group">;
+
+/**
+ * An exercise as it appears inside a specific Workout, extended with its 
+ * simplified related exercise definition.
+ */
+export type ExerciseWithMetadata = PrismaEWM & {
+    exercise: Exercise;
+};
+
+/**
+ * Standard response shape for fetching workout session details.
+ */
 export type WorkoutDetailsResponse = {
     workout: {
         id: string;
         name: string;
-        exercisesWithMetadata: {
-            id: string;
-            exercise_id: string;
-            sets_min: number | null;
-            sets_max: number | null;
-            reps_min: number | null;
-            reps_max: number | null;
-            rest_min: number | null;
-            rest_max: number | null;
-            tempo: string | null;
-            is_hidden: boolean;
-            exercise: {
-                id: string;
-                name: string;
-                muscle_group: string;
-            };
-        }[];
+        exercisesWithMetadata: ExerciseWithMetadata[];
     };
     session: {
         id: string;
@@ -40,14 +42,7 @@ export type WorkoutDetailsResponse = {
             id: string;
             exercise_with_metadata_id: string | null;
             exercise_id: string | null;
-            exerciseLog: {
-                id: string;
-                exerciseId?: string | null;
-                weight: number | null;
-                reps: number;
-                rpe: number | null;
-                set_order_index: number;
-            } | null;
+            exerciseLog: ExerciseLog | null;
         }[];
     } | null;
     previousLogsByExercise: Record<string, ExerciseLog[]>;

@@ -1,18 +1,6 @@
 import { Dumbbell, Activity, Target } from "lucide-react";
 import { ExerciseLogGroup } from "./ExerciseLogGroup";
-
-/**
- * Represents the set shape rendered within each exercise group on a session card.
- */
-type SessionCardExerciseSet = {
-    id: string;
-    weight: number | null;
-    rpe: number | null;
-    reps: number;
-    set_order_index: number;
-    pr_type?: string | null;
-    isAdHoc?: boolean;
-};
+import { ExerciseLog, Exercise } from "../../../types";
 
 /**
  * Props for the SessionCard component.
@@ -28,17 +16,14 @@ interface SessionCardProps {
     endTime: Date | string | null;
     /** A collection of exercise logs grouped by exercise. */
     exerciseGroups: {
-        exercise: { id: string; name: string; muscle_group: string };
-        sets: SessionCardExerciseSet[];
+        exercise: Exercise;
+        sets: (ExerciseLog & { isAdHoc?: boolean })[];
     }[];
 }
 
 /**
  * A card component that displays a summary of a single workout session.
  * Shows session metadata (duration, volume, sets) and expands into individual exercise logs.
- * 
- * @param {SessionCardProps} props - The session data to display.
- * @returns {JSX.Element} The rendered session card.
  */
 export function SessionCard({
     workoutName,
@@ -92,9 +77,7 @@ export function SessionCard({
                 {exerciseGroups.map(({ exercise, sets }) => (
                     <ExerciseLogGroup
                         key={exercise.id}
-                        exerciseId={exercise.id}
-                        exerciseName={exercise.name}
-                        muscleGroup={exercise.muscle_group}
+                        exercise={exercise}
                         sets={sets}
                         sessionDate={startTime instanceof Date ? startTime.toISOString() : startTime || undefined}
                     />
@@ -106,11 +89,6 @@ export function SessionCard({
 
 /**
  * Formats the duration between two dates into a user-friendly string.
- * E.g., "1h 20m" or "45m".
- * 
- * @param {Date | string} start - The starting time.
- * @param {Date | string} end - The ending time.
- * @returns {string} The formatted duration string.
  */
 function formatDuration(start: Date | string, end: Date | string) {
     const diff = new Date(end).getTime() - new Date(start).getTime();

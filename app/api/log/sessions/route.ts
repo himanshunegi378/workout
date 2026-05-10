@@ -55,6 +55,9 @@ export async function GET(request: Request) {
                                 rpe: true,
                                 set_order_index: true,
                                 pr_type: true,
+                                user_id: true,
+                                date: true,
+                                exerciseId: true,
                                 exercise: {
                                     select: {
                                         id: true,

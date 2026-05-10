@@ -2,7 +2,7 @@
 
 import { notFound, useRouter } from "next/navigation";
 import { Activity, Loader2, Trophy } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PageShell, List, ConfirmDrawer } from "@/app/components/ui";
 import { PageHeader } from "@/app/features/page-header";
 import { ExerciseCard } from "./ui/ExerciseCard";
@@ -176,17 +176,7 @@ export function ExerciseListContent({
                                     <ExerciseCard
                                         workoutId={workoutId}
                                         programmeId={programmeId}
-                                        ewmId={ewm.id}
-                                        exerciseId={ewm.exercise_id}
-                                        name={ewm.exercise.name}
-                                        muscleGroup={ewm.exercise.muscle_group}
-                                        setsMin={ewm.sets_min ?? 0}
-                                        setsMax={ewm.sets_max ?? 0}
-                                        repsMin={ewm.reps_min ?? 0}
-                                        repsMax={ewm.reps_max ?? 0}
-                                        restMin={ewm.rest_min ?? 0}
-                                        restMax={ewm.rest_max ?? 0}
-                                        tempo={ewm.tempo ?? ""}
+                                        ewm={ewm}
                                         initialLogs={exerciseLogs}
                                         previousLogs={previousLogsByExercise?.[ewm.exercise_id] || []}
                                     />

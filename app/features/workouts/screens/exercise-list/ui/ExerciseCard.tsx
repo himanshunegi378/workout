@@ -1,91 +1,58 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Repeat, Timer, Activity, MoreHorizontal, Trophy, Flame, Target } from "lucide-react";
 import { muscleColorMap } from "@/app/components/ui";
 import { 
-    ExerciseQuickLogDrawer,
-    SetTracker,
-    LogSetDrawer
+    SetTracker, 
+    LogSetDrawer, 
+    ExerciseQuickLogDrawer 
 } from "@/app/features/logging";
 import { ConfirmDrawer } from "@/app/components/ui";
 import { EditExerciseMetadataDrawer } from "./EditExerciseMetadataDrawer";
-import { ExerciseLog } from "../../../types";
+import { ExerciseLog, ExerciseWithMetadata } from "../../../types";
 import { useExerciseLogging } from "../../../hooks/use-exercise-logging";
 
 interface ExerciseCardProps {
     workoutId: string;
     programmeId: string;
-    ewmId: string;
-    exerciseId: string;
-    name: string;
-    muscleGroup: string;
-    setsMin: number;
-    setsMax: number;
-    repsMin: number;
-    repsMax: number;
-    restMin: number;
-    restMax: number;
-    tempo: string;
+    ewm: ExerciseWithMetadata;
     initialLogs?: ExerciseLog[];
     previousLogs?: ExerciseLog[];
 }
 
 /**
- * The primary interactive card for a single exercise within a live training session.
+ * A comprehensive card displaying an exercise's prescriptive data and current 
+ * session progress. 
  * 
  * Context:
- * This is the most complex UI component in the workout execution flow. It displays 
+ * This is the primary unit of interaction during a workout. It communicates 
  * the exercise protocol (sets, reps, rest, tempo), tracks completed sets via 
  * `SetTracker`, and manages the logic for logging new sets, updating existing ones, 
  * or triggering PR celebrations.
- * 
- * Why:
- * - Dynamic Workflow: Automatically calculates rest periods based on the prescribed 
- *   rest time and starts the global `RestTimer`.
- * - Comparative Performance: Displays "Beat Previous" data (historical performance) 
- *   directly on the card to encourage progressive overload.
- * - Progressive Status: Visually changes its appearance (glow, opacity, grayscale) 
- *   based on whether the exercise objective has been met or "mastered" (hitting max sets).
- * - State Management: Handles optimistic UI updates for logging sets, ensuring a 
- *   snappy feel even on slower network connections.
  */
 export function ExerciseCard({
     workoutId,
     programmeId,
-    ewmId: _ewmId,
-    exerciseId,
-    name,
-    muscleGroup,
-    setsMin,
-    setsMax,
-    repsMin,
-    repsMax,
-    restMin,
-    restMax,
-    tempo,
+    ewm,
     initialLogs = [],
     previousLogs = [],
 }: ExerciseCardProps) {
-    const colorClass = muscleColorMap[muscleGroup] ?? "bg-accent";
+    const { exercise } = ewm;
+    const colorClass = muscleColorMap[exercise.muscle_group] ?? "bg-accent";
     const router = useRouter();
-    const [ewmId, setEwmId] = useState(_ewmId);
+    
+    // We keep ewmId in state because the edit drawer might update it mid-session
+    // before the server-side refresh completes.
+    const [ewmId, setEwmId] = useState(ewm.id);
 
     const [isEditDrawerOpen, setIsEditDrawerOpen] = useState(false);
     const [isHistoryDrawerOpen, setIsHistoryDrawerOpen] = useState(false);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
     const {
         logs,
-        weight,
-        setWeight,
-        reps,
-        setReps,
-        rpe,
-        setRpe,
-        previousLog,
         isDrawerOpen,
         openDrawer,
         closeDrawer,
@@ -93,104 +60,116 @@ export function ExerciseCard({
         deleteSet,
         isSaving,
         isDeleting,
+        weight,
+        setWeight,
+        reps,
+        setReps,
+        rpe,
+        setRpe,
+        previousLog,
         currentLog,
     } = useExerciseLogging({
         workoutId,
-        exerciseId,
-        exerciseName: name,
+        exercise,
         initialLogs,
-        restMin,
+        restMin: ewm.rest_min ?? 0,
     });
 
+    const setsMin = ewm.sets_min ?? 0;
+    const setsMax = ewm.sets_max ?? 0;
     const isCompleted = logs.length >= setsMin && logs.length > 0;
-    const isPerfect = logs.length >= setsMax;
+    const isPerfect = logs.length >= setsMax && setsMax > 0;
 
     const handleSaveSet = () => saveSet(ewmId);
     const handleDeleteSet = () => setIsDeleteConfirmOpen(true);
 
     return (
         <>
-            <div
-                className={`rounded-3xl bg-background/50 px-5 py-5 text-card-foreground transition-all duration-200 md:px-6 md:py-6 border border-border/30 ${isCompleted ? "bg-success/5" : "hover:bg-background/65"
-                    }`}
+            <div 
+                className={`relative overflow-hidden rounded-3xl bg-card/45 p-5 transition-all duration-300 border border-border/50
+                    ${isCompleted ? "opacity-85" : "opacity-100"}
+                    ${isPerfect ? "ring-2 ring-success/30 bg-success/[0.02]" : ""}
+                `}
             >
+                {/* Header: Name, Muscle Group, Status */}
                 <div className="flex items-start justify-between gap-4">
-                    <button
-                        type="button"
-                        onClick={() => setIsHistoryDrawerOpen(true)}
-                        className="flex min-w-0 flex-1 items-center gap-4 text-left transition-colors"
-                    >
+                    <div className="flex min-w-0 items-start gap-3">
                         <div className={`h-8 w-1.5 shrink-0 rounded-full ${colorClass}`} />
                         <div className="flex flex-wrap items-center gap-2">
                             <h3 className="truncate font-display text-xl font-semibold tracking-tight text-foreground md:text-2xl">
-                                {name}
+                                {exercise.name}
                             </h3>
                             {isPerfect && (
                                 <span className="flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-success">
-                                    <Trophy className="w-3 h-3" /> Mastered
+                                    <Flame className="w-3 h-3 fill-current" /> Mastered
                                 </span>
                             )}
                         </div>
-                    </button>
-
-                    <div className="relative shrink-0">
-                        <button
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted/20"
-                        >
-                            <MoreHorizontal className="w-5 h-5" />
-                        </button>
-
-                        {isMenuOpen && (
-                            <>
-                                <div className="fixed inset-0 z-10" onClick={() => setIsMenuOpen(false)} />
-                                <div className="absolute right-0 top-12 z-20 w-44 overflow-hidden rounded-2xl bg-background/95 py-2 backdrop-blur shadow-xl border border-border/50">
-                                    <button onClick={() => { setIsMenuOpen(false); setIsEditDrawerOpen(true); }} className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium transition-colors hover:bg-muted/30">
-                                        <Activity className="w-4 h-4 text-accent" /> Edit Protocol
-                                    </button>
-                                </div>
-                            </>
-                        )}
                     </div>
+                    
+                    <button 
+                        onClick={() => setIsEditDrawerOpen(true)}
+                        className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted/40 hover:text-foreground active:scale-95"
+                    >
+                        <MoreHorizontal className="h-5 w-5" />
+                    </button>
                 </div>
 
-                {/* Micro-Badges Row */}
-                <div className="mt-5 flex flex-wrap gap-2">
+                {/* Muscle Group Badge */}
+                <div className="mt-2 pl-4.5">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/80">
+                        {exercise.muscle_group}
+                    </span>
+                </div>
+
+                {/* Prescription Pills */}
+                <div className="mt-5 flex flex-wrap gap-2 pl-4.5">
                     <span className="flex items-center gap-1.5 rounded-lg bg-muted/40 px-2.5 py-1.5 text-xs font-medium text-foreground/80">
                         <Target className="w-3.5 h-3.5" /> {setsMin}-{setsMax} Sets
                     </span>
                     <span className="flex items-center gap-1.5 rounded-lg bg-muted/40 px-2.5 py-1.5 text-xs font-medium text-foreground/80">
-                        <Repeat className="w-3.5 h-3.5" /> {repsMin}-{repsMax} Reps
+                        <Repeat className="w-3.5 h-3.5" /> {ewm.reps_min}-{ewm.reps_max} Reps
                     </span>
                     <span className="flex items-center gap-1.5 rounded-lg bg-muted/40 px-2.5 py-1.5 text-xs font-medium text-foreground/80">
-                        <Timer className="w-3.5 h-3.5" /> {restMin}-{restMax}s
+                        <Timer className="w-3.5 h-3.5" /> {ewm.rest_min}-{ewm.rest_max}s
                     </span>
                     <span className="flex items-center gap-1.5 rounded-lg bg-muted/40 px-2.5 py-1.5 text-xs font-medium text-foreground/80 lowercase">
-                        {tempo}
+                        {ewm.tempo}
                     </span>
                     {previousLogs.length > 0 && (
                         <span className="flex items-center gap-1.5 rounded-lg bg-accent/10 text-accent px-2.5 py-1.5 text-xs font-medium">
-                            <Flame className="w-3.5 h-3.5" /> Prev: {previousLogs[0].weight ? `${previousLogs[0].weight}kg × ` : ""}{previousLogs[0].reps}
+                            <Trophy className="w-3.5 h-3.5" /> Beat Previous
                         </span>
                     )}
                 </div>
 
-                <div className="mt-8">
+                {/* Progress / Set Tracker */}
+                <div className="mt-8 pl-4.5">
                     <SetTracker
-                        setsMin={setsMin}
-                        setsMax={setsMax}
-                        logs={logs.map(l => ({ set_order_index: l.set_order_index, reps: l.reps, rpe: l.rpe }))}
-                        targetReps={repsMin}
+                        protocol={{
+                            setsMin,
+                            setsMax,
+                            targetReps: ewm.reps_min ?? 0
+                        }}
+                        logs={logs}
                         onSetClick={openDrawer}
                         previousLogs={previousLogs}
                     />
                 </div>
+
+                <button 
+                    onClick={() => setIsHistoryDrawerOpen(true)}
+                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl border border-border/50 py-3 text-xs font-bold uppercase tracking-widest text-muted-foreground transition-all hover:bg-muted/30 hover:text-foreground active:scale-[0.98]"
+                >
+                    <Activity className="h-3.5 w-3.5" />
+                    History & Analytics
+                </button>
             </div>
 
             <LogSetDrawer
                 isOpen={isDrawerOpen}
                 onClose={closeDrawer}
-                exerciseName={name}
+                exerciseName={exercise.name}
                 weight={weight}
                 setWeight={setWeight}
                 reps={reps}
@@ -210,30 +189,29 @@ export function ExerciseCard({
                 onClose={() => setIsEditDrawerOpen(false)}
                 programmeId={programmeId}
                 workoutId={workoutId}
-                metadataId={ewmId}
-                exerciseName={name}
-                initialData={{ exerciseId, setsMin, setsMax, repsMin, repsMax, restMin, restMax, tempo }}
+                ewm={ewm}
                 onUpdate={(newEwm) => { setEwmId(newEwm.id); router.refresh(); }}
             />
 
             <ExerciseQuickLogDrawer
-                key={exerciseId}
+                key={exercise.id}
                 isOpen={isHistoryDrawerOpen}
                 onClose={() => setIsHistoryDrawerOpen(false)}
-                exerciseId={exerciseId}
-                exerciseName={name}
+                exercise={exercise}
             />
 
             <ConfirmDrawer
                 isOpen={isDeleteConfirmOpen}
                 onClose={() => setIsDeleteConfirmOpen(false)}
-                onConfirm={deleteSet}
+                onConfirm={() => {
+                    deleteSet();
+                    setIsDeleteConfirmOpen(false);
+                }}
                 title="Remove Set?"
-                description="Are you sure you want to remove this set from your log? This action cannot be undone."
-                confirmText="Remove Set"
+                description="This will permanently delete this set from your session history."
+                confirmText="Remove"
                 variant="destructive"
             />
         </>
     );
 }
-
