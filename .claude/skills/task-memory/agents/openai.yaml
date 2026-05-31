@@ -1,0 +1,4 @@
+interface:
+  display_name: "Task Memory"
+  short_description: "Maintain durable task state across sessions"
+  default_prompt: "Use $task-memory to maintain durable repo task state while working."
