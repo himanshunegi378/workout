@@ -6,8 +6,9 @@ This document provides a comprehensive guide to the backend API route handlers (
 
 ## 1. Authentication & Session Architecture
 
-Authentication is powered by **NextAuth v5** using a custom JSON Web Token (JWT) session strategy.
-- **Provider**: credentials-based logins via Username and Password.
+Authentication is powered by the NestJS backend using a signed HttpOnly `workout_auth` JWT cookie.
+- **Provider**: credentials-based logins via username and password.
+- **Backend Auth Endpoints**: `/api/auth/login`, `/api/auth/logout`, and `/api/auth/me`.
 - **Database Helper**: `@/lib/auth-helpers` implements two session recovery mechanisms:
   - `getUserId()`: Returns `string | null` representing the authenticated user's ID. Used in API routes to gracefully return `401 Unauthorized`.
   - `requireUserId()`: Returns `string` or redirects to `/login`. Used in Server Components and Server Actions.
@@ -190,7 +191,7 @@ Authentication is powered by **NextAuth v5** using a custom JSON Web Token (JWT)
 - **Endpoint**: `/api/exercises/logs`
 - **Method**: `GET`
 - **Purpose**: Fetches historical completed sets logs for one or more exercises. Supports loading logs linked directly to ad-hoc sessions as well as structured workout-session metadata.
-- **Auth Requirement**: Authenticated (Requires `auth()`)
+- **Auth Requirement**: Authenticated (requires backend `workout_auth` cookie)
 - **Request Params**:
   - **Query parameters**:
     - `exerciseId` / `exerciseIds` (string, required): Comma-separated list or array of exercise IDs.
@@ -348,7 +349,7 @@ Authentication is powered by **NextAuth v5** using a custom JSON Web Token (JWT)
 - **Endpoint**: `/api/programmes/[programmeId]`
 - **Method**: `GET`
 - **Purpose**: Fetches details of a specific programme, its workouts, and a preview of their active exercises.
-- **Auth Requirement**: Authenticated (Requires `auth()`)
+- **Auth Requirement**: Authenticated (requires backend `workout_auth` cookie)
 - **Request Params**:
   - **Path parameters**:
     - `programmeId` (string, required): The ID of the programme.
@@ -406,7 +407,7 @@ Authentication is powered by **NextAuth v5** using a custom JSON Web Token (JWT)
 - **Endpoint**: `/api/programmes/[programmeId]`
 - **Method**: `PATCH`
 - **Purpose**: Activates or deactivates a programme.
-- **Auth Requirement**: Authenticated (Requires `auth()`)
+- **Auth Requirement**: Authenticated (requires backend `workout_auth` cookie)
 - **Request Params**:
   - **Path parameters**:
     - `programmeId` (string, required): The ID of the programme.
@@ -473,7 +474,7 @@ Authentication is powered by **NextAuth v5** using a custom JSON Web Token (JWT)
 - **Endpoint**: `/api/programmes/[programmeId]/workouts/[workoutId]/details`
 - **Method**: `GET`
 - **Purpose**: Fetches the full template for a workout, today's active session, and logs from the user's last logged session (to facilitate side-by-side progress comparisons).
-- **Auth Requirement**: Authenticated (Requires `auth()`)
+- **Auth Requirement**: Authenticated (requires backend `workout_auth` cookie)
 - **Request Params**:
   - **Path parameters**:
     - `programmeId` (string, required): Parent programme ID.
@@ -851,7 +852,7 @@ Authentication is powered by **NextAuth v5** using a custom JSON Web Token (JWT)
 - **Endpoint**: `/api/log/sessions`
 - **Method**: `GET`
 - **Purpose**: Fetches completed workout sessions containing completed set logs.
-- **Auth Requirement**: Authenticated (Requires `auth()`)
+- **Auth Requirement**: Authenticated (requires backend `workout_auth` cookie)
 - **Request Params**:
   - **Query parameters**:
     - `grouped` (string, optional): If set to `"true"`, groups completed sessions by date (e.g. `"Today"`, `"Yesterday"`, or formatted string like `"May 31, 2026"`).
@@ -937,7 +938,7 @@ Authentication is powered by **NextAuth v5** using a custom JSON Web Token (JWT)
 - **Endpoint**: `/api/workout-sessions/[sessionId]/finish`
 - **Method**: `PATCH`
 - **Purpose**: Formalizes the completion of an active workout session.
-- **Auth Requirement**: Authenticated (Requires `auth()`)
+- **Auth Requirement**: Authenticated (requires backend `workout_auth` cookie)
 - **Request Params**:
   - **Path parameters**:
     - `sessionId` (string, required): Active session ID.
@@ -1319,8 +1320,10 @@ Authentication is powered by **NextAuth v5** using a custom JSON Web Token (JWT)
 
 | Path | Method | Auth Required | File Path Reference |
 | :--- | :--- | :---: | :--- |
-| `/api/auth/[...nextauth]` | `GET`, `POST` | No | [app/api/auth/[...nextauth]/route.ts](file:///mnt/New_Volume/project/workout/app/api/auth/%5B...nextauth%5D/route.ts) |
-| `/api/auth/signup` | `POST` | No | [app/api/auth/signup/route.ts](file:///mnt/New_Volume/project/workout/app/api/auth/signup/route.ts) |
+| `/api/auth/signup` | `POST` | No | `backend/src/auth/auth.controller.ts` |
+| `/api/auth/login` | `POST` | No | `backend/src/auth/auth.controller.ts` |
+| `/api/auth/logout` | `POST` | No | `backend/src/auth/auth.controller.ts` |
+| `/api/auth/me` | `GET` | Yes | `backend/src/auth/auth.controller.ts` |
 | `/api/exercises` | `GET` | Yes | [app/api/exercises/route.ts](file:///mnt/New_Volume/project/workout/app/api/exercises/route.ts#L68) |
 | `/api/exercises` | `POST` | Yes | [app/api/exercises/route.ts](file:///mnt/New_Volume/project/workout/app/api/exercises/route.ts#L6) |
 | `/api/exercises/[exerciseId]/last-log` | `GET` | Yes | [app/api/exercises/[exerciseId]/last-log/route.ts](file:///mnt/New_Volume/project/workout/app/api/exercises/%5BexerciseId%5D/last-log/route.ts) |
