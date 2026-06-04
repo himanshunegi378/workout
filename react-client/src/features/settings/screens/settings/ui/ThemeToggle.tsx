@@ -1,0 +1,55 @@
+"use client";
+
+import { useTheme } from "@/components/providers/ThemeProvider";
+import { useEffect, useState } from "react";
+import { Moon, Sun, Monitor } from "lucide-react";
+
+/**
+ * A multi-mode toggle for switching between Light, Dark, and System themes.
+ * 
+ * Context:
+ * Uses the Vite client theme provider to manage the user's preferred visual style.
+ * Includes a mount-guard to prevent server/client hydration mismatches.
+ * 
+ * Why:
+ * - Accessibility & Preference: One-tap switching between themes to ensure 
+ *   comfort in different lighting conditions (e.g., late-night gym sessions).
+ */
+export function ThemeToggle() {
+    const { theme, setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setMounted(true);
+    }, []);
+
+    if (!mounted) {
+        return <div className="h-12 w-full rounded-full bg-muted/30 animate-pulse" />;
+    }
+
+    const options = [
+        { value: "light", icon: Sun, label: "Light" },
+        { value: "dark", icon: Moon, label: "Dark" },
+        { value: "system", icon: Monitor, label: "System" },
+    ] as const;
+
+    return (
+        <div className="flex flex-wrap gap-2 rounded-3xl bg-background/40 p-2">
+            {options.map(({ value, icon: Icon, label }) => (
+                <button
+                    key={value}
+                    onClick={() => setTheme(value)}
+                    className={`flex min-w-[6.5rem] flex-1 items-center justify-center gap-2 rounded-2xl px-3 py-2 text-[11px] font-medium leading-none transition-colors sm:text-sm ${
+                        theme === value
+                            ? "bg-background/85 text-foreground"
+                            : "text-foreground/85 hover:bg-background/60 hover:text-foreground"
+                    }`}
+                >
+                    <Icon className="w-4 h-4" />
+                    <span>{label}</span>
+                </button>
+            ))}
+        </div>
+    );
+}

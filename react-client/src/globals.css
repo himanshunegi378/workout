@@ -1,0 +1,265 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Surface bg/fg pairs ── */
+  --color-background: #0c0c0e;
+  --color-foreground: #e8e8ed;
+  --color-card: #111115;
+  --color-card-foreground: #e8e8ed;
+  --color-muted: #18181d;
+  --color-muted-foreground: #8e8e9a;
+  --color-border: #26262d;
+
+  /* ── Accent bg/fg pairs ── */
+  --color-accent: #be185d;
+  --color-accent-foreground: #ffffff;
+  --color-accent-hover: #9f1239;
+  --color-ring: #be185d40;
+
+  --color-success: #00b894;
+  --color-success-foreground: #ffffff;
+  --color-warning: #fdcb6e;
+  --color-warning-foreground: #1a1a2e;
+  --color-danger: #ff8a65;
+  --color-danger-foreground: #ffffff;
+  --color-info: #74b9ff;
+  --color-info-foreground: #0c0c0e;
+
+  /* ── Muscle group colors (decorative) ── */
+  --color-muscle-abs: #7c3aed;
+  --color-muscle-back: #0f766e;
+  --color-muscle-biceps: #c2410c;
+  --color-muscle-cardio: #0369a1;
+  --color-muscle-chest: #be123c;
+  --color-muscle-forearms: #b45309;
+  --color-muscle-legs: #92400e;
+  --color-muscle-shoulders: #4f46e5;
+  --color-muscle-triceps: #e11d48;
+
+  /* ── Typography ── */
+  --font-display: "Outfit", sans-serif;
+  --font-body: "Plus Jakarta Sans", sans-serif;
+
+  /* ── Animations ── */
+  --animate-slide-up: slide-up 0.4s ease-out both;
+  --animate-fade-in: fade-in 0.3s ease-out both;
+  --animate-press: press 0.2s ease-out;
+  --animate-check-pop: check-pop 0.3s ease-out both;
+  --animate-pulse-ring: pulse-ring 1.2s ease-out infinite;
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes press {
+    0% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(0.96);
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes check-pop {
+    0% {
+      transform: scale(0);
+    }
+
+    60% {
+      transform: scale(1.2);
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes pulse-ring {
+    0% {
+      box-shadow: 0 0 0 0 oklch(from var(--color-accent) l c h / 0.6);
+    }
+
+    100% {
+      box-shadow: 0 0 0 12px oklch(from var(--color-accent) l c h / 0);
+    }
+  }
+
+  /* ── PR Celebration animations ── */
+  --animate-pr-burst: pr-burst 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  --animate-pr-slide-in: pr-slide-in 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+
+  @keyframes pr-burst {
+    0%   { transform: scale(0) rotate(-15deg); opacity: 0; }
+    60%  { transform: scale(1.25) rotate(6deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg);   opacity: 1; }
+  }
+
+  @keyframes pr-slide-in {
+    from { transform: translateY(48px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+}
+
+.light {
+  /* ── Surface bg/fg pairs ── */
+  --color-background: #f8f9fa;
+  --color-foreground: #212529;
+  --color-card: #ffffff;
+  --color-card-foreground: #212529;
+  --color-muted: #e9ecef;
+  --color-muted-foreground: #4b5563;
+  --color-border: #c7ced8;
+
+  /* ── Accent bg/fg pairs (keep the same vibrant colors) ── */
+  /* --color-accent remains #be185d */
+  /* --color-accent-foreground remains #ffffff */
+  /* --color-accent-hover remains #9f1239 */
+  --color-ring: #be185d40;
+}
+
+/* ── Smooth scrolling ── */
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-body);
+  background-image:
+    radial-gradient(circle at top left, oklch(from var(--color-accent) l c h / 0.07), transparent 26rem),
+    linear-gradient(180deg, oklch(from var(--color-card) l c h / 0.35), transparent 22rem);
+}
+
+/* ── Safe area for bottom nav ── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* ── Elevation System ──
+   3-layer shadow: inset top highlight + tight contact + wide ambient
+   Dark mode = default, .light overrides soften the shadows
+*/
+
+.elevation-1 {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.elevation-2 {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.14);
+}
+
+.elevation-3 {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 4px 14px rgba(0, 0, 0, 0.16);
+}
+
+.elevation-4 {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+.elevation-5 {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 10px 24px rgba(0, 0, 0, 0.2);
+}
+
+.elevation-6 {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 14px 30px rgba(0, 0, 0, 0.22);
+}
+
+.elevation-7 {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 18px 34px rgba(0, 0, 0, 0.24);
+}
+
+.elevation-8 {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 20px 40px rgba(0, 0, 0, 0.26);
+}
+
+/* ── Light mode elevation overrides ── */
+.light .elevation-1 {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.light .elevation-2 {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.light .elevation-3 {
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.7),
+    0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.light .elevation-4 {
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.7),
+    0 8px 20px rgba(0, 0, 0, 0.07);
+}
+
+.light .elevation-5 {
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.8),
+    0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.light .elevation-6 {
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.8),
+    0 14px 30px rgba(0, 0, 0, 0.09);
+}
+
+.light .elevation-7 {
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.9),
+    0 18px 34px rgba(0, 0, 0, 0.1);
+}
+
+.light .elevation-8 {
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.95),
+    0 20px 40px rgba(0, 0, 0, 0.12);
+}

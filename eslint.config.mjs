@@ -1,14 +1,12 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
-import importPlugin from "eslint-plugin-import";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
     plugins: {
-      import: importPlugin,
       "react-compiler": (await import("eslint-plugin-react-compiler")).default,
     },
     rules: {
@@ -24,6 +22,7 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "backend/dist/**",
+    "react-client/**",
     "next-env.d.ts",
   ]),
 ]);
