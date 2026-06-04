@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
-import { MuscleGroup } from "../../../app/generated/prisma/client";
+import { MuscleGroup } from "../../../generated/prisma/client";
 import { throwLegacyError } from "../common/utils/legacy-http";
 import { PrismaService } from "../prisma/prisma.service";
 

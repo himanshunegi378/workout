@@ -12,7 +12,7 @@
 //   The driver-level PgBouncer adapter (`@prisma/adapter-pg`) is required
 //   for Prisma to work correctly with a pooled connection in serverless.
 
-import { PrismaClient } from "@/app/generated/prisma/client";
+import { PrismaClient } from "@/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 function createPrismaClient() {

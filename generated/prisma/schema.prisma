@@ -1,0 +1,301 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../generated/prisma"
+  previewFeatures = ["views", "relationJoins"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum MuscleGroup {
+  Abs
+  Back
+  Biceps
+  Cardio
+  Chest
+  Forearms
+  Legs
+  Shoulders
+  Triceps
+}
+
+/// Lifecycle stages for user-submitted feedback.
+enum FeedbackStatus {
+  /// Newly submitted and waiting for triage.
+  Submitted
+
+  /// Reviewed and currently being evaluated.
+  UnderReview
+
+  /// Accepted and planned for a future update.
+  Planned
+
+  /// Implemented and shipped.
+  Completed
+
+  /// Reviewed but not planned for implementation.
+  Rejected
+}
+
+// ---------------------------------------------------------------------------
+// Models
+// ---------------------------------------------------------------------------
+
+/// Authenticated user (credentials-based auth).
+model User {
+  id            String   @id @default(cuid())
+  username      String   @unique
+  password_hash String
+  created_at    DateTime @default(now())
+
+  // Relations — everything a user owns
+  programmes          Programme[]
+  exercises           Exercise[]
+  workoutSessions     WorkoutSession[]
+  sessionExerciseLogs SessionExerciseLog[]
+  exerciseLogs        ExerciseLog[]
+  feedbackEntries     Feedback[]
+  activityLogs        ProgrammeActivityLog[]
+
+  @@map("users")
+}
+
+/// User-submitted product feedback or suggestions.
+model Feedback {
+  id          String         @id @default(cuid())
+  description String
+  status      FeedbackStatus @default(Submitted)
+  created_at  DateTime       @default(now())
+  updated_at  DateTime       @updatedAt
+
+  // Owner
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("feedback")
+}
+
+/// A single, reusable exercise definition.
+model Exercise {
+  id           String      @id @default(cuid())
+  name         String
+  description  String?
+  muscle_group MuscleGroup
+  is_global    Boolean     @default(false)
+
+  // Owner
+  user_id String?
+  user    User?   @relation(fields: [user_id], references: [id])
+
+  // Relations
+  exercisesWithMetadata ExerciseWithMetadata[]
+  exerciseLogs          ExerciseLog[]
+
+  @@index([is_global])
+  @@index([user_id])
+  @@map("exercises")
+}
+
+/// A named collection / programme of workouts (e.g. "Push Pull Legs").
+model Programme {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+
+  // Owner
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  // Relations
+  workouts Workout[]
+
+  is_active Boolean @default(false)
+
+  activity_logs ProgrammeActivityLog[]
+
+  @@map("programmes")
+}
+
+model ProgrammeActivityLog {
+  id         String    @id @default(cuid())
+  start_time DateTime  @default(now())
+  end_time   DateTime?
+
+  programme_id String
+  user_id      String
+
+  programme Programme @relation(fields: [programme_id], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, end_time])
+  @@map("programme_activity_logs")
+}
+
+/// A named workout containing an ordered list of exercises.
+model Workout {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+
+  /// Position of this workout within its parent WorkoutGroup
+  order_index Int
+
+  // Foreign key
+  programme_id String
+
+  // Relations
+  programme             Programme              @relation(fields: [programme_id], references: [id])
+  exercisesWithMetadata ExerciseWithMetadata[]
+  workoutSessions       WorkoutSession[]
+
+  @@map("workouts")
+}
+
+/// A single logged training session tied to a Workout.
+model WorkoutSession {
+  id         String    @id @default(cuid())
+  start_time DateTime?
+  end_time   DateTime?
+  notes      String?
+  date       DateTime  @default(now())
+
+  // Foreign keys
+  workout_id String?
+  user_id    String
+
+  // Relations
+  workout             Workout?             @relation(fields: [workout_id], references: [id])
+  user                User                 @relation(fields: [user_id], references: [id])
+  sessionExerciseLogs SessionExerciseLog[]
+
+  @@map("workout_sessions")
+}
+
+/// An exercise as it appears inside a specific Workout, with prescribed
+/// sets / reps / tempo / rest parameters.
+model ExerciseWithMetadata {
+  id String @id @default(cuid())
+
+  /// Prescribed rep range
+  reps_min Int
+  reps_max Int
+
+  /// Prescribed set range
+  sets_min Int
+  sets_max Int
+
+  /// Rest between sets (seconds)
+  rest_min Int
+  rest_max Int
+
+  /// Tempo in "eccentric-pause-concentric-pause" format, e.g. "3-1-2-0"
+  tempo String
+
+  /// Position of this exercise within its parent workout
+  order_index Int
+
+  /// Soft-deleted when a log exists and metadata was replaced by a new record
+  is_hidden Boolean @default(false)
+
+  // Foreign keys
+  exercise_id String
+  workout_id  String
+
+  // Relations
+  exercise            Exercise             @relation(fields: [exercise_id], references: [id])
+  workout             Workout              @relation(fields: [workout_id], references: [id])
+  sessionExerciseLogs SessionExerciseLog[]
+
+  @@map("exercise_with_metadata")
+}
+
+/// A single logged set within a WorkoutSession.
+model ExerciseLog {
+  id              String   @id @default(cuid())
+  weight          Float?
+  reps            Int
+  set_order_index Int
+  rpe             Float?
+  date            DateTime @default(now())
+  pr_type         String?
+
+  // Foreign keys
+  user_id String
+
+  // Relations
+  sessionExerciseLog SessionExerciseLog?
+  user               User                @relation(fields: [user_id], references: [id])
+  exercise           Exercise?           @relation(fields: [exerciseId], references: [id])
+  exerciseId         String?
+
+  @@map("exercise_logs")
+}
+
+/// Links one logged set to its workout session and optional programme metadata.
+/// The one-to-one ExerciseLog relation preserves the planned-vs-ad-hoc source of each set.
+model SessionExerciseLog {
+  id    String  @id @default(cuid())
+  notes String?
+
+  // Foreign keys
+  workout_session_id        String
+  exercise_with_metadata_id String?
+  user_id                   String
+
+  // Relations
+  workoutSession       WorkoutSession        @relation(fields: [workout_session_id], references: [id], onDelete: Cascade)
+  exerciseWithMetadata ExerciseWithMetadata? @relation(fields: [exercise_with_metadata_id], references: [id])
+  user                 User                  @relation(fields: [user_id], references: [id])
+  exercise_log_id      String?               @unique
+  exerciseLog          ExerciseLog?          @relation(fields: [exercise_log_id], references: [id], onDelete: Cascade)
+
+  @@map("session_exercise_logs")
+}
+
+// ---------------------------------------------------------------------------
+// Views
+// ---------------------------------------------------------------------------
+
+/// Analytics view consolidating log data
+view exercise_analytics_view {
+  log_id             String    @unique
+  workout_session_id String
+  user_id            String
+  session_date       DateTime
+  start_time         DateTime?
+  end_time           DateTime?
+
+  workout_id   String
+  workout_name String
+
+  programme_id   String
+  programme_name String
+
+  exercise_id   String
+  exercise_name String
+  muscle_group  MuscleGroup
+
+  exercise_with_metadata_id String?
+  reps_min                  Int?
+  reps_max                  Int?
+  sets_min                  Int?
+  sets_max                  Int?
+  rest_min                  Int?
+  rest_max                  Int?
+  tempo                     String?
+  prescribed_order          Int?
+
+  weight             Float
+  reps               Int
+  set_order_index    Int
+  volume             Float
+  is_ad_hoc_exercise Boolean
+}

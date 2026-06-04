@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { MuscleGroup } from "../app/generated/prisma/client";
+import { MuscleGroup } from "../generated/prisma/client";
 import bcrypt from "bcryptjs";
 
 
