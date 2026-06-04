@@ -46,11 +46,11 @@ export const exerciseFixtures: ExerciseFixture[] = [
  * Named response factories for /api/exercises.
  *
  * Usage in handlers.ts:
- *   http.get("/api/exercises", exercise.success())
+ *   http.get("http://backend.test/api/exercises", exercise.success())
  *
  * Usage in per-test overrides:
- *   server.use(http.get("/api/exercises", exercise.error()))
- *   server.use(http.get("/api/exercises", exercise.success([customFixture])))
+ *   server.use(http.get("http://backend.test/api/exercises", exercise.error()))
+ *   server.use(http.get("http://backend.test/api/exercises", exercise.success([customFixture])))
  */
 export const exercise = {
     /** 200 — returns the default fixture list (or a custom one). */

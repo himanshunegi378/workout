@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, ClipboardList, Dumbbell, Settings, Layers, LogOut } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { apiFetch } from "@/lib/api-client";
 
 const navItems = [
     { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -15,6 +15,13 @@ const navItems = [
 
 export function Sidebar() {
     const pathname = usePathname();
+    const router = useRouter();
+
+    async function handleSignOut() {
+        await apiFetch("/api/auth/logout", { method: "POST" }).catch(() => null);
+        router.push("/login");
+        router.refresh();
+    }
 
     // Hide sidebar on login/signup pages
     if (pathname === "/login" || pathname === "/signup") {
@@ -65,7 +72,7 @@ export function Sidebar() {
 
             <div className="px-5 py-5">
                 <button
-                    onClick={() => signOut({ callbackUrl: "/login" })}
+                    onClick={handleSignOut}
                     className="flex w-full items-center gap-3 rounded-full px-3 py-2.5 text-sm text-muted-foreground/90 transition-colors duration-200 hover:bg-danger/10 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
                     <LogOut className="h-5 w-5" />

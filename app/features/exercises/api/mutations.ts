@@ -1,3 +1,5 @@
+import { apiFetch } from "@/lib/api-client";
+
 interface CreateExerciseData {
     id?: string;
     name: string;
@@ -18,7 +20,7 @@ export async function createExercise(data: CreateExerciseData) {
         id: data.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : undefined)
     };
 
-    const res = await fetch("/api/exercises", {
+    const res = await apiFetch("/api/exercises", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -57,7 +59,7 @@ export async function addExerciseToWorkout(programmeId: string, workoutId: strin
         id: data.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : undefined)
     };
 
-    const res = await fetch(`/api/programmes/${programmeId}/workouts/${workoutId}/exercises`, {
+    const res = await apiFetch(`/api/programmes/${programmeId}/workouts/${workoutId}/exercises`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -95,7 +97,7 @@ export async function editExerciseMetadata(
     metadataId: string,
     data: EditExerciseMetadataData
 ) {
-    const res = await fetch(
+    const res = await apiFetch(
         `/api/programmes/${programmeId}/workouts/${workoutId}/exercises/${metadataId}`,
         {
             method: "PATCH",
@@ -111,4 +113,3 @@ export async function editExerciseMetadata(
 
     return res.json();
 }
-

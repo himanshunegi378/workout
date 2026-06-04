@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-client";
 import { logKeys } from "../query-keys";
 
 /**
  * Persistence layer for fetching the most recent performance record for a specific exercise.
  */
 export async function getLastLog(exerciseId: string) {
-    const res = await fetch(`/api/exercises/${exerciseId}/last-log`);
+    const res = await apiFetch(`/api/exercises/${exerciseId}/last-log`);
     if (!res.ok) {
         throw new Error("Failed to fetch last log");
     }

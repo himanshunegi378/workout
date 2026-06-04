@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-client";
 import { dashboardKeys } from "../query-keys";
 import { ACWRDataPoint } from "../utils/calculate-acwr";
 
@@ -20,7 +21,7 @@ export function useFatigueData(endDate?: Date, days = 30) {
                 params.append("endDate", endDate.toISOString());
             }
 
-            const res = await fetch(`/api/analytics/fatigue?${params.toString()}`);
+            const res = await apiFetch(`/api/analytics/fatigue?${params.toString()}`);
             if (!res.ok) {
                 throw new Error("Failed to fetch fatigue data");
             }

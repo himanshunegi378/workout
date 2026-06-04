@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
 import { Dumbbell, Eye, EyeOff, Loader2 } from "lucide-react";
+import { apiFetch } from "@/lib/api-client";
 
 /**
  * The entry point for new users to register and join the platform.
@@ -46,7 +46,7 @@ export default function SignupPage() {
 
         try {
             // 1. Create the account
-            const res = await fetch("/api/auth/signup", {
+            const res = await apiFetch("/api/auth/signup", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -61,14 +61,17 @@ export default function SignupPage() {
             }
 
             // 2. Auto sign-in after successful signup
-            const signInResult = await signIn("credentials", {
-                username: username.trim().toLowerCase(),
-                password,
-                redirect: false,
+            const signInResult = await apiFetch("/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    username: username.trim().toLowerCase(),
+                    password,
+                }),
             });
 
-            if (signInResult?.error) {
-                // Account was created but auto-login failed — send to login
+            if (!signInResult.ok) {
+                // Account was created but auto-login failed; send to login.
                 router.push("/login");
                 return;
             }

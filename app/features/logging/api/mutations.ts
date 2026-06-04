@@ -1,3 +1,5 @@
+import { apiFetch, apiUrl } from "@/lib/api-client";
+
 /**
  * Data required to log or mark a set as completed.
  * Includes unique identifiers for offline first capabilities.
@@ -29,7 +31,7 @@ export async function logSet(data: LogSetData) {
         id: data.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36).substring(7))
     };
 
-    const res = await fetch("/api/log/set", {
+    const res = await apiFetch("/api/log/set", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -51,7 +53,8 @@ export async function logSet(data: LogSetData) {
  * @throws {Error} If the server responds with an error or the request fails.
  */
 export async function deleteLogSet(setId: string) {
-    const res = await fetch(`/api/log/set?setId=${setId}`, {
+    const url = apiUrl("/api/log/set", { setId });
+    const res = await apiFetch(`${url.pathname}${url.search}`, {
         method: "DELETE",
     });
 
@@ -75,7 +78,7 @@ export async function deleteLogSet(setId: string) {
  * @throws {Error} If the server responds with an error or the request fails.
  */
 export async function updateLogSet(data: { setId: string; weight: string; reps: string; rpe?: string }) {
-    const res = await fetch("/api/log/set", {
+    const res = await apiFetch("/api/log/set", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),

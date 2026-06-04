@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-client";
 
 export interface HeatmapItem {
     date: string;
@@ -13,7 +14,7 @@ export function useHeatmapActivity() {
     return useQuery<HeatmapItem[]>({
         queryKey: ["heatmap-activity"],
         queryFn: async () => {
-            const response = await fetch("/api/analytics/activity-heatmap");
+            const response = await apiFetch("/api/analytics/activity-heatmap");
             if (!response.ok) {
                 throw new Error("Failed to fetch heatmap data");
             }

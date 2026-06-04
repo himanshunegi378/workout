@@ -1,4 +1,5 @@
 import type { FeedbackStatus } from "@/app/generated/prisma";
+import { apiFetch } from "@/lib/api-client";
 
 export type SubmitFeedbackData = {
     description: string;
@@ -12,7 +13,7 @@ export type SubmitFeedbackResponse = {
  * Persists a new feedback entry for the current user.
  */
 export async function submitFeedback(data: SubmitFeedbackData): Promise<SubmitFeedbackResponse> {
-    const response = await fetch("/api/feedback", {
+    const response = await apiFetch("/api/feedback", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

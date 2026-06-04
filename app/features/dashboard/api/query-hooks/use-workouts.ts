@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { apiFetch, apiUrl } from "@/lib/api-client";
 import { queryKeys } from "../query-keys";
 
 export interface WorkoutOption {
@@ -13,11 +14,11 @@ export function useWorkouts(onlyActive: boolean = true) {
     return useQuery<WorkoutOption[], Error>({
         queryKey: queryKeys.workouts.all(onlyActive),
         queryFn: async () => {
-            const url = new URL("/api/workouts", window.location.origin);
+            const url = apiUrl("/api/workouts");
             if (onlyActive) {
                 url.searchParams.set("active", "true");
             }
-            const response = await fetch(url.toString());
+            const response = await apiFetch(`${url.pathname}${url.search}`);
             if (!response.ok) {
                 throw new Error("Failed to fetch workouts");
             }

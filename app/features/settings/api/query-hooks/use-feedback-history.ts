@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import type { FeedbackStatus } from "@/app/generated/prisma";
+import { apiFetch } from "@/lib/api-client";
 import { feedbackKeys } from "../query-keys";
 
 export type FeedbackListItem = {
@@ -19,7 +20,7 @@ export function useFeedbackHistory() {
     return useQuery({
         queryKey: feedbackKeys.lists(),
         queryFn: async (): Promise<FeedbackListItem[]> => {
-            const response = await fetch("/api/feedback", {
+            const response = await apiFetch("/api/feedback", {
                 method: "GET",
                 cache: "no-store",
             });

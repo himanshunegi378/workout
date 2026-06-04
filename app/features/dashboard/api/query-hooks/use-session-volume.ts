@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { apiFetch, apiUrl } from "@/lib/api-client";
 import { queryKeys } from "../query-keys";
 
 export interface SessionVolumeNode {
@@ -15,7 +16,8 @@ export function useSessionVolume(workoutId: string | undefined, limit: number = 
         queryFn: async () => {
             if (!workoutId) return [];
 
-            const response = await fetch(`/api/analytics/session-volume?workoutId=${workoutId}&limit=${limit}`);
+            const url = apiUrl("/api/analytics/session-volume", { workoutId, limit });
+            const response = await apiFetch(`${url.pathname}${url.search}`);
             if (!response.ok) {
                 throw new Error("Failed to fetch session volume");
             }

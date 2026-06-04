@@ -43,7 +43,7 @@ describe("ExercisesFetch (MSW integration)", () => {
     });
 
     it("handles API error responses", async () => {
-        server.use(http.get("/api/exercises", exercise.error()));
+        server.use(http.get("http://backend.test/api/exercises", exercise.error()));
 
         renderWithProviders(<ExercisesFetchTest />);
 
@@ -53,7 +53,7 @@ describe("ExercisesFetch (MSW integration)", () => {
     });
 
     it("handles empty exercise list", async () => {
-        server.use(http.get("/api/exercises", exercise.empty()));
+        server.use(http.get("http://backend.test/api/exercises", exercise.empty()));
 
         renderWithProviders(<ExercisesFetchTest />);
 
@@ -66,7 +66,7 @@ describe("ExercisesFetch (MSW integration)", () => {
 
     it("fetches with custom fixture data", async () => {
         server.use(
-            http.get("/api/exercises", exercise.success([
+            http.get("http://backend.test/api/exercises", exercise.success([
                 {
                     id: "custom-1",
                     name: "Custom Exercise",

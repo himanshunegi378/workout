@@ -1,17 +1,6 @@
 import { vi, beforeAll, beforeEach, afterAll } from "vitest";
 import prisma from "@/lib/prisma";
 
-// Auth and Navigation mocks remain as they are external to the DB logic
-vi.mock("@/auth", () => ({
-    auth: vi.fn(),
-    handlers: {
-        GET: vi.fn(),
-        POST: vi.fn(),
-    },
-    signIn: vi.fn(),
-    signOut: vi.fn(),
-}));
-
 vi.mock("next/navigation", () => ({
     redirect: vi.fn(),
     useRouter: vi.fn(),

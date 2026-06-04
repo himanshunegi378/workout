@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
-import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 import { QueryProvider } from "@/app/components/providers/QueryProvider";
 import { RestTimerFloatingBubble, RestTimerHeaderActionBridge, RestTimerOverlay, RestTimerProvider } from "@/app/features/rest-timer";
@@ -54,34 +53,32 @@ export default function RootLayout({
         className={`${outfit.variable} ${jakarta.variable} font-body antialiased bg-background text-foreground`}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
-          <SessionProvider>
-            <QueryProvider>
-              <PageHeaderStatusProvider>
-                <PageHeaderActionsProvider>
-                  <RestTimerProvider>
-                    <PRCelebrationProvider>
-                      <BottomDrawerProvider>
-                        <div className="flex min-h-screen">
-                          <Sidebar />
-                          <div className="flex-1 flex flex-col min-w-0">
-                            {children}
-                          </div>
+          <QueryProvider>
+            <PageHeaderStatusProvider>
+              <PageHeaderActionsProvider>
+                <RestTimerProvider>
+                  <PRCelebrationProvider>
+                    <BottomDrawerProvider>
+                      <div className="flex min-h-screen">
+                        <Sidebar />
+                        <div className="flex-1 flex flex-col min-w-0">
+                          {children}
                         </div>
-                        <BottomNav />
-                      </BottomDrawerProvider>
-                      <PRCelebrationOverlay />
-                      <RestTimerOverlay />
-                      <RestTimerFloatingBubble />
+                      </div>
+                      <BottomNav />
+                    </BottomDrawerProvider>
+                    <PRCelebrationOverlay />
+                    <RestTimerOverlay />
+                    <RestTimerFloatingBubble />
 
-                    </PRCelebrationProvider>
-                    <RestTimerHeaderActionBridge />
+                  </PRCelebrationProvider>
+                  <RestTimerHeaderActionBridge />
 
-                  </RestTimerProvider>
-                </PageHeaderActionsProvider>
+                </RestTimerProvider>
+              </PageHeaderActionsProvider>
 
-              </PageHeaderStatusProvider>
-            </QueryProvider>
-          </SessionProvider>
+            </PageHeaderStatusProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

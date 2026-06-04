@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-client";
 import { workoutKeys } from "../query-keys";
 import { WorkoutDetailsResponse } from "../../types";
 
@@ -21,7 +22,7 @@ export function useWorkoutDetails(programmeId: string, workoutId: string) {
     return useQuery({
         queryKey: workoutKeys.detail(workoutId),
         queryFn: async (): Promise<WorkoutDetailsResponse> => {
-            const res = await fetch(`/api/programmes/${programmeId}/workouts/${workoutId}/details`);
+            const res = await apiFetch(`/api/programmes/${programmeId}/workouts/${workoutId}/details`);
             if (!res.ok) throw new Error("Failed to fetch workout details");
             return res.json() as Promise<WorkoutDetailsResponse>;
         },

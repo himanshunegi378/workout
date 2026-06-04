@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { MuscleGroup } from "@/app/generated/prisma/client";
 import type { AnalyticsQueryPayload } from "@/app/features/analytics/api/analytics-validation";
+import { apiFetch } from "@/lib/api-client";
 import { HistoricalMuscleMetricData } from "../../types";
 import { format, startOfWeek, subWeeks } from "date-fns";
 import { buildHistoricalMuscleMetricData, type MuscleMetricSourceRow } from "../utils/muscle-trends";
@@ -34,7 +35,7 @@ export function useMuscleHistoricalMetrics(muscleGroup: MuscleGroup, weeks: numb
                 limit: 1000,
             };
 
-            const res = await fetch("/api/analytics/query", {
+            const res = await apiFetch("/api/analytics/query", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),

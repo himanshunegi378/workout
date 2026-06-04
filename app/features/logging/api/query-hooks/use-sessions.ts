@@ -1,6 +1,7 @@
 "use client";
 
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { apiFetch, apiUrl } from "@/lib/api-client";
 import { logKeys } from "../query-keys";
 
 import type { GroupedSession, PaginatedResponse } from "../../types";
@@ -22,7 +23,7 @@ export function useInfiniteSessions({ grouped = true, limit = 10 }: { grouped?: 
     return useInfiniteQuery<PaginatedResponse<GroupedSession[]>>({
         queryKey: [...logKeys.sessions(), { grouped, limit }],
         queryFn: async ({ pageParam }) => {
-            const url = new URL("/api/log/sessions", window.location.origin);
+            const url = apiUrl("/api/log/sessions");
             if (grouped) url.searchParams.set("grouped", "true");
             url.searchParams.set("limit", limit.toString());
 
@@ -30,7 +31,7 @@ export function useInfiniteSessions({ grouped = true, limit = 10 }: { grouped?: 
                 url.searchParams.set("from", pageParam);
             }
 
-            const res = await fetch(url.toString());
+            const res = await apiFetch(`${url.pathname}${url.search}`);
             if (!res.ok) {
                 throw new Error("Failed to fetch sessions");
             }

@@ -1,3 +1,5 @@
+import { apiFetch } from "@/lib/api-client";
+
 interface CreateProgramData {
     id?: string;
     name: string;
@@ -18,7 +20,7 @@ export async function createProgramme(data: CreateProgramData) {
         id: data.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : undefined)
     };
 
-    const res = await fetch("/api/programmes", {
+    const res = await apiFetch("/api/programmes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -43,7 +45,7 @@ export interface UpdateProgramData {
  */
 export async function updateProgramme(data: UpdateProgramData) {
     const { id, ...updateData } = data;
-    const res = await fetch(`/api/programmes/${id}`, {
+    const res = await apiFetch(`/api/programmes/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updateData),

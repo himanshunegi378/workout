@@ -16,6 +16,7 @@ export default defineConfig({
             "app/components/ui/**/*.test.tsx",
             "app/features/dashboard/**/*.test.ts",
             "app/features/dashboard/**/*.test.tsx",
+            "app/features/exercises/**/*.test.tsx",
             "tests/ui/**/*.test.ts",
             "tests/ui/**/*.test.tsx",
         ],

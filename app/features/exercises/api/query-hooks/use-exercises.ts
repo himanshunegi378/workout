@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-client";
 import { exerciseKeys } from "../query-keys";
 
 /**
@@ -18,7 +19,7 @@ export function useExercises() {
     return useQuery({
         queryKey: exerciseKeys.lists(),
         queryFn: async () => {
-            const res = await fetch("/api/exercises");
+            const res = await apiFetch("/api/exercises");
             if (!res.ok) throw new Error("Failed to fetch exercises");
             return res.json();
         },

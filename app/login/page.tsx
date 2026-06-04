@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
 import { Dumbbell, Eye, EyeOff, Loader2 } from "lucide-react";
+import { apiFetch } from "@/lib/api-client";
 
 /**
  * The standard authentication portal for existing users.
  * 
  * Context:
  * This page provides a secure entry point into the application. It handles 
- * credential validation via `next-auth` and redirecting users to their 
+ * credential validation via the backend auth API and redirecting users to their 
  * training dashboard upon success.
  * 
  * Why:
@@ -39,13 +39,16 @@ export default function LoginPage() {
         setLoading(true);
         setError("");
 
-        const result = await signIn("credentials", {
-            username: username.trim().toLowerCase(),
-            password,
-            redirect: false,
+        const result = await apiFetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username: username.trim().toLowerCase(),
+                password,
+            }),
         });
 
-        if (result?.error) {
+        if (!result.ok) {
             setError("Invalid username or password");
             setLoading(false);
         } else {

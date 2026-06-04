@@ -1,6 +1,6 @@
-import { auth } from "@/auth";
 import Link from "next/link";
 import { MessageSquareMore } from "lucide-react";
+import { getCurrentUser } from "@/lib/auth-helpers";
 import { Avatar } from "./ui/Avatar";
 import { ThemeToggle } from "./ui/ThemeToggle";
 import { ClearQueryCacheRow } from "./ui/ClearQueryCacheRow";
@@ -10,7 +10,7 @@ import { SignOutButton } from "@/app/components/SignOutButton";
  * The primary container for the user settings and profile screen.
  * 
  * Context:
- * This server component aggregates user identification (via `auth()`), 
+ * This server component aggregates backend session identification, 
  * appearance preferences (theme toggling), and account management 
  * (sign-out functionality).
  * 
@@ -21,8 +21,8 @@ import { SignOutButton } from "@/app/components/SignOutButton";
  *   user identity and profile initials.
  */
 export async function SettingsContent() {
-    const session = await auth();
-    const username = session?.user?.name || "User";
+    const user = await getCurrentUser();
+    const username = user?.username || "User";
     const initial = username.charAt(0).toUpperCase();
 
     return (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-client";
 import { logKeys } from "../query-keys";
 
 export interface ExerciseHistoryLog {
@@ -51,7 +52,7 @@ export function useExerciseHistory(
             if (range?.from) searchParams.set("from", range.from);
             if (range?.to) searchParams.set("to", range.to);
 
-            const res = await fetch(`/api/exercises/logs?${searchParams.toString()}`);
+            const res = await apiFetch(`/api/exercises/logs?${searchParams.toString()}`);
             if (!res.ok) {
                 throw new Error("Failed to fetch exercise history");
             }

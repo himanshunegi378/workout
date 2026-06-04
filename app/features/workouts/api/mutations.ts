@@ -1,3 +1,5 @@
+import { apiFetch } from "@/lib/api-client";
+
 interface CreateWorkoutData {
     id?: string;
     name: string;
@@ -10,7 +12,7 @@ export async function createWorkout(programmeId: string, data: CreateWorkoutData
         id: data.id || (typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36).substring(7))
     };
 
-    const res = await fetch(`/api/programmes/${programmeId}/workouts`, {
+    const res = await apiFetch(`/api/programmes/${programmeId}/workouts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

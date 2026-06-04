@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-client";
 import { programmeKeys } from "../query-keys";
 
 export type ProgrammeDetails = {
@@ -35,7 +36,7 @@ export function useProgramme(programmeId: string) {
     return useQuery({
         queryKey: programmeKeys.detail(programmeId),
         queryFn: async (): Promise<ProgrammeDetails> => {
-            const res = await fetch(`/api/programmes/${programmeId}`);
+            const res = await apiFetch(`/api/programmes/${programmeId}`);
             if (!res.ok) throw new Error("Failed to fetch programme");
             return res.json() as Promise<ProgrammeDetails>;
         },

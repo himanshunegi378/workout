@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-client";
 import { workoutKeys } from "../query-keys";
 
 export function useFinishWorkout() {
@@ -6,7 +7,7 @@ export function useFinishWorkout() {
 
   return useMutation({
     mutationFn: async ({ sessionId }: { sessionId: string }) => {
-      const res = await fetch(`/api/workout-sessions/${sessionId}/finish`, {
+      const res = await apiFetch(`/api/workout-sessions/${sessionId}/finish`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
       });
