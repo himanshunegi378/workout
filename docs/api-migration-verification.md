@@ -583,7 +583,6 @@ Overall result: `Pass`
 | Lint | `pnpm lint` passed with 0 errors | Pass | Two existing warnings remain in `app/features/logging/api/mutation-hooks/use-update-log-set.ts`. Generated `backend/dist/**` is ignored by root ESLint. |
 | Backend build/tests | `cd backend && pnpm build`; `cd backend && pnpm test` passed | Pass | Final backend test rerun passed: 9 test files, 78 tests. |
 | Frontend cutover planning | `docs/frontend-api-switch-plan.md` exists | Pass | Frontend callers were not changed. |
-| GitNexus scope check | `gitnexus_detect_changes(scope=all)` reported low risk and no affected processes for indexed changed symbols | Pass | Reran after the ESLint ignore change. Current GitNexus index does not fully represent untracked backend/docs additions. |
 
 Commands run:
 
@@ -592,7 +591,6 @@ pnpm test:api
 pnpm lint
 cd backend && pnpm build
 cd backend && pnpm test
-gitnexus_detect_changes(scope=all)
 ```
 
 Notes:

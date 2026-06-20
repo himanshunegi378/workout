@@ -26,7 +26,6 @@
   - `pnpm test:ui`
   - `pnpm test:api`
   - `pnpm test:cycles`
-- Use GitNexus impact analysis before editing any existing symbol; report blast radius before code changes.
 
 ## Phase 1: Create `react-client`
 - Create `react-client/` as a sibling frontend package inside the repo.
@@ -168,14 +167,7 @@
   - auth/session behavior
   - PWA install behavior
   - API calls
-  - offline query persistence
-- Run checks in both clients while both exist:
-  - existing root `pnpm test:ui`
-  - existing root `pnpm test:api`
-  - existing root `pnpm test:cycles`
-  - `cd react-client && pnpm build`
   - `cd react-client && pnpm test:ui`
-- Run `gitnexus_detect_changes()` before any commit.
 
 ## Phase 9: Optional Cutover
 - Only after parity is proven, choose the deployment direction:

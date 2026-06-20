@@ -68,4 +68,3 @@ The real-world behavior to protect is simple: a workout can be logged on mobile 
 - Do not reintroduce `/api/auth/[...nextauth]` or `next-auth` client helpers.
 - Do not remove Next.js route files until the proxy phase has run successfully in the target deployment.
 - Keep `docs/api-migration-verification.md` updated after each switched domain.
-- Run `gitnexus_detect_changes()` before committing the switch.
