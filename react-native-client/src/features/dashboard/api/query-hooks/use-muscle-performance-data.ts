@@ -1,0 +1,266 @@
+import { useQuery } from '@tanstack/react-query';
+import { MuscleGroup } from '@/features/exercises';
+import { apiFetch } from '@/lib/api';
+import { MusclePerformanceData, ExercisePerformanceData, TrendStatus, PerformanceStatus } from '../../types';
+
+export function useMusclePerformanceData() {
+  return useQuery<MusclePerformanceData[], Error>({
+    queryKey: ['muscle-performance'],
+    queryFn: async (): Promise<MusclePerformanceData[]> => {
+      const now = new Date();
+
+      const currentWeekStart = new Date(now);
+      currentWeekStart.setDate(now.getDate() - now.getDay()); // Sunday is 0
+      currentWeekStart.setHours(0, 0, 0, 0);
+
+      const lastWeekStart = new Date(currentWeekStart);
+      lastWeekStart.setDate(currentWeekStart.getDate() - 7);
+
+      const isoLastWeekStart = lastWeekStart.toISOString().split('T')[0];
+
+      const payload = {
+        metrics: [
+          { field: 'volume', aggregation: 'count', alias: 'sets' },
+          { field: 'reps', aggregation: 'avg', alias: 'avg_reps' },
+          { field: 'weight', aggregation: 'avg', alias: 'avg_weight' },
+          { field: 'volume', aggregation: 'sum', alias: 'total_volume' },
+        ],
+        dimensions: ['session_date', 'muscle_group', 'exercise_name'],
+        filters: [{ field: 'session_date', operator: '>=', value: isoLastWeekStart }],
+        order_by: [],
+        limit: 1000,
+      };
+
+      const res = await apiFetch('/api/analytics/query', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error('Failed to fetch muscle performance data');
+
+      const json = await res.json();
+      const data = json.data as any[];
+
+      const currentWeekMs = currentWeekStart.getTime();
+
+      const muscleStats = new Map<string, {
+        currentSets: number;
+        lastSets: number;
+        currentVolume: number;
+        lastVolume: number;
+        currentAvgWeight: number[];
+        lastAvgWeight: number[];
+        currentAvgReps: number[];
+        lastAvgReps: number[];
+        exercises: Map<string, {
+          currentSets: number;
+          lastSets: number;
+          currentVolume: number;
+          lastVolume: number;
+          currentAvgWeight: number[];
+          lastAvgWeight: number[];
+          currentAvgReps: number[];
+          lastAvgReps: number[];
+        }>;
+      }>();
+
+      for (const row of data) {
+        const rowDateMs = new Date(row.session_date).getTime();
+        const isCurrentWeek = rowDateMs >= currentWeekMs;
+        const mg = row.muscle_group as string;
+
+        if (!muscleStats.has(mg)) {
+          muscleStats.set(mg, {
+            currentSets: 0,
+            lastSets: 0,
+            currentVolume: 0,
+            lastVolume: 0,
+            currentAvgWeight: [],
+            lastAvgWeight: [],
+            currentAvgReps: [],
+            lastAvgReps: [],
+            exercises: new Map(),
+          });
+        }
+
+        const stats = muscleStats.get(mg)!;
+        const exName = row.exercise_name as string;
+
+        if (!stats.exercises.has(exName)) {
+          stats.exercises.set(exName, {
+            currentSets: 0,
+            lastSets: 0,
+            currentVolume: 0,
+            lastVolume: 0,
+            currentAvgWeight: [],
+            lastAvgWeight: [],
+            currentAvgReps: [],
+            lastAvgReps: [],
+          });
+        }
+
+        const exStats = stats.exercises.get(exName)!;
+
+        if (isCurrentWeek) {
+          stats.currentSets += Number(row.sets);
+          stats.currentVolume += Number(row.total_volume);
+          stats.currentAvgWeight.push(Number(row.avg_weight));
+          stats.currentAvgReps.push(Number(row.avg_reps));
+
+          exStats.currentSets += Number(row.sets);
+          exStats.currentVolume += Number(row.total_volume);
+          exStats.currentAvgWeight.push(Number(row.avg_weight));
+          exStats.currentAvgReps.push(Number(row.avg_reps));
+        } else {
+          stats.lastSets += Number(row.sets);
+          stats.lastVolume += Number(row.total_volume);
+          stats.lastAvgWeight.push(Number(row.avg_weight));
+          stats.lastAvgReps.push(Number(row.avg_reps));
+
+          exStats.lastSets += Number(row.sets);
+          exStats.lastVolume += Number(row.total_volume);
+          exStats.lastAvgWeight.push(Number(row.avg_weight));
+          exStats.lastAvgReps.push(Number(row.avg_reps));
+        }
+      }
+
+      const result: MusclePerformanceData[] = [];
+
+      for (const [mg, stats] of Array.from(muscleStats.entries())) {
+        if (stats.currentSets === 0 && stats.lastSets === 0) continue;
+
+        const avgCWeight = stats.currentAvgWeight.length
+          ? stats.currentAvgWeight.reduce((a, b) => a + b, 0) / stats.currentAvgWeight.length
+          : 0;
+        const avgLWeight = stats.lastAvgWeight.length
+          ? stats.lastAvgWeight.reduce((a, b) => a + b, 0) / stats.lastAvgWeight.length
+          : 0;
+
+        const avgCReps = stats.currentAvgReps.length
+          ? stats.currentAvgReps.reduce((a, b) => a + b, 0) / stats.currentAvgReps.length
+          : 0;
+        const avgLReps = stats.lastAvgReps.length
+          ? stats.lastAvgReps.reduce((a, b) => a + b, 0) / stats.lastAvgReps.length
+          : 0;
+
+        let performance: PerformanceStatus = 'stable';
+        let trendDetail = 'stable';
+
+        const weightDiff = avgCWeight - avgLWeight;
+        const repsDiff = avgCReps - avgLReps;
+        const volDiff = stats.currentVolume - stats.lastVolume;
+
+        const getTrend = (diff: number, baseline: number): TrendStatus => {
+          if (baseline === 0) return diff > 0 ? 'up' : 'same';
+          if (diff > baseline * 0.05) return 'up';
+          if (diff < -(baseline * 0.05)) return 'down';
+          return 'same';
+        };
+
+        const repsTrend = getTrend(repsDiff, avgLReps);
+        const weightTrend = getTrend(weightDiff, avgLWeight);
+        const volumeTrend = getTrend(volDiff, stats.lastVolume);
+
+        if (avgLWeight === 0 && avgCWeight > 0) {
+          performance = 'increase';
+          trendDetail = 'new';
+        } else if (weightTrend === 'up') {
+          performance = 'increase';
+          trendDetail = '↑ weight';
+        } else if (weightTrend === 'down') {
+          performance = 'decrease';
+          trendDetail = '↓ weight';
+        } else if (repsTrend === 'up') {
+          performance = 'increase';
+          trendDetail = '↑ reps';
+        } else if (repsTrend === 'down') {
+          performance = 'decrease';
+          trendDetail = '↓ reps';
+        }
+
+        const exercises: ExercisePerformanceData[] = [];
+        for (const [en, eStats] of stats.exercises.entries()) {
+          const eAvgCW = eStats.currentAvgWeight.length
+            ? eStats.currentAvgWeight.reduce((a, b) => a + b, 0) / eStats.currentAvgWeight.length
+            : 0;
+          const eAvgLW = eStats.lastAvgWeight.length
+            ? eStats.lastAvgWeight.reduce((a, b) => a + b, 0) / eStats.lastAvgWeight.length
+            : 0;
+          const eAvgCR = eStats.currentAvgReps.length
+            ? eStats.currentAvgReps.reduce((a, b) => a + b, 0) / eStats.currentAvgReps.length
+            : 0;
+          const eAvgLR = eStats.lastAvgReps.length
+            ? eStats.lastAvgReps.reduce((a, b) => a + b, 0) / eStats.lastAvgReps.length
+            : 0;
+
+          const eWD = eAvgCW - eAvgLW;
+          const eRD = eAvgCR - eAvgLR;
+          const eVD = eStats.currentVolume - eStats.lastVolume;
+
+          const eRT = getTrend(eRD, eAvgLR);
+          const eWT = getTrend(eWD, eAvgLW);
+          const eVT = getTrend(eVD, eStats.lastVolume);
+
+          let ep: PerformanceStatus = 'stable';
+          let etd = 'stable';
+
+          if (eAvgLW === 0 && eAvgCW > 0) {
+            ep = 'increase';
+            etd = 'new';
+          } else if (eWT === 'up') {
+            ep = 'increase';
+            etd = '↑ weight';
+          } else if (eWT === 'down') {
+            ep = 'decrease';
+            etd = '↓ weight';
+          } else if (eRT === 'up') {
+            ep = 'increase';
+            etd = '↑ reps';
+          } else if (eRT === 'down') {
+            ep = 'decrease';
+            etd = '↓ reps';
+          }
+
+          const eVolumeChangePercentage = eStats.lastVolume > 0
+            ? ((eStats.currentVolume - eStats.lastVolume) / eStats.lastVolume) * 100
+            : 0;
+
+          exercises.push({
+            name: en,
+            currentWeekSets: eStats.currentSets,
+            lastWeekSets: eStats.lastSets,
+            currentWeekVolume: eStats.currentVolume,
+            lastWeekVolume: eStats.lastVolume,
+            volumeChangePercentage: eVolumeChangePercentage,
+            repsTrend: eRT,
+            weightTrend: eWT,
+            volumeTrend: eVT,
+            performance: ep,
+            trendDetail: etd,
+          });
+        }
+
+        const volumeChangePercentage = stats.lastVolume > 0
+          ? ((stats.currentVolume - stats.lastVolume) / stats.lastVolume) * 100
+          : 0;
+
+        result.push({
+          muscleGroup: mg as MuscleGroup,
+          currentWeekSets: stats.currentSets,
+          lastWeekSets: stats.lastSets,
+          currentWeekVolume: stats.currentVolume,
+          lastWeekVolume: stats.lastVolume,
+          volumeChangePercentage,
+          repsTrend,
+          weightTrend,
+          volumeTrend,
+          performance,
+          trendDetail,
+          exercises: exercises.sort((a, b) => b.currentWeekVolume - a.currentWeekVolume),
+        });
+      }
+
+      return result.sort((a, b) => b.currentWeekSets - a.currentWeekSets);
+    },
+  });
+}

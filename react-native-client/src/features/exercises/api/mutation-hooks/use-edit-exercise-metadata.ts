@@ -1,0 +1,30 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { editExerciseMetadata, EditExerciseMetadataData } from '../mutations';
+
+interface UseEditExerciseMetadataProps {
+  programmeId: string;
+  workoutId: string;
+  metadataId: string;
+}
+
+export function useEditExerciseMetadata({
+  programmeId,
+  workoutId,
+  metadataId,
+}: UseEditExerciseMetadataProps) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: EditExerciseMetadataData) =>
+      editExerciseMetadata(programmeId, workoutId, metadataId, data),
+    onSuccess: () => {
+      // Invalidate the workout details and programme details to reflect the updated metadata
+      queryClient.invalidateQueries({
+        queryKey: ['workouts', 'detail', workoutId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['programmes', 'detail', programmeId],
+      });
+    },
+  });
+}
