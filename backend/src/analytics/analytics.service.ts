@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
-import { Prisma } from "../../../generated/prisma/client";
+import { Prisma } from "../generated/prisma/client";
 import { throwLegacyError } from "../common/utils/legacy-http";
 import { PrismaService } from "../prisma/prisma.service";
 import { AGGREGATION_MAP } from "./analytics-schema";

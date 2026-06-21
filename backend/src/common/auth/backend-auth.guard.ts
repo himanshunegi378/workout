@@ -55,8 +55,16 @@ export class BackendAuthGuard implements CanActivate {
       return true;
     }
 
-    const cookies = parseCookies(request.headers.cookie);
-    const rawToken = cookies.get(AUTH_COOKIE_NAME);
+    let rawToken: string | undefined = undefined;
+
+    const authHeader = request.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      rawToken = authHeader.substring(7);
+    } else {
+      const cookies = parseCookies(request.headers.cookie);
+      rawToken = cookies.get(AUTH_COOKIE_NAME);
+    }
+
     const secret = this.config.getRequired("AUTH_SECRET");
     const token = rawToken ? await this.verifyToken(rawToken, secret) : null;
     const userId = typeof token?.sub === "string" ? token.sub : null;

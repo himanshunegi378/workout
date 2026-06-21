@@ -70,7 +70,7 @@ describe("POST /api/auth/signup", () => {
       .send({ username: "NewUser", password: "password123", ignored: true })
       .expect(HttpStatus.CREATED);
 
-    expect(response.body).toEqual({ id: "u1", username: "newuser" });
+    expect(response.body).toEqual({ id: "u1", username: "newuser", token: expect.any(String) });
     expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
       where: { username: "newuser" },
     });
@@ -135,7 +135,7 @@ describe("POST /api/auth/signup", () => {
       .send({ username: " NewUser ", password: "password123" })
       .expect(HttpStatus.OK);
 
-    expect(response.body).toEqual({ id: "u1", username: "newuser" });
+    expect(response.body).toEqual({ id: "u1", username: "newuser", token: expect.any(String) });
     expect(response.headers["set-cookie"]?.[0]).toContain("workout_auth=");
     expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
       where: { username: "newuser" },
@@ -176,6 +176,35 @@ describe("POST /api/auth/signup", () => {
     const response = await request(app.getHttpServer())
       .get("/api/auth/me")
       .set("Cookie", loginResponse.headers["set-cookie"])
+      .expect(HttpStatus.OK);
+
+    expect(response.body).toEqual({ id: "u1", username: "newuser" });
+  });
+
+  it("returns the current user for a valid backend auth Bearer token", async () => {
+    const bcrypt = await import("bcryptjs");
+    prismaMock.user.findUnique
+      .mockResolvedValueOnce({
+        id: "u1",
+        username: "newuser",
+        password_hash: "hashed-password",
+      })
+      .mockResolvedValueOnce({
+        id: "u1",
+        username: "newuser",
+      });
+    vi.mocked(bcrypt.default.compare).mockResolvedValue(true as never);
+
+    const loginResponse = await request(app.getHttpServer())
+      .post("/api/auth/login")
+      .send({ username: "newuser", password: "password123" })
+      .expect(HttpStatus.OK);
+
+    const token = loginResponse.body.token;
+
+    const response = await request(app.getHttpServer())
+      .get("/api/auth/me")
+      .set("Authorization", `Bearer ${token}`)
       .expect(HttpStatus.OK);
 
     expect(response.body).toEqual({ id: "u1", username: "newuser" });

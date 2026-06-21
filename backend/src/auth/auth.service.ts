@@ -65,7 +65,8 @@ export class AuthService {
         },
       });
 
-      return { id: user.id, username: user.username };
+      const token = await this.createToken(user.id, user.username);
+      return { id: user.id, username: user.username, token };
     } catch (error) {
       if (error instanceof Error && "getStatus" in error) {
         throw error;
@@ -109,7 +110,7 @@ export class AuthService {
       secure,
     });
 
-    return { id: user.id, username: user.username };
+    return { id: user.id, username: user.username, token };
   }
 
   /** Clears the backend auth cookie. */
